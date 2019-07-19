@@ -30,7 +30,7 @@
 
         <frontEndVersion>2.2.2</frontEndVersion>
         <cmd-toolkit.version>1.2.1</cmd-toolkit.version>
-        <spring-data-jpa.version>1.3.5.RELEASE</spring-data-jpa.version>
+        <spring-data-jpa.version>1.11.22.RELEASE</spring-data-jpa.version>
         <spring.version>3.2.18.RELEASE</spring.version>
         <hibernate.version>3.6.10.Final</hibernate.version>
         <wicket.version>6.26.0</wicket.version>
@@ -422,7 +422,7 @@
             <id>clarin</id>
             <properties>
                 <logging.level>warn</logging.level>
-                <serviceRootUrl></serviceRootUrl>
+                <serviceRootUrl/>
                 <serviceUrlBase>http://catalog.clarin.eu</serviceUrlBase>
                 <serviceUrlPath>/ds/ComponentRegistry</serviceUrlPath>
                 <!-- Will be inserted in context.xml -->
@@ -441,7 +441,7 @@
             </build>
             <properties>
                 <logging.level>info</logging.level>
-                <serviceRootUrl></serviceRootUrl>
+                <serviceRootUrl/>
                 <serviceUrlBase>http://catalog.clarin.eu</serviceUrlBase>
                 <serviceUrlPath>/ds/ComponentRegistry</serviceUrlPath>
                 <!-- Will be inserted in context.xml -->
