@@ -158,7 +158,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey-jaxrs</artifactId>
-            <version>1.5.10</version>
+            <version>1.5.11</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.javassist</groupId>
@@ -422,7 +422,7 @@
             <id>clarin</id>
             <properties>
                 <logging.level>warn</logging.level>
-                <serviceRootUrl></serviceRootUrl>
+                <serviceRootUrl/>
                 <serviceUrlBase>http://catalog.clarin.eu</serviceUrlBase>
                 <serviceUrlPath>/ds/ComponentRegistry</serviceUrlPath>
                 <!-- Will be inserted in context.xml -->
@@ -441,7 +441,7 @@
             </build>
             <properties>
                 <logging.level>info</logging.level>
-                <serviceRootUrl></serviceRootUrl>
+                <serviceRootUrl/>
                 <serviceUrlBase>http://catalog.clarin.eu</serviceUrlBase>
                 <serviceUrlPath>/ds/ComponentRegistry</serviceUrlPath>
                 <!-- Will be inserted in context.xml -->
