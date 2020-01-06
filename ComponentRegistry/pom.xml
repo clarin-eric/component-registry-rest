@@ -28,7 +28,7 @@
         <webXmlPath>src/main/webapp/WEB-INF/web-test.xml</webXmlPath>
 
         <documentationUrl>https://www.clarin.eu/content/component-registry-documentation</documentationUrl>
-        <adminUsers></adminUsers>
+        <adminUsers/>
         <toolkitLocation>https://infra.clarin.eu/CMDI/1.x</toolkitLocation>
         <generalComponentSchemaUrl>https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd</generalComponentSchemaUrl>
         <component2SchemaXslUrl>https://infra.clarin.eu/CMDI/1.x/xslt/comp2schema.xsl</component2SchemaXslUrl>
@@ -39,8 +39,8 @@
         <cmd-toolkit.version>1.2.3</cmd-toolkit.version>
         <spring.version>5.1.11.RELEASE</spring.version>
         <wicket.version>6.30.0</wicket.version>
-        <jackson.version>2.9.10</jackson.version>
-        <jackson-databind.version>2.9.10.1</jackson-databind.version>
+        <jackson.version>2.10.0</jackson.version>
+        <jackson-databind.version>2.10.0</jackson-databind.version>
         <jersey.version>1.19.4</jersey.version>
         <slf4j.version>1.7.29</slf4j.version>
 
@@ -197,7 +197,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey-jaxrs</artifactId>
-            <version>1.5.10</version>
+            <version>1.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.javassist</groupId>
@@ -452,7 +452,7 @@
                 <logging.level>warn</logging.level>
 
                 <!-- Will be inserted in context.xml -->
-                <serviceRootUrl></serviceRootUrl>
+                <serviceRootUrl/>
                 <serviceUrlBase>http://catalog.clarin.eu</serviceUrlBase>
                 <serviceUrlPath>/ds/ComponentRegistry</serviceUrlPath>
 
@@ -505,7 +505,7 @@
                 <logging.level>info</logging.level>
 
                 <!-- Will be inserted in context.xml -->
-                <serviceRootUrl></serviceRootUrl>
+                <serviceRootUrl/>
                 <serviceUrlBase>http://catalog.clarin.eu</serviceUrlBase>
                 <serviceUrlPath>/ds/ComponentRegistry</serviceUrlPath>
 
