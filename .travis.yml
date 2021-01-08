@@ -1,5 +1,7 @@
-sudo: false
 language: java
+
+os:
+ - linux
 
 jdk:
   - openjdk11
@@ -12,8 +14,7 @@ script:
 deploy:
   provider: releases
   prerelease: true
-  api_key:
-    secure: "b1grRBGy5Sr7ux7sp7cexg/asyvZIb4XWpOedXEzFnBQsl6E+ELozvkBN9eApCnLutONaIAVeLvchbL/jkATiNLAsiP1gDUo7+6P/IhS4GyKAATwTt5Z2uUpFAmlh8ooI2YzUElTg5fXdmEhHiU1govzyhlOYaTH/PuxLLiUYeq8k5lGVF/7LwgIH2+UBmz/FxKL3Mbh9I/TVc5RdBQPXL+yaw9FoCgCoXqexNP/Vt0VSbep2cPCM7WdutekfSMREl7Z9SzrST+h/1jmZdVHQG54qa7U89geTzejRyFH/pQmac3pf035s4F7NwyWAvfItUpi6cCwRY84Agr62ZVLHwDex58WcO9JJHat4iS3LET85KHFCLaIUO0TUZoO4AokO4BZRaJk7YS1yAtAfD9YAebj5Gvijhih/nujAkvf8a5D1TxUKgAfbe3JZS3zU0qPN5XmeVWNrUlo2WE9LnwfbHyQaDPYEJ7y/nRziY/AUizJYmMAedkx34IRgDApwCX5InUV3vaOkSWM/8jt7B2q6wwpysreMnUzshAfGqJAAeLkBw0lmFOnLjLAs0Nl+8CEozEAWUe/9Bs5UyMGiwogeEZvX+px+J9vAWwJAmqYY7ZwYguW3xfv78SqKfLFcU7KoxbWqHG5FZZiuEfXAzvTnXeqO9yQdUhDAZ1+f6y3RCU="
+  token: "${GITHUB_DEPLOY_TOKEN}"
   file: "ComponentRegistry/target/component-registry-rest-${TRAVIS_TAG}-docker.tar.gz"
   skip_cleanup: true
   on:
