@@ -4,8 +4,8 @@ For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
 ## Release Component Registry 2.4.0 (January 2021)
 
-- Using CMD toolkit version 2.4.0
-- Cues for tools namespace changed to 'http://www.clarin.eu/cmd/cues/1'
+- Using [CMD toolkit version 1.2.4](https://github.com/clarin-eric/cmdi-toolkit/releases/tag/1.2.4)
+- Cues for tools namespace changed to `http://www.clarin.eu/cmd/cues/1` (as per the [CMDI 1.2 specification](https://www.clarin.eu/cmdi1.2-specification))
 - Components and profiles have a newly added boolean property `recommended`
 
 ## Release Component Registry 2.3.1 (February 2020)
