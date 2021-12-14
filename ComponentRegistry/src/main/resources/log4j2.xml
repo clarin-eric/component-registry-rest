@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>        
+        <RollingFile
+            name="FILE"
+            fileName="${sys:catalina.base}/logs/componentRegistry.log"
+            filePattern="${sys:catalina.base}/logs/componentRegistry.%i.log.gz"
+            ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d %p [%c#%M:%L] - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="25MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10" />
+        </RollingFile>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c#%M:%L] - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="clarin.cmdi.componentregistry.Configuration" level="${logging.level}" />
+        <Logger name="clarin.cmdi.componentregistry.impl.database" level="${logging.level}" />
+        <Logger name="clarin.cmdi.componentregistry.rest" level="${logging.level}" />
+        <Logger name="clarin.cmdi.componentregistry.servlet" level="${logging.level}" />
+        <Logger name="com.sun.jersey" level="warn" />
+        <Logger name="org.apache.wicket" level="warn" />
+        <Root level="info">
+            <AppenderRef ref="${logging.appender}"/> <!-- filtered through Maven -->   
+        </Root>
+    </Loggers>
+</Configuration>

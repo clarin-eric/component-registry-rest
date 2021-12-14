@@ -37,12 +37,13 @@
         <clavasRestUrl>https://vocabularies.clarin.eu/clavas/public/api/</clavasRestUrl>
 
         <cmd-toolkit.version>1.2.4</cmd-toolkit.version>
-        <spring.version>5.2.16.RELEASE</spring.version>
-        <wicket.version>8.12.0</wicket.version>
-        <jackson.version>2.12.5</jackson.version>
+        <spring.version>5.3.13</spring.version>
+        <wicket.version>8.13.0</wicket.version>
+        <jackson.version>2.13.0</jackson.version>
         <jackson-databind.version>${jackson.version}</jackson-databind.version>
         <jersey.version>1.19.4</jersey.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <log4j.version>2.16.0</log4j.version>
 
         <logging.appender>FILE</logging.appender>
         <logging.level>warn</logging.level>
@@ -61,14 +62,14 @@
         <!-- Logging -->
         
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -233,7 +234,7 @@
             <!-- replace excluded guava provided via swagger -->
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.1.1-jre</version>
+            <version>31.0.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.sun.grizzly</groupId>
@@ -255,7 +256,7 @@
         <dependency>
             <groupId>de.mpg.mpgaai</groupId>
             <artifactId>mpgaai-jaas</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -461,7 +462,7 @@
             <properties>
                 <distribution.nameAppendix>develop</distribution.nameAppendix>
                 <logging.level>debug</logging.level>
-                <logging.appender>CONSOLE</logging.appender>
+                <logging.appender>FILE</logging.appender>
 
                 <!-- Will be inserted in context.xml -->
                 <serviceUrlBase>http://localhost:8080</serviceUrlBase>
