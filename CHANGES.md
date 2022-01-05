@@ -2,8 +2,14 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
-## Release Component Registry 2.4.0 (January 2021)
+## Release Component Registry 2.4.2 (December 2021)
+- Logging: migrated to Log4j 2.16.0
+- Minor dependency updates
 
+## Release Component Registry 2.4.1 (September 2021)
+- Minor dependency updates
+
+## Release Component Registry 2.4.0 (January 2021)
 - Using [CMD toolkit version 1.2.4](https://github.com/clarin-eric/cmdi-toolkit/releases/tag/1.2.4)
 - Cues for tools namespace changed to `http://www.clarin.eu/cmd/cues/1` (as per the [CMDI 1.2 specification](https://www.clarin.eu/cmdi1.2-specification))
 - Components and profiles have a newly added boolean property `recommended`
