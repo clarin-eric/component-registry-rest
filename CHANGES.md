@@ -2,6 +2,10 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.4.3 (February 2022)
+- Logging: migrated to Log4j 2.17.1
+- Minor dependency updates
+
 ## Release Component Registry 2.4.2 (December 2021)
 - Logging: migrated to Log4j 2.16.0
 - Minor dependency updates
