@@ -37,13 +37,13 @@
         <clavasRestUrl>https://vocabularies.clarin.eu/clavas/public/api/</clavasRestUrl>
 
         <cmd-toolkit.version>1.2.4</cmd-toolkit.version>
-        <spring.version>5.3.15</spring.version>
-        <wicket.version>8.13.0</wicket.version>
-        <jackson.version>2.13.1</jackson.version>
+        <spring.version>5.3.27</spring.version>
+        <wicket.version>8.14.0</wicket.version>
+        <jackson.version>2.15.0</jackson.version>
         <jackson-databind.version>${jackson.version}</jackson-databind.version>
         <jersey.version>1.19.4</jersey.version>
-        <slf4j.version>1.7.32</slf4j.version>
-        <log4j.version>2.17.1</log4j.version>
+        <slf4j.version>2.0.7</slf4j.version>
+        <log4j.version>2.20.0</log4j.version>
 
         <logging.appender>FILE</logging.appender>
         <logging.level>warn</logging.level>
