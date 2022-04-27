@@ -42,7 +42,7 @@
         <jackson.version>2.13.1</jackson.version>
         <jackson-databind.version>${jackson.version}</jackson-databind.version>
         <jersey.version>1.19.4</jersey.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <log4j.version>2.17.1</log4j.version>
 
         <logging.appender>FILE</logging.appender>
