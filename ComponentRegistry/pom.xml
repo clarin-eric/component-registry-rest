@@ -199,7 +199,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jersey-jaxrs</artifactId>
-            <version>1.5.24</version>
+            <version>1.6.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.javassist</groupId>
