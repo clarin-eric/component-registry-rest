@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -54,9 +55,11 @@ public class VocabularyServiceServlet extends HttpServlet {
     /**
      * Vocabulary service path on external service
      */
-    private static final String VOCABULARY_SERVICE_PATH = "conceptscheme";
+    private static final String UPSTREAM_REST_BASE = "/rest/v1";
+    private static final String VOCABULARY_SERVICE_PATH = UPSTREAM_REST_BASE + "/vocabularies";
     private static final String VOCABULARY_PAGE_SERVICE_PATH_FORMAT = VOCABULARY_SERVICE_PATH + "/%s"; //placeholder for id
 
+    private static final String QUERY_PARAMETER_LANGUAGE = "lang";
     private static final String QUERY_PARAMETER_FORMAT = "format";
 
     /**
@@ -77,11 +80,11 @@ public class VocabularyServiceServlet extends HttpServlet {
     /**
      * Vocabulary service path on this service
      */
-    private final static String CONCEPT_SCHEMES_PATH = "/conceptscheme";
+    private final static String VOCABS_PATH = "/vocabularies";
     /**
      * Vocabulary page redirect path on this service
      */
-    private static final String VOCAB_PAGE_PATH = "/conceptscheme/vocabpage";
+    private static final String VOCAB_PAGE_PATH = "/vocabpage";
 
     private static final String VOCAB_ITEMS_PATH = "/items";
 
@@ -107,9 +110,9 @@ public class VocabularyServiceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String path = req.getPathInfo();
         if (path != null) {
-            if (path.equals(CONCEPT_SCHEMES_PATH)) {
+            if (path.equals(VOCABS_PATH)) {
                 //proxy the response (list of concept schemes (vocabularies)) from the original service
-                serveConceptSchemes(req, resp);
+                serveVocabularies(req, resp);
                 return;
             } else if (path.equals(VOCAB_ITEMS_PATH)) {
                 //proxy the list of concepts (items) within a concept scheme (vocabulary) - JSON only
@@ -125,11 +128,11 @@ public class VocabularyServiceServlet extends HttpServlet {
         resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
     }
 
-    private void serveConceptSchemes(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void serveVocabularies(HttpServletRequest servletRequest, HttpServletResponse resp) throws IOException {
         WebResource serviceReq = service.path(VOCABULARY_SERVICE_PATH);
 
         //forward query params to service request
-        final Map<String, String[]> params = req.getParameterMap();
+        final Map<String, String[]> params = servletRequest.getParameterMap();
         if (params != null) {
             for (Map.Entry<String, String[]> param : params.entrySet()) {
                 for (String value : param.getValue()) {
@@ -137,14 +140,14 @@ public class VocabularyServiceServlet extends HttpServlet {
                 }
             }
         }
-
-        //set request format according to Accept header (if no explicit 'format' in request)
-        if (params == null || !params.containsKey(QUERY_PARAMETER_FORMAT)) {
-            serviceReq = setFormatFromAcceptHeader(req, serviceReq);
+        if (params == null || !params.containsKey(QUERY_PARAMETER_LANGUAGE)) {
+            // set mandatory language param
+            serviceReq = serviceReq.queryParam(QUERY_PARAMETER_LANGUAGE, "en");
         }
 
         logger.debug("Forwarding vocabulary service request to {}", serviceReq.toString());
-        forwardResponse(serviceReq, resp);
+        final UniformInterface downstreamRequest = copyAcceptHeader(servletRequest, serviceReq, Optional.of("application/json"));
+        forwardResponse(downstreamRequest, resp);
     }
 
     /**
@@ -173,10 +176,10 @@ public class VocabularyServiceServlet extends HttpServlet {
         if (fields != null) {
             baseRequest = baseRequest.queryParam(VOCABULARY_ITEMS_PARAM_FIELDS, fields);
         }
-        
+
         final Integer maxResults;
         final String maxResultsParam = getSingleParamValue(req, PARAM_MAX_RESULTS);
-        if(maxResultsParam != null) {
+        if (maxResultsParam != null) {
             maxResults = Integer.valueOf(maxResultsParam);
         } else {
             maxResults = null;
@@ -239,9 +242,9 @@ public class VocabularyServiceServlet extends HttpServlet {
                 return;
             }
         } while (results.size() < target && (maxResults == null || results.size() < maxResults) && lastFetchSize > 0); //continue unless we have a complete result or retreived nothing last time
-        
+
         logger.debug("Retrieved {} items", results.size());
-        
+
         //turn back into a single JSON array
         final JSONArray docs = new JSONArray(results);
         resp.setStatus(HttpServletResponse.SC_OK);
@@ -249,6 +252,19 @@ public class VocabularyServiceServlet extends HttpServlet {
         try (Writer writer = new OutputStreamWriter(resp.getOutputStream(), "UTF-8")) {
             writer.write(docs.toString());
         }
+    }
+
+    private UniformInterface copyAcceptHeader(HttpServletRequest req, WebResource serviceReq, Optional<String> defaultValue) {
+        final String acceptHeader = req.getHeader("Accept");
+        if (acceptHeader != null) {
+            return serviceReq.header("Accept", acceptHeader);
+        } else {
+            if (defaultValue.isPresent()) {
+                return serviceReq.header("Accept", defaultValue.get());
+            }
+        }
+
+        return serviceReq;
     }
 
     private WebResource setFormatFromAcceptHeader(HttpServletRequest req, WebResource serviceReq) {
@@ -272,8 +288,8 @@ public class VocabularyServiceServlet extends HttpServlet {
         // construct redirect URI to send client to the right page at the service
         final StringBuilder targetUriBuilder = new StringBuilder(
                 UriBuilder.fromUri(serviceUri)
-                .path(String.format(VOCABULARY_PAGE_SERVICE_PATH_FORMAT, id))
-                .build().toString());
+                        .path(String.format(VOCABULARY_PAGE_SERVICE_PATH_FORMAT, id))
+                        .build().toString());
         // append request format specifier depending on accept header
         final String acceptHeader = req.getHeader("Accept");
         if (acceptHeader != null) {
