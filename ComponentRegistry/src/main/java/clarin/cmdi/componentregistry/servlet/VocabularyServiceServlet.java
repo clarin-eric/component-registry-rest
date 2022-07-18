@@ -57,7 +57,7 @@ public class VocabularyServiceServlet extends HttpServlet {
      */
     private static final String UPSTREAM_REST_BASE = "/rest/v1";
     private static final String VOCABULARY_SERVICE_PATH = UPSTREAM_REST_BASE + "/vocabularies";
-    private static final String VOCABULARY_PAGE_SERVICE_PATH_FORMAT = VOCABULARY_SERVICE_PATH + "/%s"; //placeholder for id
+    private static final String VOCABULARY_PAGE_SERVICE_PATH_FORMAT = "/%s/en/";
 
     private static final String QUERY_PARAMETER_LANGUAGE = "lang";
     private static final String QUERY_PARAMETER_FORMAT = "format";
@@ -84,7 +84,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     /**
      * Vocabulary page redirect path on this service
      */
-    private static final String VOCAB_PAGE_PATH = "/vocabpage";
+    private static final String VOCAB_PAGE_PATH = "/page";
 
     private static final String VOCAB_ITEMS_PATH = "/items";
 
@@ -290,20 +290,9 @@ public class VocabularyServiceServlet extends HttpServlet {
                 UriBuilder.fromUri(serviceUri)
                         .path(String.format(VOCABULARY_PAGE_SERVICE_PATH_FORMAT, id))
                         .build().toString());
-        // append request format specifier depending on accept header
-        final String acceptHeader = req.getHeader("Accept");
-        if (acceptHeader != null) {
-            if (acceptHeader.contains(MediaType.APPLICATION_JSON)) {
-                targetUriBuilder.append(".json");
-                //forward JSON content
-                final Builder serviceReq = Client.create().resource(targetUriBuilder.toString()).accept(MediaType.APPLICATION_JSON_TYPE);
-                forwardResponse(serviceReq, resp);
-                return;
-            } else if (acceptHeader.contains(MediaType.TEXT_HTML)) {
-                targetUriBuilder.append(".html");
-            }
-        }
-        // redirect to page at service (all cases except for JSON)
+        
+        // TODO: forward vocab info in JSON format in case of JSON accept header??
+
         resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
         resp.sendRedirect(resp.encodeRedirectURL(targetUriBuilder.toString()));
     }
