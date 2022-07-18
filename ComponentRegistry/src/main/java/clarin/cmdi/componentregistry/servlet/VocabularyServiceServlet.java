@@ -3,14 +3,14 @@ package clarin.cmdi.componentregistry.servlet;
 import clarin.cmdi.componentregistry.Configuration;
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterface;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +23,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,30 +54,18 @@ public class VocabularyServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final static Logger logger = LoggerFactory.getLogger(VocabularyServiceServlet.class);
 
+    private static final String CONTENT_TYPE_JSON = "application/json";
+
     /**
      * Vocabulary service path on external service
      */
     private static final String UPSTREAM_REST_BASE = "/rest/v1";
-    private static final String VOCABULARY_SERVICE_PATH = UPSTREAM_REST_BASE + "/vocabularies";
-    private static final String VOCABULARY_PAGE_SERVICE_PATH_FORMAT = "/%s/en/";
+    private static final String VOCABULARIES_RESOURCE_PATH = UPSTREAM_REST_BASE + "/vocabularies";
+    private static final String VOCABULARY_PAGE_PATH_FORMAT = "/%s/en/";
+    private static final String VOCAB_ITEMS_INDEX_PATH = UPSTREAM_REST_BASE + "/%s/index/";
 
     private static final String QUERY_PARAMETER_LANGUAGE = "lang";
     private static final String QUERY_PARAMETER_FORMAT = "format";
-
-    /**
-     * Service to retrieve vocabulary items as concepts
-     */
-    private static final String VOCABULARY_ITEMS_PATH = "find-concepts";
-    private static final String VOCABULARY_ITEMS_PARAM_QUERY = "q";
-    private static final String VOCABULARY_ITEMS_QUERY_ALL_VALUE = "uri:*";
-
-    private static final String VOCABULARY_ITEMS_PARAM_ROWS = "rows";
-    private static final String ITEM_RETRIEVAL_BATCH_SIZE = "500";
-
-    private static final String VOCABULARY_ITEMS_PARAM_OFFSET = "start";
-
-    private static final String VOCABULARY_ITEMS_PARAM_CONCEPT_SCHEME = "conceptScheme";
-    private static final String VOCABULARY_ITEMS_PARAM_FIELDS = "fl";
 
     /**
      * Vocabulary service path on this service
@@ -89,9 +79,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     private static final String VOCAB_ITEMS_PATH = "/items";
 
     private static final String PARAM_ID = "id";
-    private static final String PARAM_SCHEME_URI = "scheme";
-    private static final String PARAM_FIELDS = "fields";
-    private static final String PARAM_MAX_RESULTS = "maxResults";
+    private static final String PARAM_INDEX_POS = "index";
 
     private transient WebResource service;
     private URI serviceUri;
@@ -123,13 +111,12 @@ public class VocabularyServiceServlet extends HttpServlet {
                 serveVocabularyPage(req, resp);
                 return;
             }
-            //TODO: else if path is '/items'...
         }
         resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
     }
 
     private void serveVocabularies(HttpServletRequest servletRequest, HttpServletResponse resp) throws IOException {
-        WebResource serviceReq = service.path(VOCABULARY_SERVICE_PATH);
+        WebResource serviceReq = service.path(VOCABULARIES_RESOURCE_PATH);
 
         //forward query params to service request
         final Map<String, String[]> params = servletRequest.getParameterMap();
@@ -146,7 +133,7 @@ public class VocabularyServiceServlet extends HttpServlet {
         }
 
         logger.debug("Forwarding vocabulary service request to {}", serviceReq.toString());
-        final UniformInterface downstreamRequest = copyAcceptHeader(servletRequest, serviceReq, Optional.of("application/json"));
+        final UniformInterface downstreamRequest = copyAcceptHeader(servletRequest, serviceReq, Optional.of(CONTENT_TYPE_JSON));
         forwardResponse(downstreamRequest, resp);
     }
 
@@ -161,97 +148,63 @@ public class VocabularyServiceServlet extends HttpServlet {
      * @throws IOException
      */
     private void serveConceptItems(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        final String schemeId = getSingleParamValue(req, PARAM_SCHEME_URI);
-        if (schemeId == null) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "concept scheme URI for vocabulary must be provided via '" + PARAM_SCHEME_URI + "' query parameter");
+        final String id = getSingleParamValue(req, PARAM_ID);
+        if (id == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "vocabulary id must be provided via 'id' query parameter");
             return;
         }
 
-        WebResource baseRequest = service.path(VOCABULARY_ITEMS_PATH)
-                .queryParam(VOCABULARY_ITEMS_PARAM_QUERY, VOCABULARY_ITEMS_QUERY_ALL_VALUE)
-                .queryParam(VOCABULARY_ITEMS_PARAM_CONCEPT_SCHEME, schemeId)
-                .queryParam(QUERY_PARAMETER_FORMAT, "json");
-
-        final String fields = getSingleParamValue(req, PARAM_FIELDS);
-        if (fields != null) {
-            baseRequest = baseRequest.queryParam(VOCABULARY_ITEMS_PARAM_FIELDS, fields);
+        final List<String> indexLetters = getIndexLetters(id);
+        if (indexLetters == null) {
+            resp.setStatus(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            return;
         }
 
-        final Integer maxResults;
-        final String maxResultsParam = getSingleParamValue(req, PARAM_MAX_RESULTS);
-        if (maxResultsParam != null) {
-            maxResults = Integer.valueOf(maxResultsParam);
-        } else {
-            maxResults = null;
-        }
+        logger.debug("Letters in index: {}", indexLetters);
+        final int index
+                = Integer.parseInt(Optional.ofNullable(
+                        getSingleParamValue(req, PARAM_INDEX_POS))
+                        .orElse("0"));
 
-        //keep some stats on the retrieved records (service will not necessarily return all at once)
-        int target = 0;
-        long lastFetchSize = 0;
-        List results = null;
-        //start fetch loop
-        do {
-            //continue where we left off
-            final String offset = Integer.toString(results == null ? 0 : results.size());
-            logger.trace("Getting items starting at {}", offset);
-
-            final String rows = (maxResults == null) ? ITEM_RETRIEVAL_BATCH_SIZE : maxResults.toString();
-            logger.trace("Getting {} items at a time", rows);
-
-            final WebResource request = baseRequest
-                    .queryParam(VOCABULARY_ITEMS_PARAM_OFFSET, offset)
-                    .queryParam(VOCABULARY_ITEMS_PARAM_ROWS, rows);
-            logger.debug("Retrieving items from {}", request);
-            final ClientResponse itemsResponse = request.get(ClientResponse.class);
-            final int responseStatus = itemsResponse.getStatus();
-            if (responseStatus >= 200 && responseStatus < 300) {
-                try {
-                    final JSONObject responseObject = new JSONObject(itemsResponse.getEntity(String.class));
-                    final JSONObject response = responseObject.getJSONObject("response");
-                    if (response == null) {
-                        logger.warn("Structure of find-concepts service not as expected - did not find /response");
-                        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                        return;
-                    }
-
-                    //get total results count
-                    target = response.getInt("numFound");
-                    if (results == null) {
-                        results = new ArrayList(target);
-                    }
-
-                    //get documents
-                    final JSONArray docs = response.getJSONArray("docs");
-                    if (docs == null) {
-                        logger.warn("Structure of find-concepts service not as expected - did not find array at /response/docs");
-                        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                        return;
-                    }
-
-                    lastFetchSize = docs.length();
-                    //add documents to result collection
-                    for (int i = 0; i < lastFetchSize; i++) {
-                        results.add(docs.get(i));
-                    }
-                } catch (JSONException ex) {
-                    throw new RuntimeException("Could not retrieve items", ex);
-                }
-            } else {
-                logger.warn("Response code {} when requesting vocabulary items", responseStatus);
-                resp.setStatus(responseStatus);
-                return;
+        if (index >= indexLetters.size()) {
+            // return empty object
+            try (OutputStreamWriter osWriter = new OutputStreamWriter(resp.getOutputStream())) {
+                osWriter.write(JSONWriter.valueToString(new JSONObject()));
             }
-        } while (results.size() < target && (maxResults == null || results.size() < maxResults) && lastFetchSize > 0); //continue unless we have a complete result or retreived nothing last time
-
-        logger.debug("Retrieved {} items", results.size());
-
-        //turn back into a single JSON array
-        final JSONArray docs = new JSONArray(results);
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentType("application/json;charset=UTF-8");
-        try (Writer writer = new OutputStreamWriter(resp.getOutputStream(), "UTF-8")) {
-            writer.write(docs.toString());
+            resp.setStatus(Response.Status.OK.getStatusCode());
+            resp.setContentType(CONTENT_TYPE_JSON);
+            return;
         }
+
+        final String letter = indexLetters.get(index);
+        final WebResource serviceReq = service.path(String.format(VOCAB_ITEMS_INDEX_PATH + "%s", id, letter));
+
+        logger.debug("Forwarding vocabulary service request to {}", serviceReq.toString());
+        final UniformInterface downstreamRequest = copyAcceptHeader(req, serviceReq, Optional.of(CONTENT_TYPE_JSON));
+        forwardResponse(downstreamRequest, resp);
+    }
+
+    private List<String> getIndexLetters(final String id) throws ClientHandlerException, UniformInterfaceException, RuntimeException {
+        // retrieve index
+        final ClientResponse indexResponse = service.path(String.format(VOCAB_ITEMS_INDEX_PATH, id))
+                //.header("Accept", "application/json")
+                .get(ClientResponse.class);
+        final int indexResponseStatus = indexResponse.getStatus();
+        final List<String> indexLetters = new ArrayList<>();
+        if (indexResponseStatus >= 200 && indexResponseStatus < 300) {
+            try {
+                final JSONObject response = new JSONObject(indexResponse.getEntity(String.class));
+                final JSONArray lettersArray = response.getJSONArray("indexLetters");
+                if (lettersArray == null) {
+                    logger.warn("Structure of index response not as expected - did not find /response");
+                    return null;
+                }
+                lettersArray.forEach(o -> indexLetters.add(o.toString()));
+            } catch (JSONException ex) {
+                throw new RuntimeException("Could not retrieve items", ex);
+            }
+        }
+        return indexLetters;
     }
 
     private UniformInterface copyAcceptHeader(HttpServletRequest req, WebResource serviceReq, Optional<String> defaultValue) {
@@ -288,11 +241,10 @@ public class VocabularyServiceServlet extends HttpServlet {
         // construct redirect URI to send client to the right page at the service
         final StringBuilder targetUriBuilder = new StringBuilder(
                 UriBuilder.fromUri(serviceUri)
-                        .path(String.format(VOCABULARY_PAGE_SERVICE_PATH_FORMAT, id))
+                        .path(String.format(VOCABULARY_PAGE_PATH_FORMAT, id))
                         .build().toString());
-        
-        // TODO: forward vocab info in JSON format in case of JSON accept header??
 
+        // TODO: forward vocab info in JSON format in case of JSON accept header??
         resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
         resp.sendRedirect(resp.encodeRedirectURL(targetUriBuilder.toString()));
     }
