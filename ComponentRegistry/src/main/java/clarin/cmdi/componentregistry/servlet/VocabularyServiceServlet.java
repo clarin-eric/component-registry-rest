@@ -1,6 +1,7 @@
 package clarin.cmdi.componentregistry.servlet;
 
 import clarin.cmdi.componentregistry.Configuration;
+import com.google.common.base.Objects;
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -23,7 +24,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import org.json.JSONArray;
@@ -55,6 +55,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     private final static Logger logger = LoggerFactory.getLogger(VocabularyServiceServlet.class);
 
     private static final String CONTENT_TYPE_JSON = "application/json";
+    private static final String DEFAULT_VOCAB_LANG = "en";
 
     /**
      * Vocabulary service path on external service
@@ -79,6 +80,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     private static final String VOCAB_ITEMS_PATH = "/items";
 
     private static final String PARAM_ID = "id";
+    private static final String PARAM_URI = "uri";
     private static final String PARAM_INDEX_POS = "index";
 
     private transient WebResource service;
@@ -120,17 +122,8 @@ public class VocabularyServiceServlet extends HttpServlet {
 
         //forward query params to service request
         final Map<String, String[]> params = servletRequest.getParameterMap();
-        if (params != null) {
-            for (Map.Entry<String, String[]> param : params.entrySet()) {
-                for (String value : param.getValue()) {
-                    serviceReq = serviceReq.queryParam(param.getKey(), value);
-                }
-            }
-        }
-        if (params == null || !params.containsKey(QUERY_PARAMETER_LANGUAGE)) {
-            // set mandatory language param
-            serviceReq = serviceReq.queryParam(QUERY_PARAMETER_LANGUAGE, "en");
-        }
+        serviceReq = copyRequestParams(params, serviceReq);
+        serviceReq = copyLangParam(params, serviceReq);
 
         logger.debug("Forwarding vocabulary service request to {}", serviceReq.toString());
         final UniformInterface downstreamRequest = copyAcceptHeader(servletRequest, serviceReq, Optional.of(CONTENT_TYPE_JSON));
@@ -148,40 +141,37 @@ public class VocabularyServiceServlet extends HttpServlet {
      * @throws IOException
      */
     private void serveConceptItems(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        final String id = getSingleParamValue(req, PARAM_ID);
-        if (id == null) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "vocabulary id must be provided via 'id' query parameter");
-            return;
-        }
-
-        final List<String> indexLetters = getIndexLetters(id);
-        if (indexLetters == null) {
-            resp.setStatus(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-            return;
-        }
-
-        logger.debug("Letters in index: {}", indexLetters);
-        final int index
-                = Integer.parseInt(Optional.ofNullable(
-                        getSingleParamValue(req, PARAM_INDEX_POS))
-                        .orElse("0"));
-
-        if (index >= indexLetters.size()) {
-            // return empty object
-            try (OutputStreamWriter osWriter = new OutputStreamWriter(resp.getOutputStream())) {
-                osWriter.write(JSONWriter.valueToString(new JSONObject()));
+        final String id = getIdFromRequest(req, resp);
+        if (id != null) {
+            final List<String> indexLetters = getIndexLetters(id);
+            if (indexLetters == null) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
             }
-            resp.setStatus(Response.Status.OK.getStatusCode());
-            resp.setContentType(CONTENT_TYPE_JSON);
-            return;
+
+            logger.debug("Letters in index: {}", indexLetters);
+            final int index
+                    = Integer.parseInt(Optional.ofNullable(
+                            getSingleParamValue(req, PARAM_INDEX_POS))
+                            .orElse("0"));
+
+            if (index >= indexLetters.size()) {
+                // return empty object
+                try (OutputStreamWriter osWriter = new OutputStreamWriter(resp.getOutputStream())) {
+                    osWriter.write(JSONWriter.valueToString(new JSONObject()));
+                }
+                resp.setStatus(HttpServletResponse.SC_OK);
+                resp.setContentType(CONTENT_TYPE_JSON);
+                return;
+            }
+
+            final String letter = indexLetters.get(index);
+            final WebResource serviceReq = service.path(String.format(VOCAB_ITEMS_INDEX_PATH + "%s", id, letter));
+
+            logger.debug("Forwarding vocabulary service request to {}", serviceReq.toString());
+            final UniformInterface downstreamRequest = copyAcceptHeader(req, serviceReq, Optional.of(CONTENT_TYPE_JSON));
+            forwardResponse(downstreamRequest, resp);
         }
-
-        final String letter = indexLetters.get(index);
-        final WebResource serviceReq = service.path(String.format(VOCAB_ITEMS_INDEX_PATH + "%s", id, letter));
-
-        logger.debug("Forwarding vocabulary service request to {}", serviceReq.toString());
-        final UniformInterface downstreamRequest = copyAcceptHeader(req, serviceReq, Optional.of(CONTENT_TYPE_JSON));
-        forwardResponse(downstreamRequest, resp);
     }
 
     private List<String> getIndexLetters(final String id) throws ClientHandlerException, UniformInterfaceException, RuntimeException {
@@ -233,20 +223,18 @@ public class VocabularyServiceServlet extends HttpServlet {
     }
 
     private void serveVocabularyPage(HttpServletRequest req, HttpServletResponse resp) throws IllegalArgumentException, UriBuilderException, IOException {
-        final String id = getSingleParamValue(req, PARAM_ID);
-        if (id == null) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "vocabulary id must be provided via 'id' query parameter");
-            return;
-        }
-        // construct redirect URI to send client to the right page at the service
-        final StringBuilder targetUriBuilder = new StringBuilder(
-                UriBuilder.fromUri(serviceUri)
-                        .path(String.format(VOCABULARY_PAGE_PATH_FORMAT, id))
-                        .build().toString());
+        final String id = getIdFromRequest(req, resp);
+        if (id != null) {
+            // construct redirect URI to send client to the right page at the service
+            final StringBuilder targetUriBuilder = new StringBuilder(
+                    UriBuilder.fromUri(serviceUri)
+                            .path(String.format(VOCABULARY_PAGE_PATH_FORMAT, id))
+                            .build().toString());
 
-        // TODO: forward vocab info in JSON format in case of JSON accept header??
-        resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
-        resp.sendRedirect(resp.encodeRedirectURL(targetUriBuilder.toString()));
+            // TODO: forward vocab info in JSON format in case of JSON accept header??
+            resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
+            resp.sendRedirect(resp.encodeRedirectURL(targetUriBuilder.toString()));
+        }
     }
 
     private void forwardResponse(UniformInterface request, HttpServletResponse resp) throws IOException {
@@ -271,5 +259,76 @@ public class VocabularyServiceServlet extends HttpServlet {
         } else {
             return idParam[0];
         }
+    }
+
+    private String getIdFromRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        final String idParamValue = getSingleParamValue(req, PARAM_ID);
+        final String id;
+        if (idParamValue != null) {
+            id = idParamValue;
+        } else {
+            final String uriParamValue = getSingleParamValue(req, PARAM_URI);
+            if (uriParamValue == null) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "vocabulary id or URI must be provided via 'id' or 'uri' query parameter");
+                id = null;
+            } else {
+                id = lookupVocabId(uriParamValue, req);
+                if (id == null) {
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Found no vocabulary with URI matching value of 'uri' parameter");
+                }
+            }
+        }
+        return id;
+    }
+
+    private String lookupVocabId(String uri, HttpServletRequest servletRequest) {
+        WebResource serviceReq = service.path(VOCABULARIES_RESOURCE_PATH);
+
+        //forward query params to service request
+        final Map<String, String[]> params = servletRequest.getParameterMap();
+        serviceReq = copyRequestParams(params, serviceReq);
+        serviceReq = copyLangParam(params, serviceReq);
+
+        final ClientResponse response = serviceReq.accept(CONTENT_TYPE_JSON).get(ClientResponse.class);
+        final int responseStatus = response.getStatus();
+        if (responseStatus >= 200 && responseStatus < 300) {
+            try {
+                final JSONObject responseObj = new JSONObject(response.getEntity(String.class));
+                final JSONArray vocabsArray = responseObj.getJSONArray("vocabularies");
+                if (vocabsArray == null) {
+                    logger.warn("Structure of index response not as expected - did not find vocabularies");
+                    return null;
+                }
+                for (Object vocab : vocabsArray) {
+                    if (vocab instanceof JSONObject) {
+                        if (Objects.equal(uri, ((JSONObject) vocab).getString("uri"))) {
+                            return ((JSONObject) vocab).getString("id");
+                        }
+                    }
+                }
+            } catch (JSONException ex) {
+                throw new RuntimeException("Could not retrieve items", ex);
+            }
+        }
+        return null;
+    }
+
+    private WebResource copyLangParam(final Map<String, String[]> params, WebResource serviceReq) {
+        if (params == null || !params.containsKey(QUERY_PARAMETER_LANGUAGE)) {
+            // set mandatory language param
+            serviceReq = serviceReq.queryParam(QUERY_PARAMETER_LANGUAGE, DEFAULT_VOCAB_LANG);
+        }
+        return serviceReq;
+    }
+
+    private WebResource copyRequestParams(final Map<String, String[]> paramsMap, WebResource serviceReq) {
+        if (paramsMap != null) {
+            for (Map.Entry<String, String[]> param : paramsMap.entrySet()) {
+                for (String value : param.getValue()) {
+                    serviceReq = serviceReq.queryParam(param.getKey(), value);
+                }
+            }
+        }
+        return serviceReq;
     }
 }
