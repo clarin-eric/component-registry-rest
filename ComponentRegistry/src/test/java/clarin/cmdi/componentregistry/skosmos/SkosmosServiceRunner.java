@@ -16,10 +16,12 @@
  */
 package clarin.cmdi.componentregistry.skosmos;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.core.UriBuilder;
+import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -37,12 +39,37 @@ public class SkosmosServiceRunner {
 
     public final static void main(String[] args) throws InterruptedException, ExecutionException {
         final SkosmosService service = new SkosmosService(UriBuilder.fromUri(SERVICE_URI).build());
+
+        Multimap<String, String> map = dummySchemeVocabMap();
         for (int i = 1; i <= 5; i++) {
             logger.info("Getting map (iteration {})", i);
             final Instant start = Instant.now();
-            final Multimap<String, String> map = service.getConceptSchemeUriMap();
-            logger.info("Map retrieved ({} items in {} ms)", map.size(), new Interval(start, Instant.now()));
+            map = service.getConceptSchemeUriMap();
+            logger.info("Map retrieved ({} items in {}ms)", map.size(), durationSince(start).getMillis());
         }
 
+        for (int i = 1; i <= 5; i++) {
+            logger.info("Getting scheme info (iteration {})", i);
+            final Instant start = Instant.now();
+            for (String schemeUri : map.keys()) {
+                logger.info("Getting scheme info for {}", schemeUri);
+                final Map schemeInfo = service.getConceptSchemeInfo(schemeUri);
+                logger.debug("Concept scheme '{}': {} keys", schemeUri, schemeInfo.size());
+            }
+            logger.info("All info retrieved ({} items in {}ms)", map.size(), durationSince(start).getMillis());
+        }
+
+    }
+
+    private static Multimap<String, String> dummySchemeVocabMap() {
+        return ImmutableMultimap.<String, String>builder()
+                .put("http://www.yso.fi/onto/koko/", "koko")
+                .put("http://www.yso.fi/onto/yso/", "yso")
+                .build();
+
+    }
+
+    private static Duration durationSince(Instant instant) {
+        return new Interval(instant, Instant.now()).toDuration();
     }
 }

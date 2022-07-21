@@ -2,13 +2,23 @@ package clarin.cmdi.componentregistry.servlet;
 
 import clarin.cmdi.componentregistry.Configuration;
 import clarin.cmdi.componentregistry.skosmos.SkosmosService;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.utils.JsonUtils;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.io.ByteStreams;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterface;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -37,10 +47,10 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class VocabularyServiceServlet extends HttpServlet {
-    
+
     private static final long serialVersionUID = 1L;
     private final static Logger logger = LoggerFactory.getLogger(VocabularyServiceServlet.class);
-    
+
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String DEFAULT_VOCAB_LANG = "en";
 
@@ -59,15 +69,13 @@ public class VocabularyServiceServlet extends HttpServlet {
      */
     private static final String VOCAB_ITEMS_PATH = "/items";
     private SkosmosService skosmosService;
-    
 
-    
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.skosmosService = new SkosmosService(UriBuilder.fromUri(Configuration.getInstance().getClavasRestUrl()).build());
+        this.skosmosService = new SkosmosService(UriBuilder.fromUri(Configuration.getInstance().getClavasRestUrl()).path("rest/v1").build());
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String path = req.getPathInfo();
@@ -88,9 +96,43 @@ public class VocabularyServiceServlet extends HttpServlet {
         }
         resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
     }
-    
-    private void serveVocabularies(HttpServletRequest servletRequest, HttpServletResponse resp) throws IOException {
+
+    private void serveVocabularies(HttpServletRequest servletRequest, HttpServletResponse resp) {
+        logger.debug("Retrieving information from service");
+        final List<Object> infos
+                = skosmosService.getConceptSchemeUriMap()
+                //= dummySchemeVocabMap()
+                        .keySet()
+                        .stream()
+                        .map(uri -> skosmosService.getConceptSchemeInfo(uri))
+                        //.map(info -> JsonLdProcessor.fromRDF(info, options))
+                        .collect(Collectors.toList());
+
+        logger.debug("Constructing response");
+        // make aggregated JSON-LD output
+        final Map context = new HashMap();
+        final JsonLdOptions options = new JsonLdOptions();
+        //final Object result = JsonLdProcessor.compact(infos, context, options);
+        final Object result = JsonLdProcessor.flatten(infos, options);
         
+        // write response
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setHeader("Content-Type", "application/json; charset=UTF-8");
+        try (OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream())) {
+            JsonUtils.write(writer, result);
+        } catch (IOException ex) {
+            logger.error("Error while writing to response stream", ex);
+        }
+        
+        logger.debug("Done");
+    }
+
+    private static Multimap<String, String> dummySchemeVocabMap() {
+        return ImmutableMultimap.<String, String>builder()
+                .put("http://www.yso.fi/onto/koko/", "koko")
+                .put("http://www.yso.fi/onto/yso/", "yso")
+                .build();
+
     }
 
     /**
@@ -104,13 +146,13 @@ public class VocabularyServiceServlet extends HttpServlet {
      * @throws IOException
      */
     private void serveConceptItems(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        
+
     }
-    
+
     private void serveVocabularyPage(HttpServletRequest req, HttpServletResponse resp) throws IllegalArgumentException, UriBuilderException, IOException {
-        
+
     }
-    
+
     private void forwardResponse(UniformInterface request, HttpServletResponse resp) throws IOException {
         //make GET request and copy directly to response stream
         final ClientResponse response = request.get(ClientResponse.class);
@@ -124,7 +166,7 @@ public class VocabularyServiceServlet extends HttpServlet {
             }
         }
     }
-    
+
     private String getSingleParamValue(HttpServletRequest req, String param) throws IOException {
         // get id from query parameter
         final String[] idParam = req.getParameterValues(param);
@@ -134,7 +176,7 @@ public class VocabularyServiceServlet extends HttpServlet {
             return idParam[0];
         }
     }
-    
+
     private WebResource copyRequestParams(final Map<String, String[]> paramsMap, WebResource serviceReq) {
         if (paramsMap != null) {
             for (Map.Entry<String, String[]> param : paramsMap.entrySet()) {

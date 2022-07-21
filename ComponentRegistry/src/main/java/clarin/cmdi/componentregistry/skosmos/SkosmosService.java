@@ -29,12 +29,14 @@ import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
@@ -51,15 +53,20 @@ public class SkosmosService {
     private static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE_DEFAULT_VALUE = "en";
 
     private transient WebResource service;
-    private URI serviceUri;
 
     private final Object conceptSchemeUriMapCacheKey = new Object();
 
-    private AsyncLoadingCache<Object, Multimap<String, String>> conceptSchemeUriMapCache
+    private final AsyncLoadingCache<Object, Multimap<String, String>> conceptSchemeUriMapCache
             = Caffeine.newBuilder()
                     .maximumSize(10_000)
                     .refreshAfterWrite(60, TimeUnit.MINUTES)
                     .buildAsync(key -> createConceptSchemeUriMapCache());
+
+    private final AsyncLoadingCache<String, Map> conceptSchemeInfoCache
+            = Caffeine.newBuilder()
+                    .maximumSize(10_000)
+                    .refreshAfterWrite(60, TimeUnit.MINUTES)
+                    .buildAsync(this::retrieveConceptSchemeInfo);
 
     public SkosmosService(URI serviceUri) {
         this.service = Client.create().resource(serviceUri);
@@ -67,9 +74,20 @@ public class SkosmosService {
         logger.info("Instantiated vocabulary servlet on URI {}", serviceUri);
     }
 
-    public Multimap<String, String> getConceptSchemeUriMap() throws InterruptedException, ExecutionException {
-        return conceptSchemeUriMapCache.get(conceptSchemeUriMapCacheKey)
-                .get();
+    public Multimap<String, String> getConceptSchemeUriMap() {
+        try {
+            return conceptSchemeUriMapCache.get(conceptSchemeUriMapCacheKey).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new RuntimeException("Exception while getting concept scheme URIs from skosmos service", ex);
+        }
+    }
+
+    public Map getConceptSchemeInfo(String uri) {
+        try {
+            return conceptSchemeInfoCache.get(uri).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new RuntimeException("Exception while getting concept scheme info from skosmos service", ex);
+        }
     }
 
     private Multimap<String, String> createConceptSchemeUriMapCache() throws IOException {
@@ -92,7 +110,8 @@ public class SkosmosService {
     }
 
     private Stream<String> getVocabularyIds() {
-        final WebResource request = service.path("/vocabularies")
+        final WebResource request = service
+                .path("/vocabularies")
                 .queryParam(SKOSMOS_QUERY_PARAMETER_LANGUAGE, SKOSMOS_QUERY_PARAMETER_LANGUAGE_DEFAULT_VALUE);
         logger.debug("Request: {}", request);
 
@@ -104,12 +123,12 @@ public class SkosmosService {
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
                 if (compact instanceof Map) {
-                    logger.debug("Vocabs response object: {}", compact);
+                    logger.trace("Vocabs response object: {}", compact);
                     Object vocabs = ((Map) compact).get("http://schema.onki.fi/onki#hasVocabulary");
-                    logger.debug("Vocabularies in response: {}", vocabs);
+                    logger.trace("Vocabularies in response: {}", vocabs);
                     if (vocabs instanceof List) {
                         return ((List<Map>) vocabs)
-                                .<Object>stream()
+                                .stream()
                                 .map(m -> m.get("http://schema.onki.fi/onki#vocabularyIdentifier").toString());
                     }
                 }
@@ -123,7 +142,7 @@ public class SkosmosService {
     }
 
     private Stream<String> getConceptUrisFromVocab(String id) {
-        final WebResource request = service.path(id);
+        final WebResource request = service.path(id + "/");
         logger.debug("Request: {}", request);
 
         final ClientResponse response = request.get(ClientResponse.class);
@@ -134,12 +153,12 @@ public class SkosmosService {
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
                 if (compact instanceof Map) {
-                    logger.debug("Vocab response object: {}", compact);
+                    logger.trace("Vocab response object: {}", compact);
                     Object schemes = ((Map) compact).get("http://schema.onki.fi/onki#hasConceptScheme");
-                    logger.debug("Concept schemes in response: {}", schemes);
+                    logger.trace("Concept schemes in response: {}", schemes);
                     if (schemes instanceof List) {
                         return ((List<Map>) schemes)
-                                .<Object>stream()
+                                .stream()
                                 .map(m -> m.get("@id").toString());
                     }
                 }
@@ -150,5 +169,41 @@ public class SkosmosService {
         }
         logger.warn("No concept schemes found in response (request: {}, response status: {})", request, response.getStatusInfo());
         return Stream.empty();
+    }
+
+    private Map retrieveConceptSchemeInfo(String uri) {
+        final WebResource request = service
+                .path("/data")
+                .queryParam("uri", uri);
+        logger.debug("Request: {}", request);
+
+        final ClientResponse response = request
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ClientResponse.class);
+        if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
+            try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
+                final Map context = new HashMap();
+                final JsonLdOptions options = new JsonLdOptions();
+                final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+                if (compact instanceof Map) {
+                    logger.trace("Concept scheme data response object: {}", compact);
+                    Object graph = ((Map) compact).get("@graph");
+                    logger.trace("Graph in response: {}", graph);
+                    if (graph instanceof List) {
+                        return ((List<Map>) graph).stream()
+                                .filter(map -> uri.equals(map.get("@id")))
+                                .findFirst()
+                                .orElseGet(Collections::emptyMap);
+                    }
+                }
+            } catch (IOException ex) {
+                logger.error("IOException while trying to process response for request: " + request.toString());
+                throw new RuntimeException(ex);
+            }
+        }
+
+        logger.warn("No data for concept scheme '{}', (request: {}, response status: {})", uri, request, response.getStatusInfo());
+        return Collections.emptyMap();
     }
 }
