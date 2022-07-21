@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,32 +52,27 @@ public class VocabularyServiceServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final static Logger logger = LoggerFactory.getLogger(VocabularyServiceServlet.class);
 
-    private static final String CONTENT_TYPE_JSON = "application/json";
-    private static final String DEFAULT_VOCAB_LANG = "en";
-
-    /**
-     * Vocabulary service path on this service
-     */
+    // Paths
     private final static String VOCABS_PATH = "/vocabularies";
-
-    /**
-     * Vocabulary page redirect path on this service
-     */
     private static final String VOCAB_PAGE_PATH = "/page";
-
-    /**
-     * Items path on this service
-     */
     private static final String VOCAB_ITEMS_PATH = "/items";
+
+    //Parameters
+    private static final String PARAM_URI = "uri";
+
+    //Skosmos endpoint knowledge
+    private static final String SKOSMOS_VOCABULARY_PAGE_PATH_FORMAT = "/%s";
+
+    private String serviceBaseUrl;
     private SkosmosService skosmosService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        final String clavasRestUrl = Configuration.getInstance().getClavasRestUrl();
+        serviceBaseUrl = Configuration.getInstance().getClavasRestUrl();
         //final long skosmosCacheRefreshRateSeconds = Configuration.getInstance().getSkosmosCacheRefreshRateSeconds();
         final long skosmosCacheRefreshRateSeconds = 60;
-        this.skosmosService = new SkosmosService(UriBuilder.fromUri(clavasRestUrl).path("rest/v1").build(), Duration.ofSeconds(skosmosCacheRefreshRateSeconds));
+        this.skosmosService = new SkosmosService(UriBuilder.fromUri(serviceBaseUrl).path("rest/v1").build(), Duration.ofSeconds(skosmosCacheRefreshRateSeconds));
     }
 
     @Override
@@ -104,7 +100,7 @@ public class VocabularyServiceServlet extends HttpServlet {
         logger.debug("Retrieving information from service");
         final List<Object> infos
                 = skosmosService.getConceptSchemeUriMap()
-                //= dummySchemeVocabMap()
+                        //= dummySchemeVocabMap()
                         .keySet()
                         .stream()
                         .map(uri -> skosmosService.getConceptSchemeInfo(uri))
@@ -117,7 +113,7 @@ public class VocabularyServiceServlet extends HttpServlet {
         final JsonLdOptions options = new JsonLdOptions();
         //final Object result = JsonLdProcessor.compact(infos, context, options);
         final Object result = JsonLdProcessor.flatten(infos, options);
-        
+
         // write response
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setHeader("Content-Type", "application/json; charset=UTF-8");
@@ -126,16 +122,8 @@ public class VocabularyServiceServlet extends HttpServlet {
         } catch (IOException ex) {
             logger.error("Error while writing to response stream", ex);
         }
-        
+
         logger.debug("Done");
-    }
-
-    private static Multimap<String, String> dummySchemeVocabMap() {
-        return ImmutableMultimap.<String, String>builder()
-                .put("http://www.yso.fi/onto/koko/", "koko")
-                .put("http://www.yso.fi/onto/yso/", "yso")
-                .build();
-
     }
 
     /**
@@ -153,21 +141,27 @@ public class VocabularyServiceServlet extends HttpServlet {
     }
 
     private void serveVocabularyPage(HttpServletRequest req, HttpServletResponse resp) throws IllegalArgumentException, UriBuilderException, IOException {
+        final String schemeUri = getSingleParamValue(req, PARAM_URI);
+        if (schemeUri == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing query parameter: " + PARAM_URI);
+        } else {
+            final Collection<String> vocabUris = skosmosService.getConceptSchemeUriMap().get(schemeUri);
+            if (vocabUris.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
+            } else {
+                final String vocabUri = vocabUris.iterator().next(); // skip any additional vocabs registered this scheme
+                // construct redirect URI to send client to the right page at the service
+                final StringBuilder targetUriBuilder = new StringBuilder(
+                        UriBuilder.fromUri(serviceBaseUrl)
+                                .path(String.format(SKOSMOS_VOCABULARY_PAGE_PATH_FORMAT, vocabUri))
+                                .build().toString());
 
-    }
-
-    private void forwardResponse(UniformInterface request, HttpServletResponse resp) throws IOException {
-        //make GET request and copy directly to response stream
-        final ClientResponse response = request.get(ClientResponse.class);
-        //also forward content type header
-        resp.setContentType(response.getHeaders().getFirst("content-type"));
-        final InputStream get = response.getEntityInputStream();
-        try (final InputStream serviceResultStream = get) {
-            try (final ServletOutputStream responseOutStream = resp.getOutputStream()) {
-                ByteStreams.copy(serviceResultStream, responseOutStream);
-                responseOutStream.close();
+                // TODO: forward vocab info in JSON format in case of JSON accept header??
+                resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
+                resp.sendRedirect(resp.encodeRedirectURL(targetUriBuilder.toString()));
             }
         }
+
     }
 
     private String getSingleParamValue(HttpServletRequest req, String param) throws IOException {
