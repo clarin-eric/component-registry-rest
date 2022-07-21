@@ -21,8 +21,8 @@ public class Configuration {
     private String generalComponentSchema = "https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd";
     private String ccrRestUrl = "https://openskos.meertens.knaw.nl/ccr/api/";
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
-    private Collection<String> adminUsers = new HashSet<String>();
-    private List<String> displayNameShibbolethKeys = new ArrayList<String>();
+    private Collection<String> adminUsers = new HashSet<>();
+    private List<String> displayNameShibbolethKeys = new ArrayList<>();
     private long skosmosCacheRefreshRateSeconds = 3600;
 
     {//Default values

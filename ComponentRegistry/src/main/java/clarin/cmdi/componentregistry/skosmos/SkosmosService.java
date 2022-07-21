@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -183,15 +184,19 @@ public class SkosmosService {
         return Stream.empty();
     }
 
-    private Map retrieveConceptSchemeInfo(String uri) {
-        final WebResource request = service
-                .path("/data")
-                .queryParam("uri", uri);
+    private Map retrieveConceptSchemeInfo(String schemeUri) {
+        final Optional<String> vocabId = getConceptSchemeUriMap().get(schemeUri).stream().findFirst();
+
+        if (vocabId.isEmpty()) {
+            logger.warn("No vocabulary in concept scheme map for uri {}", schemeUri);
+            return Collections.emptyMap();
+        }
+
+        final WebResource request = service.path(vocabId.get() + "/");
         logger.debug("Request: {}", request);
 
-        final ClientResponse response = request
-                .accept(MediaType.APPLICATION_JSON)
-                .get(ClientResponse.class);
+        final ClientResponse response
+                = request.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
             try (InputStream responseEntityStream = response.getEntityInputStream()) {
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
@@ -199,14 +204,21 @@ public class SkosmosService {
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
                 if (compact instanceof Map) {
-                    logger.trace("Concept scheme data response object: {}", compact);
-                    Object graph = ((Map) compact).get("@graph");
-                    logger.trace("Graph in response: {}", graph);
-                    if (graph instanceof List) {
-                        return ((List<Map>) graph).stream()
-                                .filter(map -> uri.equals(map.get("@id")))
+                    logger.trace("Vocab response object: {}", compact);
+                    Object schemes = ((Map) compact).get("http://schema.onki.fi/onki#hasConceptScheme");
+                    logger.trace("Concept schemes in response: {}", schemes);
+                    if (schemes instanceof List) {
+                        return ((List<Map>) schemes)
+                                .stream()
+                                .filter(m -> schemeUri.equals(m.get("@id")))
                                 .findFirst()
                                 .orElseGet(Collections::emptyMap);
+                    } else if (schemes instanceof Map) {
+                        //single concept scheme
+                        final Object schemeId = ((Map) schemes).get("@id");
+                        if (schemeUri.equals(schemeId)) {
+                            return (Map) schemes;
+                        }
                     }
                 }
             } catch (IOException ex) {
@@ -214,8 +226,7 @@ public class SkosmosService {
                 throw new RuntimeException(ex);
             }
         }
-
-        logger.warn("No data for concept scheme '{}', (request: {}, response status: {})", uri, request, response.getStatusInfo());
+        logger.warn("No data for concept scheme '{}', (request: {}, response status: {})", schemeUri, request, response.getStatusInfo());
         return Collections.emptyMap();
     }
 }
