@@ -29,6 +29,7 @@ import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,29 +50,36 @@ public class SkosmosService {
 
     private final static Logger logger = LoggerFactory.getLogger(SkosmosService.class);
 
-    private static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE = "lang";
-    private static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE_DEFAULT_VALUE = "en";
+    public static final Duration DEFAULT_CACHE_REFRESH_RATE = Duration.ofMinutes(60);
 
-    private transient WebResource service;
+    public static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE = "lang";
+    public static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE_DEFAULT_VALUE = "en";
 
+    private final WebResource service;
+
+    // Caches
     private final Object conceptSchemeUriMapCacheKey = new Object();
+    private final AsyncLoadingCache<Object, Multimap<String, String>> conceptSchemeUriMapCache;
 
-    private final AsyncLoadingCache<Object, Multimap<String, String>> conceptSchemeUriMapCache
-            = Caffeine.newBuilder()
-                    .maximumSize(10_000)
-                    .refreshAfterWrite(60, TimeUnit.MINUTES)
-                    .buildAsync(key -> createConceptSchemeUriMapCache());
-
-    private final AsyncLoadingCache<String, Map> conceptSchemeInfoCache
-            = Caffeine.newBuilder()
-                    .maximumSize(10_000)
-                    .refreshAfterWrite(60, TimeUnit.MINUTES)
-                    .buildAsync(this::retrieveConceptSchemeInfo);
+    private final int CONCEPT_SCHEME_INFO_CACHE_MAX_SIZE = 10_000;
+    private final AsyncLoadingCache<String, Map> conceptSchemeInfoCache;
 
     public SkosmosService(URI serviceUri) {
-        this.service = Client.create().resource(serviceUri);
+        this(serviceUri, DEFAULT_CACHE_REFRESH_RATE);
+    }
 
-        logger.info("Instantiated vocabulary servlet on URI {}", serviceUri);
+    public SkosmosService(URI serviceUri, Duration cacheRefreshRate) {
+        this.service = Client.create().resource(serviceUri);
+        conceptSchemeUriMapCache = Caffeine.newBuilder()
+                .maximumSize(1)
+                .refreshAfterWrite(cacheRefreshRate)
+                .buildAsync(key -> createConceptSchemeUriMapCache());
+
+        conceptSchemeInfoCache = Caffeine.newBuilder()
+                .maximumSize(CONCEPT_SCHEME_INFO_CACHE_MAX_SIZE)
+                .refreshAfterWrite(cacheRefreshRate)
+                .buildAsync(this::retrieveConceptSchemeInfo);
+
     }
 
     public Multimap<String, String> getConceptSchemeUriMap() {
@@ -100,10 +108,8 @@ public class SkosmosService {
         // 2) for each vocabulary get concept schemes and put in map
         logger.debug("Getting concept schemes for all vocabularies");
         vocabularyIds
-                .peek(id -> logger.debug("Id: {}", id))
-                .forEach(
-                        vocabId -> getConceptUrisFromVocab(vocabId).forEach(
-                                schemeUri -> mapBuilder.put(schemeUri, vocabId)));
+                .forEach(vocabId -> getConceptUrisFromVocab(vocabId)
+                .forEach(schemeUri -> mapBuilder.put(schemeUri, vocabId)));
 
         // 3) build the map
         return mapBuilder.build();
@@ -160,6 +166,12 @@ public class SkosmosService {
                         return ((List<Map>) schemes)
                                 .stream()
                                 .map(m -> m.get("@id").toString());
+                    } else if (schemes instanceof Map) {
+                        //single concept scheme
+                        final Object schemeId = ((Map) schemes).get("@id");
+                        if (schemeId instanceof String) {
+                            return Stream.of((String) schemeId);
+                        }
                     }
                 }
             } catch (IOException ex) {

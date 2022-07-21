@@ -14,6 +14,7 @@ import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,10 @@ public class VocabularyServiceServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.skosmosService = new SkosmosService(UriBuilder.fromUri(Configuration.getInstance().getClavasRestUrl()).path("rest/v1").build());
+        final String clavasRestUrl = Configuration.getInstance().getClavasRestUrl();
+        //final long skosmosCacheRefreshRateSeconds = Configuration.getInstance().getSkosmosCacheRefreshRateSeconds();
+        final long skosmosCacheRefreshRateSeconds = 60;
+        this.skosmosService = new SkosmosService(UriBuilder.fromUri(clavasRestUrl).path("rest/v1").build(), Duration.ofSeconds(skosmosCacheRefreshRateSeconds));
     }
 
     @Override

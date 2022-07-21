@@ -23,7 +23,8 @@ public class Configuration {
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
     private Collection<String> adminUsers = new HashSet<String>();
     private List<String> displayNameShibbolethKeys = new ArrayList<String>();
-    
+    private long skosmosCacheRefreshRateSeconds = 3600;
+
     {//Default values
         displayNameShibbolethKeys.add("displayName");
         displayNameShibbolethKeys.add("commonName");
@@ -48,7 +49,7 @@ public class Configuration {
     public String getCcrRestUrl() {
         return ccrRestUrl;
     }
-    
+
     public String getClavasRestUrl() {
         return clavasRestUrl;
     }
@@ -118,5 +119,14 @@ public class Configuration {
         LOG.info("Setting toolkitLocation to {}", toolkitLocation);
         this.toolkitLocation = toolkitLocation;
     }
-    
+
+    public void setSkosmosCacheRefreshRateSeconds(long skosmosCacheRefreshRateSeconds) {
+        LOG.info("Setting skosmosCacheRefreshRateSeconds to {}", skosmosCacheRefreshRateSeconds);
+        this.skosmosCacheRefreshRateSeconds = skosmosCacheRefreshRateSeconds;
+    }
+
+    public long getSkosmosCacheRefreshRateSeconds() {
+        return skosmosCacheRefreshRateSeconds;
+    }
+
 }
