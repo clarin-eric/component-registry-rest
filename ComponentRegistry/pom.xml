@@ -447,6 +447,16 @@
             <version>1.9.13</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jsonld-java</groupId>
+            <artifactId>jsonld-java</artifactId>
+            <version>0.13.4</version>
+        </dependency>
     </dependencies>
 
 
