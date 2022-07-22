@@ -37,7 +37,7 @@ public class SkosmosServiceRunner {
     private final static Logger logger = LoggerFactory.getLogger(SkosmosServiceRunner.class);
 
     //private final static String SERVICE_URI = "https://api.finto.fi/rest/v1";
-    private final static String SERVICE_URI = "http://65.108.201.6:8080/rest/v1";
+    private final static String SERVICE_URI = "https://cc-sprint-skosmos.clarin-dev.eu/rest/v1";
 
     public final static void main(String[] args) throws InterruptedException, ExecutionException {
         final SkosmosService service = new SkosmosService(UriBuilder.fromUri(SERVICE_URI).build());

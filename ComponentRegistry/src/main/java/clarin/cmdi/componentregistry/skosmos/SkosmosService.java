@@ -109,12 +109,13 @@ public class SkosmosService {
 
     public Stream<Object> getConceptsInScheme(String schemeUri, String vocId) {
         final WebResource request = service
-                .path(vocId + "/search")
-                .queryParam("query", "*:*")
+                .path(vocId + "/topConcepts")
                 .queryParam("scheme", schemeUri);
         logger.debug("Request: {}", request);
 
-        final ClientResponse response = request.get(ClientResponse.class);
+        final ClientResponse response = request
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ClientResponse.class);
         if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
             try (InputStream responseEntityStream = response.getEntityInputStream()) {
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
@@ -122,14 +123,14 @@ public class SkosmosService {
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
                 if (compact instanceof Map) {
-                    logger.trace("Search response object: {}", compact);
-                    final Object resultsMap = ((Map) compact).get("http://schema.onki.fi/onki#results");
-                    if (resultsMap instanceof Map) {
-                        final Object results = ((Map) resultsMap).get("@list");
-                        if (results instanceof List) {
-                            logger.debug("Results in response: {}", ((List) results).size());
-                            return ((List) results).stream();
-                        }
+                    logger.trace("Vocab top concepts response object: {}", compact);
+                    final Object concepts = ((Map) compact).get("http://www.w3.org/2004/02/skos/core#hasTopConcept");
+                    if (concepts instanceof List) {
+                        logger.debug("Results in response: {}", ((List) concepts).size());
+                        return ((List) concepts).stream();
+                    } else if (concepts instanceof Map) {
+                        //singleton
+                        return Stream.of(concepts);
                     }
                 }
             } catch (IOException ex) {
