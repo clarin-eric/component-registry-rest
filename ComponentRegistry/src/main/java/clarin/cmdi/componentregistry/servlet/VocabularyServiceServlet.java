@@ -5,24 +5,16 @@ import clarin.cmdi.componentregistry.skosmos.SkosmosService;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.utils.JsonUtils;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.io.ByteStreams;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterface;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.time.Duration;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +43,7 @@ public class VocabularyServiceServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private final static Logger logger = LoggerFactory.getLogger(VocabularyServiceServlet.class);
+    private static final String CONTENT_TYPE_HEADER_VALUE_JSON = "application/json; charset=UTF-8";
 
     // Paths
     private final static String VOCABS_PATH = "/vocabularies";
@@ -70,8 +63,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         serviceBaseUrl = Configuration.getInstance().getClavasRestUrl();
-        //final long skosmosCacheRefreshRateSeconds = Configuration.getInstance().getSkosmosCacheRefreshRateSeconds();
-        final long skosmosCacheRefreshRateSeconds = 60;
+        final long skosmosCacheRefreshRateSeconds = Configuration.getInstance().getSkosmosCacheRefreshRateSeconds();
         this.skosmosService = new SkosmosService(UriBuilder.fromUri(serviceBaseUrl).path("rest/v1").build(), Duration.ofSeconds(skosmosCacheRefreshRateSeconds));
     }
 
@@ -109,14 +101,14 @@ public class VocabularyServiceServlet extends HttpServlet {
 
         logger.debug("Constructing response");
         // make aggregated JSON-LD output
-        final Map context = new HashMap();
+        //final Map context = new HashMap();
         final JsonLdOptions options = new JsonLdOptions();
         //final Object result = JsonLdProcessor.compact(infos, context, options);
         final Object result = JsonLdProcessor.flatten(infos, options);
 
         // write response
         resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setHeader("Content-Type", "application/json; charset=UTF-8");
+        resp.setHeader("Content-Type", CONTENT_TYPE_HEADER_VALUE_JSON);
         try (OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream())) {
             JsonUtils.write(writer, result);
         } catch (IOException ex) {
@@ -137,7 +129,34 @@ public class VocabularyServiceServlet extends HttpServlet {
      * @throws IOException
      */
     private void serveConceptItems(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        final String schemeUri = getSingleParamValue(req, PARAM_URI);
+        logger.debug("Retrieving information from service");
+        if (schemeUri == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing query parameter: " + PARAM_URI);
+        } else if (!skosmosService.getConceptSchemeUriMap().containsKey(schemeUri)) {
+            logger.debug("Requested scheme URI not found ({}), sending 404 response", schemeUri);
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "No scheme with URI " + schemeUri);
+        } else {
+            final List<Object> infos = skosmosService.getConceptsInScheme(schemeUri);
 
+            logger.debug("Constructing response");
+            // make aggregated JSON-LD output
+            //final Map context = new HashMap();
+            final JsonLdOptions options = new JsonLdOptions();
+            //final Object result = JsonLdProcessor.compact(infos, context, options);
+            final Object result = JsonLdProcessor.flatten(infos, options);
+
+            // write response
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setHeader("Content-Type", CONTENT_TYPE_HEADER_VALUE_JSON);
+            try (OutputStreamWriter writer = new OutputStreamWriter(resp.getOutputStream())) {
+                JsonUtils.write(writer, result);
+            } catch (IOException ex) {
+                logger.error("Error while writing to response stream", ex);
+            }
+
+            logger.debug("Done");
+        }
     }
 
     private void serveVocabularyPage(HttpServletRequest req, HttpServletResponse resp) throws IllegalArgumentException, UriBuilderException, IOException {

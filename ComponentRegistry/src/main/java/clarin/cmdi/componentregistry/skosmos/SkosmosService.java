@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
@@ -91,12 +92,52 @@ public class SkosmosService {
         }
     }
 
-    public Map getConceptSchemeInfo(String uri) {
+    public Map getConceptSchemeInfo(String schemeUri) {
         try {
-            return conceptSchemeInfoCache.get(uri).get();
+            return conceptSchemeInfoCache.get(schemeUri).get();
         } catch (InterruptedException | ExecutionException ex) {
             throw new RuntimeException("Exception while getting concept scheme info from skosmos service", ex);
         }
+    }
+
+    public List<Object> getConceptsInScheme(String schemeUri) {
+        return getConceptSchemeUriMap().get(schemeUri)
+                .stream()
+                .flatMap(vocId -> getConceptsInScheme(schemeUri, vocId))
+                .collect(Collectors.toList());
+    }
+
+    public Stream<Object> getConceptsInScheme(String schemeUri, String vocId) {
+        final WebResource request = service
+                .path(vocId + "/search")
+                .queryParam("query", "*:*")
+                .queryParam("scheme", schemeUri);
+        logger.debug("Request: {}", request);
+
+        final ClientResponse response = request.get(ClientResponse.class);
+        if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
+            try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
+                final Map context = new HashMap();
+                final JsonLdOptions options = new JsonLdOptions();
+                final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+                if (compact instanceof Map) {
+                    logger.trace("Search response object: {}", compact);
+                    final Object resultsMap = ((Map) compact).get("http://schema.onki.fi/onki#results");
+                    if (resultsMap instanceof Map) {
+                        final Object results = ((Map) resultsMap).get("@list");
+                        if (results instanceof List) {
+                            logger.debug("Results in response: {}", ((List) results).size());
+                            return ((List) results).stream();
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                logger.error("IOException while trying to process response for request: " + request.toString());
+                throw new RuntimeException(ex);
+            }
+        }
+        return Stream.empty();
     }
 
     private Multimap<String, String> createConceptSchemeUriMapCache() throws IOException {

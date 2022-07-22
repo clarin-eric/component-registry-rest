@@ -18,6 +18,7 @@ package clarin.cmdi.componentregistry.skosmos;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.core.UriBuilder;
@@ -35,28 +36,32 @@ public class SkosmosServiceRunner {
 
     private final static Logger logger = LoggerFactory.getLogger(SkosmosServiceRunner.class);
 
-    private final static String SERVICE_URI = "https://api.finto.fi/rest/v1";
+    //private final static String SERVICE_URI = "https://api.finto.fi/rest/v1";
+    private final static String SERVICE_URI = "http://65.108.201.6:8080/rest/v1";
 
     public final static void main(String[] args) throws InterruptedException, ExecutionException {
         final SkosmosService service = new SkosmosService(UriBuilder.fromUri(SERVICE_URI).build());
 
         Multimap<String, String> map = dummySchemeVocabMap();
-        for (int i = 1; i <= 5; i++) {
-            logger.info("Getting map (iteration {})", i);
+//        for (int i = 1; i <= 5; i++) {
+//            logger.info("Getting map (iteration {})", i);
             final Instant start = Instant.now();
             map = service.getConceptSchemeUriMap();
             logger.info("Map retrieved ({} items in {}ms)", map.size(), durationSince(start).getMillis());
-        }
+//        }
 
-        for (int i = 1; i <= 5; i++) {
-            logger.info("Getting scheme info (iteration {})", i);
-            final Instant start = Instant.now();
-            for (String schemeUri : map.keys()) {
-                logger.info("Getting scheme info for {}", schemeUri);
-                final Map schemeInfo = service.getConceptSchemeInfo(schemeUri);
-                logger.debug("Concept scheme '{}': {} keys", schemeUri, schemeInfo.size());
-            }
-            logger.info("All info retrieved ({} items in {}ms)", map.size(), durationSince(start).getMillis());
+//        for (int i = 1; i <= 5; i++) {
+//            logger.info("Getting scheme info (iteration {})", i);
+//            final Instant start = Instant.now();
+//            for (String schemeUri : map.keys()) {
+//                logger.info("Getting scheme info for {}", schemeUri);
+//                final Map schemeInfo = service.getConceptSchemeInfo(schemeUri);
+//                logger.debug("Concept scheme '{}': {} keys", schemeUri, schemeInfo.size());
+//            }
+//            logger.info("All info retrieved ({} items in {}ms)", map.size(), durationSince(start).getMillis());
+//        }
+        for (String schemeUri : map.keys()) {
+            final List concepts = service.getConceptsInScheme(schemeUri);
         }
 
     }
