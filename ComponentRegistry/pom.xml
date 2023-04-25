@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.clarin.cmdi</groupId>
         <artifactId>componentRegistry.parent</artifactId>
-        <version>2.4.3</version>
+        <version>2.4.4-SNAPSHOT</version>
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
     <artifactId>component-registry-rest</artifactId>
@@ -698,6 +698,7 @@
                             <generatePackage>clarin.cmdi.componentregistry.rss</generatePackage>
                             <catalog>src/main/resources/catalog.cat</catalog>
                             <catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>
+                            <strict>false</strict>
                         </configuration>
                     </execution>
                 </executions>
