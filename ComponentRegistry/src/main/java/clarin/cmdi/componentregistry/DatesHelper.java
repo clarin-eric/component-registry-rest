@@ -9,6 +9,7 @@ import clarin.cmdi.componentregistry.impl.ComponentUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -18,6 +19,10 @@ import org.apache.commons.lang3.time.DateFormatUtils;
  * @author olhsha
  */
 public class DatesHelper {
+
+    public final static Locale RFC822DATEFORMAT_LOCALE = new Locale("en", "US", "POSIX");
+    public final static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat(
+            "EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", RFC822DATEFORMAT_LOCALE);
 
     /**
      *
@@ -55,12 +60,6 @@ public class DatesHelper {
         }
     }
 
-    private static SimpleDateFormat getRFC822DATEFORMAT() {
-        SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat(
-                "EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z");
-        return RFC822DATEFORMAT;
-    }
-
     /**
      *
      * @param dateString the value of dateString
@@ -70,30 +69,27 @@ public class DatesHelper {
         if (date == null) {
             return dateString;
         } else {
-            SimpleDateFormat RFC822DATEFORMAT = getRFC822DATEFORMAT();
             return RFC822DATEFORMAT.format(date);
         }
     }
 
     /**
      *
-     * @param dateString the value of dateString
+     * @param date
+     * @return String representation
      */
     public static String getRFCDateTime(Date date) {
         if (date == null) {
             return null;
         }
         String s = DateFormatUtils.format(date,
-                DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern());
+                DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.getPattern());
         return getRFCDateTime(s);
     }
 
     public static Date parseRFCDateTime(String dateTime) {
-        SimpleDateFormat RFC822DATEFORMAT = getRFC822DATEFORMAT();
-        Date date;
         try {
-            date = RFC822DATEFORMAT.parse(dateTime);
-            return date;
+            return RFC822DATEFORMAT.parse(dateTime);
         } catch (ParseException e) {
             return null;
         }
