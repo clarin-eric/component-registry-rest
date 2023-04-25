@@ -20,7 +20,7 @@
     <context:component-scan base-package="clarin.cmdi.componentregistry" />
     <!-- target class proxying must be enabled, otherwise Jersey won't find 
     the @path annotations on ComponentRegistryRestService -->
-    <tx:annotation-driven proxy-target-class="true" />
+    <tx:annotation-driven proxy-target-class="false" />
     <jpa:repositories base-package="clarin.cmdi.componentregistry.persistence.jpa" />
 
     <!-- Load properties from context.xml via servlet container -->

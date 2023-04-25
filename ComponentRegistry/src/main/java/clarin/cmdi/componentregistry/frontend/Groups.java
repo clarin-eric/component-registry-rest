@@ -2,7 +2,6 @@ package clarin.cmdi.componentregistry.frontend;
 
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.impl.ComponentUtils;
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.impl.database.ValidationException;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
@@ -29,6 +28,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import clarin.cmdi.componentregistry.IGroupService;
 
 /**
  *
@@ -39,7 +39,7 @@ public class Groups extends SecureAdminWebPage {
     private final static Logger logger = LoggerFactory.getLogger(Groups.class);
     
     @SpringBean
-    private GroupService groupService;
+    private IGroupService groupService;
     @SpringBean
     private UserDao userDao;
     private final IModel<Long> selectedGroup = new Model<Long>(null);

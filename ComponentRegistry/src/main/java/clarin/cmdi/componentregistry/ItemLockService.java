@@ -17,11 +17,13 @@
 package clarin.cmdi.componentregistry;
 
 import clarin.cmdi.componentregistry.model.ItemLock;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Twan Goosen <twan@clarin.eu>
  */
+@Transactional
 public interface ItemLockService {
 
     ItemLock getLock(String componentId);

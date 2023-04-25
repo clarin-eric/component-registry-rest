@@ -1,5 +1,7 @@
 package clarin.cmdi.componentregistry.impl.database;
 
+import clarin.cmdi.componentregistry.ComponentRegistry;
+
 /**
  * Interface for a simple service factory (with ComponentRegistry implementation
  * being the service), required for injecting the dao's into the
@@ -8,5 +10,5 @@ package clarin.cmdi.componentregistry.impl.database;
  */
 public interface ComponentRegistryBeanFactory {
 
-    public ComponentRegistryDbImpl getNewComponentRegistry();
+    public ComponentRegistry getNewComponentRegistry();
 }

@@ -3,7 +3,6 @@ package clarin.cmdi.componentregistry.rest;
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.ItemIsLockedException;
 import clarin.cmdi.componentregistry.ItemLockService;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
@@ -40,6 +39,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import clarin.cmdi.componentregistry.IGroupService;
 
 /**
  *
@@ -57,7 +57,7 @@ public class ItemsService extends AbstractComponentRegistryRestService {
     private HttpServletResponse servletResponse;
 
     @InjectParam(value = "GroupService")
-    private GroupService groupService;
+    private IGroupService groupService;
 
     @InjectParam(value = "ItemLockService")
     private ItemLockService itemLockService;

@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry.impl.database;
 
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import java.util.ArrayList;
@@ -14,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import clarin.cmdi.componentregistry.impl.ComponentUtils;
 import clarin.cmdi.componentregistry.model.BaseDescription;
@@ -33,6 +30,7 @@ import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.springframework.dao.DataAccessException;
+import clarin.cmdi.componentregistry.IGroupService;
 
 /**
  * Service that manages groups, memberships and ownerships. It exposes some
@@ -42,10 +40,9 @@ import org.springframework.dao.DataAccessException;
  * @author george.georgovassilis@mpi.nl
  *
  */
-@ManagedResource(objectName = "componentregistry:name=GroupService", description = "Operations for managing groups")
+//@ManagedResource(objectName = "componentregistry:name=GroupService", description = "Operations for managing groups")
 @Service("GroupService")
-@Transactional
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl implements IGroupService {
 
     @Autowired
     private GroupDao groupDao;
@@ -58,16 +55,7 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private UserDao userDao;
 
-    public void setGroupDao(GroupDao groupDao) {
-        this.groupDao = groupDao;
-    }
-
-    public void setGroupMembershipDao(GroupMembershipDao groupMembershipDao) {
-        this.groupMembershipDao = groupMembershipDao;
-    }
-
-    public void setOwnershipDao(OwnershipDao ownershipDao) {
-        this.ownershipDao = ownershipDao;
+    public GroupServiceImpl() {
     }
 
     @Override
@@ -119,7 +107,7 @@ public class GroupServiceImpl implements GroupService {
         throw new RuntimeException("not implemented");
     }
 
-    protected boolean canUserAccessAbstractDescriptionEitherOnHisOwnOrThroughGroupMembership(RegistryUser user,
+    private boolean canUserAccessAbstractDescriptionEitherOnHisOwnOrThroughGroupMembership(RegistryUser user,
             BaseDescription description) {
         // TODO make some joins and multi-id queries to speed the entire method
         // up

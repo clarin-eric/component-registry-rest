@@ -10,16 +10,10 @@ import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import com.google.common.base.Strings;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.security.Principal;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -69,7 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = {Exception.class, ValidationException.class})
 @Api(value = "/authentication", description = "REST resource for handling the authentication status", produces = MediaType.APPLICATION_XML)
-public class AuthenticationRestService {
+public class AuthenticationRestService implements IAuthenticationRestService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthenticationRestService.class);
 
@@ -82,14 +76,7 @@ public class AuthenticationRestService {
     @Autowired(required = true)
     private UserDao userDao;
 
-    @GET
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Information on the current authentication state. Pass 'redirect' query parameter to make this method redirect to the URI specified as its value.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "If no query parameters are passed, with the authentications status in its body")
-        ,
-        @ApiResponse(code = 303, message = "A redirect to the URI provided as the value of the 'redirect' parameter")
-    })
+    @Override
     public Response getAuthenticationInformation(@QueryParam("redirect") @DefaultValue("") String redirectUri) throws JSONException, AuthenticationRequiredException {
         logger.trace("Authentication information requested. Security context {}. Redirect URI: '{}'", security, redirectUri);
 
@@ -126,13 +113,7 @@ public class AuthenticationRestService {
         }
     }
 
-    @POST
-    @ApiOperation(value = "Triggers the service to require the client to authenticate by means of the configured authentication mechanism. Notice that this might require user interaction!")
-    @ApiResponses(value = {
-        @ApiResponse(code = 303, message = "A redirect, either to a Shibboleth authentication page/discovery service or other identification mechanism, and ultimately to the same URI as requested (which should be picked up as a GET)")
-        ,
-        @ApiResponse(code = 401, message = "If unauthenticated, a request to authenticate may be returned (not in case of Shibboleth authentication)")
-    })
+    @Override
     public Response triggerAuthenticationRequest() {
         logger.debug("Client has triggered authentication request {} -> {}", security.getUserPrincipal(), uriInfo.getRequestUri());
 

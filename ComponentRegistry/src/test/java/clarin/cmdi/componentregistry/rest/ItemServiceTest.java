@@ -18,7 +18,6 @@ package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.ItemLockService;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
@@ -42,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import clarin.cmdi.componentregistry.IGroupService;
 
 /**
  *
@@ -57,7 +57,7 @@ public class ItemServiceTest extends ComponentRegistryRestServiceTestCase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private GroupService groupService;
+    private IGroupService groupService;
     @Autowired
     private ItemLockService itemLockService;
 

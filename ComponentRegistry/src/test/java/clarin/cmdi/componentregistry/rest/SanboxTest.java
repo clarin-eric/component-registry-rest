@@ -8,7 +8,6 @@ import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.Ownership;
 import clarin.cmdi.componentregistry.model.ProfileDescription;
@@ -27,6 +26,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import clarin.cmdi.componentregistry.IGroupService;
 
 /**
  *
@@ -40,7 +40,7 @@ public class SanboxTest extends ComponentRegistryRestServiceTestCase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private GroupService groupService;
+    private IGroupService groupService;
     @Autowired
     private UserDao userDao;
     @Autowired
