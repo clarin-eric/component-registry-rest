@@ -4,19 +4,12 @@ import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.Configuration;
 import clarin.cmdi.componentregistry.UserCredentials;
-import clarin.cmdi.componentregistry.impl.database.ValidationException;
 import clarin.cmdi.componentregistry.model.AuthenticationInfo;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import com.google.common.base.Strings;
-import io.swagger.annotations.Api;
 import java.net.URI;
 import java.security.Principal;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -25,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Authentication resource to be used by the client to retrieve the current
@@ -59,25 +51,18 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author Twan Goosen <twan.goosen@mpi.nl>
  */
-@Path("/authentication")
 @Service
-@Transactional(rollbackFor = {Exception.class, ValidationException.class})
-@Api(value = "/authentication", description = "REST resource for handling the authentication status", produces = MediaType.APPLICATION_XML)
 public class AuthenticationRestService implements IAuthenticationRestService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthenticationRestService.class);
 
-    @Context
-    private SecurityContext security;
-    @Context
-    private UriInfo uriInfo;
     @Autowired(required = true)
     private Configuration configuration;
     @Autowired(required = true)
     private UserDao userDao;
 
     @Override
-    public Response getAuthenticationInformation(@QueryParam("redirect") @DefaultValue("") String redirectUri) throws JSONException, AuthenticationRequiredException {
+    public Response getAuthenticationInformation(String redirectUri, UriInfo uriInfo, SecurityContext security) throws JSONException, AuthenticationRequiredException {
         logger.trace("Authentication information requested. Security context {}. Redirect URI: '{}'", security, redirectUri);
 
         final Principal userPrincipal = security.getUserPrincipal();
@@ -93,7 +78,7 @@ public class AuthenticationRestService implements IAuthenticationRestService {
         } else {
             final UserCredentials credentials = new UserCredentials(userPrincipal);
             final RegistryUser user = userDao.getByPrincipalName(userPrincipal.getName());
-            
+
             final Long id;
             if (user == null) {
                 logger.trace("Unregistered user {}", userPrincipal.getName());
@@ -114,7 +99,7 @@ public class AuthenticationRestService implements IAuthenticationRestService {
     }
 
     @Override
-    public Response triggerAuthenticationRequest() {
+    public Response triggerAuthenticationRequest(UriInfo uriInfo, SecurityContext security) {
         logger.debug("Client has triggered authentication request {} -> {}", security.getUserPrincipal(), uriInfo.getRequestUri());
 
         //done - redirect to GET

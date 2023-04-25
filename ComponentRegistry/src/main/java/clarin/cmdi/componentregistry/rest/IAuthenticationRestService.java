@@ -17,22 +17,32 @@
 package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
+import clarin.cmdi.componentregistry.impl.database.ValidationException;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import org.json.JSONException;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author twagoo
  */
+@Transactional(rollbackFor = {Exception.class, ValidationException.class})
+@Path("/authentication")
+@Api(value = "/authentication", description = "REST resource for handling the authentication status", produces = MediaType.APPLICATION_XML)
 public interface IAuthenticationRestService {
 
     @GET
@@ -42,13 +52,13 @@ public interface IAuthenticationRestService {
         @ApiResponse(code = 200, message = "If no query parameters are passed, with the authentications status in its body"),
         @ApiResponse(code = 303, message = "A redirect to the URI provided as the value of the 'redirect' parameter")})
     Response getAuthenticationInformation(@QueryParam(value = "redirect")
-            @DefaultValue(value = "") String redirectUri) throws JSONException, AuthenticationRequiredException;
+            @DefaultValue(value = "") String redirectUri, @Context UriInfo uriInfo, @Context SecurityContext security) throws JSONException, AuthenticationRequiredException;
 
     @POST
     @ApiOperation(value = "Triggers the service to require the client to authenticate by means of the configured authentication mechanism. Notice that this might require user interaction!")
     @ApiResponses(value = {
         @ApiResponse(code = 303, message = "A redirect, either to a Shibboleth authentication page/discovery service or other identification mechanism, and ultimately to the same URI as requested (which should be picked up as a GET)"),
         @ApiResponse(code = 401, message = "If unauthenticated, a request to authenticate may be returned (not in case of Shibboleth authentication)")})
-    Response triggerAuthenticationRequest();
+    Response triggerAuthenticationRequest(@Context UriInfo uriInfo, @Context SecurityContext security);
 
 }
