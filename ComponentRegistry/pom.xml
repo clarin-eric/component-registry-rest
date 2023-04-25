@@ -680,6 +680,7 @@
                             <generatePackage>clarin.cmdi.componentregistry.components</generatePackage>
                             <catalog>src/main/resources/catalog.cat</catalog>
                             <catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>
+                            <strict>false</strict>
                         </configuration>
                     </execution>
                     <execution>
