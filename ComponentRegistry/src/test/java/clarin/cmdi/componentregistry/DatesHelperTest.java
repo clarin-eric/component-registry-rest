@@ -75,7 +75,7 @@ public class DatesHelperTest {
     @Test
     public void testGetRFCDateTime() {
         String dateString = "2012-09-17T13:40:57+00:00";
-        String expResult = "Mon, 17 Sep 2012 15:40:57 +0200";
+        String expResult = "Mon, 17 Sept 2012 15:40:57 +0200";
         String result = DatesHelper.getRFCDateTime(dateString);
         assertEquals(expResult, result);
     }
