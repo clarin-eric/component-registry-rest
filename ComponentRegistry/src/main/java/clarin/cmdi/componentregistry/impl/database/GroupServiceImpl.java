@@ -30,7 +30,7 @@ import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.springframework.dao.DataAccessException;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  * Service that manages groups, memberships and ownerships. It exposes some
@@ -42,7 +42,7 @@ import clarin.cmdi.componentregistry.IGroupService;
  */
 //@ManagedResource(objectName = "componentregistry:name=GroupService", description = "Operations for managing groups")
 @Service("GroupService")
-public class GroupServiceImpl implements IGroupService {
+public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupDao groupDao;

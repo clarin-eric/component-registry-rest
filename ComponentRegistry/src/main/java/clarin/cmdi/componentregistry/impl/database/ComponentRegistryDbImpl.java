@@ -55,7 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  * Implementation of ComponentRegistry that uses Database Acces Objects for
@@ -89,7 +89,7 @@ public class ComponentRegistryDbImpl extends ComponentRegistryImplBase implement
     @Autowired
     private MDMarshaller marshaller;
     @Autowired
-    private IGroupService groupService;
+    private GroupService groupService;
     @Autowired
     private ComponentSpecConverter specConverter;
 

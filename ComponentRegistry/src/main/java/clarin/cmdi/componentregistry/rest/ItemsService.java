@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *
@@ -57,7 +57,7 @@ public class ItemsService extends AbstractComponentRegistryRestService {
     private HttpServletResponse servletResponse;
 
     @InjectParam(value = "GroupService")
-    private IGroupService groupService;
+    private GroupService groupService;
 
     @InjectParam(value = "ItemLockService")
     private ItemLockService itemLockService;

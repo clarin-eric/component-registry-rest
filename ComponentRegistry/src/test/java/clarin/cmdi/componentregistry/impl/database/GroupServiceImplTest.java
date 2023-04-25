@@ -21,12 +21,12 @@ import clarin.cmdi.componentregistry.persistence.jpa.OwnershipDao;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import clarin.cmdi.componentregistry.rest.DummyPrincipal;
 import static org.junit.Assert.*;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 public class GroupServiceImplTest extends BaseUnitTest {
 
     @Autowired
-    IGroupService groupService;
+    GroupService groupService;
     @Autowired
     UserDao userDao;
 

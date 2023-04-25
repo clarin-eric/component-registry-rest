@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *
@@ -57,7 +57,7 @@ public class ItemServiceTest extends ComponentRegistryRestServiceTestCase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private IGroupService groupService;
+    private GroupService groupService;
     @Autowired
     private ItemLockService itemLockService;
 

@@ -26,7 +26,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *
@@ -40,7 +40,7 @@ public class SanboxTest extends ComponentRegistryRestServiceTestCase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private IGroupService groupService;
+    private GroupService groupService;
     @Autowired
     private UserDao userDao;
     @Autowired

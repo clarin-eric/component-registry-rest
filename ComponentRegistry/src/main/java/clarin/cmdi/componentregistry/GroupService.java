@@ -16,7 +16,7 @@ import clarin.cmdi.componentregistry.model.RegistryUser;
  *
  */
 @Transactional
-public interface IGroupService {
+public interface GroupService {
 
     /**
      * Creates a new group. Will fail with an exception if the (normalised) group name already exists

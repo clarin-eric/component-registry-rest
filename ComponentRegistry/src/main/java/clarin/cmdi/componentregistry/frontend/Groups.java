@@ -28,7 +28,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *
@@ -39,7 +39,7 @@ public class Groups extends SecureAdminWebPage {
     private final static Logger logger = LoggerFactory.getLogger(Groups.class);
     
     @SpringBean
-    private IGroupService groupService;
+    private GroupService groupService;
     @SpringBean
     private UserDao userDao;
     private final IModel<Long> selectedGroup = new Model<Long>(null);

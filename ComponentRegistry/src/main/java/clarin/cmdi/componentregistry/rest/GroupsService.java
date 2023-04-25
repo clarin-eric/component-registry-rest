@@ -13,7 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.springframework.stereotype.Service;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *
@@ -26,7 +26,7 @@ import clarin.cmdi.componentregistry.IGroupService;
 public class GroupsService extends AbstractComponentRegistryRestService {
 
     @InjectParam(value = "GroupService")
-    private IGroupService groupService;
+    private GroupService groupService;
 
     @GET
     @Path("/usermembership")

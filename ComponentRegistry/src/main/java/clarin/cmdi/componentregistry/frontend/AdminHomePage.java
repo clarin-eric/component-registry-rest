@@ -52,7 +52,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.springframework.dao.DataAccessException;
-import clarin.cmdi.componentregistry.IGroupService;
+import clarin.cmdi.componentregistry.GroupService;
 
 @SuppressWarnings("serial")
 public class AdminHomePage extends SecureAdminWebPage {
@@ -65,7 +65,7 @@ public class AdminHomePage extends SecureAdminWebPage {
     @SpringBean(name = "componentRegistryFactory")
     private ComponentRegistryFactory componentRegistryFactory;
     @SpringBean(name = "GroupService")
-    private IGroupService groupService;
+    private GroupService groupService;
     @SpringBean
     private ComponentDao componentDao;
     @SpringBean
