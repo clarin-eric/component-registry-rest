@@ -4,7 +4,7 @@ os:
  - linux
 
 jdk:
-  - openjdk11
+  - openjdk17
 
 script:
 - bash -c 'if [ "${TRAVIS_TAG}" ]; then mvn versions:set -DnewVersion=${TRAVIS_TAG} versions:commit; fi'
