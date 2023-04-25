@@ -44,6 +44,7 @@
         <jersey.version>1.19.4</jersey.version>
         <slf4j.version>2.0.7</slf4j.version>
         <log4j.version>2.20.0</log4j.version>
+        <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
 
         <logging.appender>FILE</logging.appender>
         <logging.level>warn</logging.level>
@@ -101,7 +102,7 @@
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>2.4.0-b180830.0438</version>
+            <version>${jaxb-runtime.version}</version>
         </dependency>        
         <dependency>
             <groupId>junit</groupId>
@@ -580,9 +581,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
-                    <release>11</release>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -654,7 +655,14 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.14.0</version>
+                <version>0.15.2</version>
+<!--                <dependencies>
+                    <dependency>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                        <version>${jaxb-runtime.version}</version>
+                    </dependency>
+                </dependencies>-->
                 <executions>
                     <execution>
                         <id>jaxb-components</id>
