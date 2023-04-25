@@ -21,10 +21,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DateUtils;
-
 import clarin.cmdi.componentregistry.util.XmlDateAdapter;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * 
@@ -90,8 +89,8 @@ public class Comment {
     public void setId(String commentId) {
 	this.id = commentId;
 	try {
-	    this.dbId = Long.parseLong(commentId);
-	} catch (Exception e) {
+	    this.dbId = Long.valueOf(commentId);
+	} catch (NumberFormatException e) {
 	}
     }
 
@@ -149,7 +148,7 @@ public class Comment {
 
     public static Date getDate(String registrationDate) throws ParseException {
 	return DateUtils.parseDate(registrationDate,
-		new String[] { DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT
+		new String[] { DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT
 			.getPattern() });
     }
 

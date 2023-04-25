@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 
 import clarin.cmdi.componentregistry.model.BaseDescription;

@@ -91,8 +91,6 @@ public class AdminRegistry {
             }
         } catch (JAXBException e) {
             throw new SubmitFailedException(e);
-        } catch (IOException e) {
-            throw new SubmitFailedException(e);
         } catch (ItemNotFoundException e) {
             throw new SubmitFailedException(e);
         } catch (AuthenticationRequiredException e) {
