@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>        
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c#%M:%L] - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="clarin.cmdi.componentregistry" level="info" />
+        <Logger name="clarin.cmdi.componentregistry.rest" level="debug" />
+        <Logger name="com.sun.jersey" level="info" />
+        <Logger name="org.apache.wicket" level="info" />
+        <Root level="info">
+            <AppenderRef ref="CONSOLE"/>
+        </Root>
+    </Loggers>
+</Configuration>

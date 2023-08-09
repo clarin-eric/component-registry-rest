@@ -8,8 +8,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import static org.junit.Assert.*;
 

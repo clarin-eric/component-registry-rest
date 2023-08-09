@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry.rest;
 
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.model.Group;
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.resource.Singleton;
@@ -14,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.springframework.stereotype.Service;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *

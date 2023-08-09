@@ -10,7 +10,6 @@ import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.RegistrySpace;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.model.CommentResponse;
 import clarin.cmdi.componentregistry.model.ComponentDescription;
@@ -40,6 +39,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.springframework.util.Assert;
+import clarin.cmdi.componentregistry.GroupService;
 
 /**
  *

@@ -1,7 +1,6 @@
 package clarin.cmdi.componentregistry.validation;
 
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import clarin.cmdi.componentregistry.model.BaseDescription;
 
 public class DescriptionValidator extends BaseValidator {

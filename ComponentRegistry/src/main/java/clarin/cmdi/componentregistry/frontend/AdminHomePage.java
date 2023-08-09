@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
-import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.IMarshaller;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.OwnerUser;
@@ -53,6 +52,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.springframework.dao.DataAccessException;
+import clarin.cmdi.componentregistry.GroupService;
 
 @SuppressWarnings("serial")
 public class AdminHomePage extends SecureAdminWebPage {

@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry.impl.database;
 
-import clarin.cmdi.componentregistry.GroupService;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,6 +21,7 @@ import clarin.cmdi.componentregistry.persistence.jpa.OwnershipDao;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import clarin.cmdi.componentregistry.rest.DummyPrincipal;
 import static org.junit.Assert.*;
+import clarin.cmdi.componentregistry.GroupService;
 
 public class GroupServiceImplTest extends BaseUnitTest {
 

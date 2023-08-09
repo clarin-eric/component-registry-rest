@@ -4,7 +4,6 @@ import clarin.cmdi.componentregistry.DatesHelper;
 import clarin.cmdi.componentregistry.model.Comment;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 /**

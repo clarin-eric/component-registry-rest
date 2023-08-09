@@ -26,13 +26,11 @@ import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import java.util.Calendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Twan Goosen <twan@clarin.eu>
  */
-@Transactional
 @Service("ItemLockService")
 public class ItemLockServiceImpl implements ItemLockService {
 
@@ -76,18 +74,6 @@ public class ItemLockServiceImpl implements ItemLockService {
         if (existingLock != null) {
             itemLockDao.delete(existingLock);
         }
-    }
-
-    public void setItemLockDao(ItemLockDao itemLockDao) {
-        this.itemLockDao = itemLockDao;
-    }
-
-    public void setComponentDao(ComponentDao componentDao) {
-        this.componentDao = componentDao;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
     }
 
 }

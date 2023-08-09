@@ -81,7 +81,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
             RegistryUser user = this.getOrCreateUser(credentials);
             owner = new OwnerUser(user.getId());
         }
-        ComponentRegistryDbImpl cr = componentRegistryBeanFactory.getNewComponentRegistry();// default public registry
+        ComponentRegistry cr = componentRegistryBeanFactory.getNewComponentRegistry();// default public registry
         cr.setRegistrySpace(RegistrySpace.GROUP);
         cr.setRegistryOwner(owner);
         cr.setGroupId(groupId);
@@ -157,7 +157,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
     }
 
     private ComponentRegistry getNewComponentRegistryForUser(Number userId) {
-        ComponentRegistryDbImpl componentRegistry = componentRegistryBeanFactory.getNewComponentRegistry();
+        ComponentRegistry componentRegistry = componentRegistryBeanFactory.getNewComponentRegistry();
         if (userId != null) {
             OwnerUser ou = new OwnerUser(userId);
             componentRegistry.setRegistrySpace(RegistrySpace.PRIVATE);
@@ -168,9 +168,9 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
     }
 
     @Override
-    public ComponentRegistryDbImpl getBaseRegistry(UserCredentials credentials) {
+    public ComponentRegistry getBaseRegistry(UserCredentials credentials) {
         RegistryUser user = this.getOrCreateUser(credentials);
-        ComponentRegistryDbImpl componentRegistryDbImpl = componentRegistryBeanFactory.getNewComponentRegistry();// default public registry
+        ComponentRegistry componentRegistryDbImpl = componentRegistryBeanFactory.getNewComponentRegistry();// default public registry
         if (user != null) {
             Number userId = user.getId();
             Owner owner = new OwnerUser(userId);

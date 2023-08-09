@@ -2,6 +2,11 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.4.4 (April 2023)
+- Adapted to Java 17
+- Dependency updates
+- CMD Toolkit 1.2.5
+
 ## Release Component Registry 2.4.3 (February 2022)
 - Logging: migrated to Log4j 2.17.1
 - Minor dependency updates
