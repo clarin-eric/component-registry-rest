@@ -147,7 +147,7 @@ public class ComponentSpecValidatorTest extends BaseUnitTest {
         profileContent += "	<Component ComponentRef=\""
                 + ComponentDescription.COMPONENT_PREFIX + id1 + "\"/>"; // id not
         // registered
-        profileContent += "	<Component ComponentRef=\""
+        profileContent += "	<Component name=\"ComponentTwo\" ComponentRef=\""
                 + ComponentDescription.COMPONENT_PREFIX + id2 + "\"/>"; // id not
         // registered
         profileContent += "    </Component>";
