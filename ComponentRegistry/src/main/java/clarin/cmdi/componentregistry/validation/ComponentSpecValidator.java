@@ -176,7 +176,7 @@ public class ComponentSpecValidator extends BaseValidator {
     }
 
     private boolean isDefinedInSeparateFile(ComponentType cmdComponentType) {
-        return cmdComponentType.getName() == null;
+        return cmdComponentType.getComponentRef() != null && !cmdComponentType.getComponentRef().isBlank();
     }
 
     /**
