@@ -37,7 +37,7 @@ public class ComponentUtils {
 
     public static Date getDate(String registrationDate) throws ParseException {
         return DateUtils.parseDate(registrationDate,
-                new String[]{DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT
+                new String[]{DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
                             .getPattern()});
     }
 
