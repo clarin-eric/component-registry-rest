@@ -2,11 +2,6 @@ package clarin.cmdi.componentregistry.servlet;
 
 import clarin.cmdi.componentregistry.Configuration;
 import com.google.common.io.ByteStreams;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterface;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -21,9 +16,15 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
+import org.glassfish.jersey.client.ClientResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +91,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     private static final String PARAM_FIELDS = "fields";
     private static final String PARAM_MAX_RESULTS = "maxResults";
 
-    private transient WebResource service;
+    private transient WebTarget service;
     private URI serviceUri;
 
     @Override
@@ -98,7 +99,7 @@ public class VocabularyServiceServlet extends HttpServlet {
         super.init(config);
 
         this.serviceUri = UriBuilder.fromUri(Configuration.getInstance().getClavasRestUrl()).build();
-        this.service = Client.create().resource(serviceUri);
+        service = ClientBuilder.newClient().target(serviceUri);
 
         logger.info("Instantiated vocabulary servlet on URI {}", serviceUri);
     }
@@ -126,7 +127,7 @@ public class VocabularyServiceServlet extends HttpServlet {
     }
 
     private void serveConceptSchemes(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        WebResource serviceReq = service.path(VOCABULARY_SERVICE_PATH);
+        WebTarget serviceReq = service.path(VOCABULARY_SERVICE_PATH);
 
         //forward query params to service request
         final Map<String, String[]> params = req.getParameterMap();
@@ -164,7 +165,7 @@ public class VocabularyServiceServlet extends HttpServlet {
             return;
         }
 
-        WebResource baseRequest = service.path(VOCABULARY_ITEMS_PATH)
+        WebTarget baseRequest = service.path(VOCABULARY_ITEMS_PATH)
                 .queryParam(VOCABULARY_ITEMS_PARAM_QUERY, VOCABULARY_ITEMS_QUERY_ALL_VALUE)
                 .queryParam(VOCABULARY_ITEMS_PARAM_CONCEPT_SCHEME, schemeId)
                 .queryParam(QUERY_PARAMETER_FORMAT, "json");
@@ -173,10 +174,10 @@ public class VocabularyServiceServlet extends HttpServlet {
         if (fields != null) {
             baseRequest = baseRequest.queryParam(VOCABULARY_ITEMS_PARAM_FIELDS, fields);
         }
-        
+
         final Integer maxResults;
         final String maxResultsParam = getSingleParamValue(req, PARAM_MAX_RESULTS);
-        if(maxResultsParam != null) {
+        if (maxResultsParam != null) {
             maxResults = Integer.valueOf(maxResultsParam);
         } else {
             maxResults = null;
@@ -195,15 +196,15 @@ public class VocabularyServiceServlet extends HttpServlet {
             final String rows = (maxResults == null) ? ITEM_RETRIEVAL_BATCH_SIZE : maxResults.toString();
             logger.trace("Getting {} items at a time", rows);
 
-            final WebResource request = baseRequest
+            final WebTarget baseRequestTarget = baseRequest
                     .queryParam(VOCABULARY_ITEMS_PARAM_OFFSET, offset)
                     .queryParam(VOCABULARY_ITEMS_PARAM_ROWS, rows);
-            logger.debug("Retrieving items from {}", request);
-            final ClientResponse itemsResponse = request.get(ClientResponse.class);
+            logger.debug("Retrieving items from {}", baseRequestTarget);
+            final ClientResponse itemsResponse = baseRequestTarget.request(MediaType.APPLICATION_JSON).get(ClientResponse.class);
             final int responseStatus = itemsResponse.getStatus();
             if (responseStatus >= 200 && responseStatus < 300) {
                 try {
-                    final JSONObject responseObject = new JSONObject(itemsResponse.getEntity(String.class));
+                    final JSONObject responseObject = new JSONObject(itemsResponse.readEntity(String.class));
                     final JSONObject response = responseObject.getJSONObject("response");
                     if (response == null) {
                         logger.warn("Structure of find-concepts service not as expected - did not find /response");
@@ -239,9 +240,9 @@ public class VocabularyServiceServlet extends HttpServlet {
                 return;
             }
         } while (results.size() < target && (maxResults == null || results.size() < maxResults) && lastFetchSize > 0); //continue unless we have a complete result or retreived nothing last time
-        
+
         logger.debug("Retrieved {} items", results.size());
-        
+
         //turn back into a single JSON array
         final JSONArray docs = new JSONArray(results);
         resp.setStatus(HttpServletResponse.SC_OK);
@@ -251,7 +252,7 @@ public class VocabularyServiceServlet extends HttpServlet {
         }
     }
 
-    private WebResource setFormatFromAcceptHeader(HttpServletRequest req, WebResource serviceReq) {
+    private WebTarget setFormatFromAcceptHeader(HttpServletRequest req, WebTarget serviceReq) {
         final String acceptHeader = req.getHeader("Accept");
         if (acceptHeader != null) {
             if (acceptHeader.contains(MediaType.APPLICATION_JSON)) {
@@ -272,16 +273,17 @@ public class VocabularyServiceServlet extends HttpServlet {
         // construct redirect URI to send client to the right page at the service
         final StringBuilder targetUriBuilder = new StringBuilder(
                 UriBuilder.fromUri(serviceUri)
-                .path(String.format(VOCABULARY_PAGE_SERVICE_PATH_FORMAT, id))
-                .build().toString());
+                        .path(String.format(VOCABULARY_PAGE_SERVICE_PATH_FORMAT, id))
+                        .build().toString());
         // append request format specifier depending on accept header
         final String acceptHeader = req.getHeader("Accept");
         if (acceptHeader != null) {
             if (acceptHeader.contains(MediaType.APPLICATION_JSON)) {
                 targetUriBuilder.append(".json");
                 //forward JSON content
-                final Builder serviceReq = Client.create().resource(targetUriBuilder.toString()).accept(MediaType.APPLICATION_JSON_TYPE);
-                forwardResponse(serviceReq, resp);
+                final Client client = ClientBuilder.newClient();
+                WebTarget target = client.target(targetUriBuilder.toString());
+                forwardResponse(target, resp);
                 return;
             } else if (acceptHeader.contains(MediaType.TEXT_HTML)) {
                 targetUriBuilder.append(".html");
@@ -292,12 +294,13 @@ public class VocabularyServiceServlet extends HttpServlet {
         resp.sendRedirect(resp.encodeRedirectURL(targetUriBuilder.toString()));
     }
 
-    private void forwardResponse(UniformInterface request, HttpServletResponse resp) throws IOException {
+    private void forwardResponse(WebTarget target, HttpServletResponse resp) throws IOException {
         //make GET request and copy directly to response stream
-        final ClientResponse response = request.get(ClientResponse.class);
+        final Invocation.Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
+        final Response response = request.get();
         //also forward content type header
-        resp.setContentType(response.getHeaders().getFirst("content-type"));
-        final InputStream get = response.getEntityInputStream();
+        resp.setContentType(response.getHeaders().getFirst("content-type").toString());
+        final InputStream get = response.readEntity(InputStream.class);
         try (final InputStream serviceResultStream = get) {
             try (final ServletOutputStream responseOutStream = resp.getOutputStream()) {
                 ByteStreams.copy(serviceResultStream, responseOutStream);
