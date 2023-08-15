@@ -1,9 +1,7 @@
 package clarin.cmdi.componentregistry.servlet;
 
 import clarin.cmdi.componentregistry.Configuration;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -13,8 +11,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -46,7 +46,7 @@ public class ConceptRegistryServlet extends HttpServlet {
     private final static Logger logger = LoggerFactory.getLogger(ConceptRegistryServlet.class);
     private static final String CCR2DCIF_XSL_RESOURCE = "/ccr2dcif.xsl";
 
-    private transient WebResource service;
+    private transient WebTarget service;
     private Templates ccr2dcifTemplates;
 
     @Override
@@ -54,8 +54,8 @@ public class ConceptRegistryServlet extends HttpServlet {
         super.init(config);
 
         final URI uri = UriBuilder.fromUri(Configuration.getInstance().getCcrRestUrl()).build();
-        final Client client = Client.create();
-        service = client.resource(uri);
+        final Client client = ClientBuilder.newClient();
+        service = client.target(uri);
 
         try {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -70,20 +70,18 @@ public class ConceptRegistryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 
         // Set keywords
-        String keywords = req.getParameter("keywords");
+        final String keywords = req.getParameter("keywords");
         logger.debug("ISOcat request: keywords = {}", keywords);
-        queryParams.add("q", keywords);
 
         //TODO: Scope by concept scheme?
         //TODO: Set fields to be returned (fl=...)
-        final WebResource requestResource = service.path("find-concepts").queryParams(queryParams);
-        logger.debug("Forwarding CCR request to {}", requestResource.getURI());
+        final WebTarget requestResource = service.path("find-concepts").queryParam("q", keywords);
+        logger.debug("Forwarding CCR request to {}", requestResource.getUri());
 
         // Send request to CCR
-        final InputStream result = requestResource.accept(MediaType.APPLICATION_XML).get(InputStream.class);
+        final InputStream result = requestResource.request(MediaType.APPLICATION_XML).get(InputStream.class);
         logger.debug("CCR result: {}", result);
 
         final String acceptHeader = req.getHeader("Accept");
