@@ -2,6 +2,11 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.4.5 (April 2023)
+- Fixed issue that allowed publication of components referencing unpublished components
+    <https://github.com/clarin-eric/component-registry-rest/issues/75>
+- Dependency updates
+
 ## Release Component Registry 2.4.4 (April 2023)
 - Adapted to Java 17
 - Dependency updates
