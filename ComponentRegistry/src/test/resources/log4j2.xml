@@ -8,6 +8,7 @@
     <Loggers>
         <Logger name="clarin.cmdi.componentregistry" level="info" />
         <Logger name="clarin.cmdi.componentregistry.rest" level="debug" />
+        <Logger name="clarin.cmdi.componentregistry.skosmos" level="debug" />
         <Logger name="com.sun.jersey" level="info" />
         <Logger name="org.apache.wicket" level="info" />
         <Root level="info">

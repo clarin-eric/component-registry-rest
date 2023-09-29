@@ -64,6 +64,8 @@
                   value="${eu.clarin.cmdi.componentregistry.clavasRestUrl}" />
         <property name="toolkitLocation"
                   value="${eu.clarin.cmdi.componentregistry.toolkitLocation}" />
+        <property name="skosmosCacheRefreshRateSeconds"
+                  value="${eu.clarin.cmdi.componentregistry.skosmosCacheRefreshRateSeconds}" />
         <!-- Extra attribute keys that are passed in a shibboleth authenticated 
         request principal. You need to configure the shhaa.xml file to enable the 
         extra attributes. -->

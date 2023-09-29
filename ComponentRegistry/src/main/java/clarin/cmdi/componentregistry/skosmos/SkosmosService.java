@@ -21,6 +21,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.utils.JsonUtils;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
 import com.sun.jersey.api.client.Client;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ws.rs.core.MediaType;
@@ -56,6 +56,16 @@ public class SkosmosService {
 
     public static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE = "lang";
     public static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE_DEFAULT_VALUE = "en";
+
+    /**
+     * JSON-LD contexts that we always want to set
+     */
+    private static final ImmutableMap CONTEXTS_TO_SET = ImmutableMap.builder()
+            .put("rdfs", 	"http://www.w3.org/2000/01/rdf-schema#")
+            .put("skos", "http://www.w3.org/2004/02/skos/core#")
+            .put("onki", "http://schema.onki.fi/onki#")
+            .put("notation", "skos:notation")
+            .build();
 
     private final WebResource service;
 
@@ -118,10 +128,15 @@ public class SkosmosService {
                 .get(ClientResponse.class);
         if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
             try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
+                setContexts(jsonObject);
+
+                //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+
                 if (compact instanceof Map) {
                     logger.trace("Vocab top concepts response object: {}", compact);
                     final Object concepts = ((Map) compact).get("http://www.w3.org/2004/02/skos/core#hasTopConcept");
@@ -167,10 +182,15 @@ public class SkosmosService {
         final ClientResponse response = request.get(ClientResponse.class);
         if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
             try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
+                setContexts(jsonObject);
+                
+                //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+                
                 if (compact instanceof Map) {
                     logger.trace("Vocabs response object: {}", compact);
                     Object vocabs = ((Map) compact).get("http://schema.onki.fi/onki#hasVocabulary");
@@ -197,10 +217,15 @@ public class SkosmosService {
         final ClientResponse response = request.get(ClientResponse.class);
         if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
             try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
+                setContexts(jsonObject);
+                
+                //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
+                
                 if (compact instanceof Map) {
                     logger.trace("Vocab response object: {}", compact);
                     Object schemes = ((Map) compact).get("http://schema.onki.fi/onki#hasConceptScheme");
@@ -241,13 +266,18 @@ public class SkosmosService {
                 = request.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
             try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
+                setContexts(jsonObject);
+                
+                //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
-                if (compact instanceof Map) {
+
+                if (compact instanceof Map map) {
                     logger.trace("Vocab response object: {}", compact);
-                    Object schemes = ((Map) compact).get("http://schema.onki.fi/onki#hasConceptScheme");
+                    Object schemes = map.get("http://schema.onki.fi/onki#hasConceptScheme");
                     logger.trace("Concept schemes in response: {}", schemes);
                     if (schemes instanceof List) {
                         return ((List<Map>) schemes)
@@ -270,5 +300,81 @@ public class SkosmosService {
         }
         logger.warn("No data for concept scheme '{}', (request: {}, response status: {})", schemeUri, request, response.getStatusInfo());
         return Collections.emptyMap();
+    }
+
+    public List<Object> searchConcepts(String query, String scheme) {
+        return searchConcepts(query, Optional.of(scheme), Optional.empty());
+    }
+
+    private List<Object> searchConcepts(String query, Optional<String> scheme, Optional<String> vocabularyId) {
+        final WebResource request = buildSearchConceptsRequest(query, scheme, vocabularyId);
+        logger.debug("Request: {}", request);
+
+        // make request
+        final ClientResponse response
+                = request.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        if (response.getStatusInfo().getFamily() == SUCCESSFUL) {
+            logger.debug("Successful response: {}", response);
+            try (InputStream responseEntityStream = response.getEntityInputStream()) {
+                //parse and enhance
+                final Object resultsObject = JsonUtils.fromInputStream(responseEntityStream);
+                setContexts(resultsObject);
+                
+                //compact
+                final Object compact = JsonLdProcessor.compact(resultsObject, new HashMap(), new JsonLdOptions());
+                if (compact instanceof Map resultsMap) {
+                    logger.trace("Search results object: {}", resultsMap);
+                    Object results = resultsMap.get("http://schema.onki.fi/onki#results");
+                    logger.trace("Concept schemes in response: {}", results);
+                    List<Object> theList = getJsonList(results);
+                    if (theList != null) {
+                        return theList;
+                    }
+                }
+                logger.warn("Failed to extract search results from response to request {}: {}", request, resultsObject);
+            } catch (IOException ex) {
+                logger.error("IOException while trying to process response for request: " + request.toString());
+                throw new RuntimeException(ex);
+            }
+        } else {
+            logger.warn("Unsuccessful response to request {}: {}", request, response.getStatusInfo());
+        }
+
+        return Collections.emptyList();
+    }
+
+    /**
+     * Ensures that all relevant contexts are set on a JSON-LD object
+     *
+     * @param resultsObject
+     */
+    private void setContexts(final Object resultsObject) {
+        if (resultsObject instanceof Map resultsMap) {
+            if (resultsMap.get("@context") instanceof Map contextMap) {
+                contextMap.putAll(CONTEXTS_TO_SET);
+            }
+        }
+    }
+
+    private List<Object> getJsonList(Object object) {
+        if (object instanceof List) {
+            return (List<Object>) object;
+        } else if (object instanceof Map map) {
+            final Object list = map.get("@list");
+            if (list instanceof List) {
+                return (List<Object>) list;
+            }
+        }
+        return null;
+    }
+
+    private WebResource buildSearchConceptsRequest(String query, Optional<String> scheme, Optional<String> vocabularyId) {
+        final WebResource baseRequest
+                = service.path(vocabularyId.map(id -> "/" + id + "/search")
+                        .orElse("/search"))
+                        .queryParam("unique", "true")
+                        .queryParam("query", query);
+        // add scheme if provided
+        return scheme.map(s -> baseRequest.queryParam("scheme", s)).orElse(baseRequest);
     }
 }

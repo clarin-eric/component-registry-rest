@@ -21,6 +21,7 @@ public class Configuration {
     private String generalComponentSchema = "https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd";
     private String ccrRestUrl = "https://openskos.meertens.knaw.nl/ccr/api/";
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
+    private String ccrConceptsScheme = "http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128";
     private Collection<String> adminUsers = new HashSet<>();
     private List<String> displayNameShibbolethKeys = new ArrayList<>();
     private long skosmosCacheRefreshRateSeconds = 3600;
@@ -60,6 +61,14 @@ public class Configuration {
 
     public String[] getAdminUsersArray() {
         return adminUsers.toArray(new String[0]);
+    }
+
+    public long getSkosmosCacheRefreshRateSeconds() {
+        return skosmosCacheRefreshRateSeconds;
+    }
+
+    public String getCcrConceptsScheme() {
+        return ccrConceptsScheme;
     }
 
     public boolean isAdminUser(Principal principal) {
@@ -125,8 +134,9 @@ public class Configuration {
         this.skosmosCacheRefreshRateSeconds = skosmosCacheRefreshRateSeconds;
     }
 
-    public long getSkosmosCacheRefreshRateSeconds() {
-        return skosmosCacheRefreshRateSeconds;
+    public void setCcrConceptsScheme(String ccrConceptsScheme) {
+        LOG.info("Setting ccrConceptsScheme to {}", ccrConceptsScheme);
+        this.ccrConceptsScheme = ccrConceptsScheme;
     }
 
 }
