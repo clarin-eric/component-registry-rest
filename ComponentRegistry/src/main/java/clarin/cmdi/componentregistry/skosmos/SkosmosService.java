@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,11 +58,16 @@ public class SkosmosService {
     public static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE = "lang";
     public static final String SKOSMOS_QUERY_PARAMETER_LANGUAGE_DEFAULT_VALUE = "en";
 
+    private Set<String> excludedSchemes = Collections.emptySet();
+    private Set<String> includedSchemes = Collections.emptySet();
+    private Set<String> excludedVocabs = Collections.emptySet();
+    private Set<String> includedVocabs = Collections.emptySet();
+
     /**
      * JSON-LD contexts that we always want to set
      */
     private static final ImmutableMap CONTEXTS_TO_SET = ImmutableMap.builder()
-            .put("rdfs", 	"http://www.w3.org/2000/01/rdf-schema#")
+            .put("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
             .put("skos", "http://www.w3.org/2004/02/skos/core#")
             .put("onki", "http://schema.onki.fi/onki#")
             .put("notation", "skos:notation")
@@ -166,11 +172,37 @@ public class SkosmosService {
         // 2) for each vocabulary get concept schemes and put in map
         logger.debug("Getting concept schemes for all vocabularies");
         vocabularyIds
+                .filter(this::isVocabIncluded)
                 .forEach(vocabId -> getConceptUrisFromVocab(vocabId)
+                .filter(this::isConceptSchemeIncluded)
                 .forEach(schemeUri -> mapBuilder.put(schemeUri, vocabId)));
 
         // 3) build the map
         return mapBuilder.build();
+    }
+
+    private boolean isConceptSchemeIncluded(String schemeUri) {
+        if (isConceptSchemeExcluded(schemeUri)) {
+            return false;
+        } else {
+            return includedSchemes.isEmpty() || includedSchemes.contains(schemeUri);
+        }
+    }
+
+    private boolean isConceptSchemeExcluded(String schemeUri) {
+        return excludedSchemes.contains(schemeUri);
+    }
+
+    private boolean isVocabIncluded(String vocabId) {
+        if (isVocabExcluded(vocabId)) {
+            return false;
+        } else {
+            return includedVocabs.isEmpty() || includedVocabs.contains(vocabId);
+        }
+    }
+
+    private boolean isVocabExcluded(String vocabId) {
+        return excludedVocabs.contains(vocabId);
     }
 
     private Stream<String> getVocabularyIds() {
@@ -185,12 +217,12 @@ public class SkosmosService {
                 //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
                 setContexts(jsonObject);
-                
+
                 //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
-                
+
                 if (compact instanceof Map) {
                     logger.trace("Vocabs response object: {}", compact);
                     Object vocabs = ((Map) compact).get("http://schema.onki.fi/onki#hasVocabulary");
@@ -220,12 +252,12 @@ public class SkosmosService {
                 //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
                 setContexts(jsonObject);
-                
+
                 //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
                 final Object compact = JsonLdProcessor.compact(jsonObject, context, options);
-                
+
                 if (compact instanceof Map) {
                     logger.trace("Vocab response object: {}", compact);
                     Object schemes = ((Map) compact).get("http://schema.onki.fi/onki#hasConceptScheme");
@@ -269,7 +301,7 @@ public class SkosmosService {
                 //parse and enhance
                 final Object jsonObject = JsonUtils.fromInputStream(responseEntityStream);
                 setContexts(jsonObject);
-                
+
                 //compact
                 final Map context = new HashMap();
                 final JsonLdOptions options = new JsonLdOptions();
@@ -302,11 +334,30 @@ public class SkosmosService {
         return Collections.emptyMap();
     }
 
-    public List<Object> searchConcepts(String query, String scheme) {
-        return searchConcepts(query, Optional.of(scheme), Optional.empty());
+    public List<Object> searchConcepts(String query) {
+        if (includedVocabs.isEmpty()) {
+            return searchConcepts(query, Optional.empty()).toList();
+        } else {
+            return includedVocabs.stream()
+                    .filter(this::isVocabIncluded)
+                    .flatMap(vocabId -> searchConcepts(query, Optional.of(vocabId)))
+                    .toList();
+        }
     }
 
-    private List<Object> searchConcepts(String query, Optional<String> scheme, Optional<String> vocabularyId) {
+    public Stream<Object> searchConcepts(String query, Optional<String> vocabularyId) {
+        if (includedSchemes.isEmpty()) {
+            return searchConcepts(query, Optional.empty(), vocabularyId);
+        } else {
+            return includedSchemes.stream()
+                    //filter out excluded
+                    .filter(this::isConceptSchemeIncluded)
+                    //get concepts for all included schemes
+                    .flatMap(scheme -> searchConcepts(query, Optional.of(scheme), vocabularyId));
+        }
+    }
+
+    private Stream<Object> searchConcepts(String query, Optional<String> scheme, Optional<String> vocabularyId) {
         final WebResource request = buildSearchConceptsRequest(query, scheme, vocabularyId);
         logger.debug("Request: {}", request);
 
@@ -319,7 +370,7 @@ public class SkosmosService {
                 //parse and enhance
                 final Object resultsObject = JsonUtils.fromInputStream(responseEntityStream);
                 setContexts(resultsObject);
-                
+
                 //compact
                 final Object compact = JsonLdProcessor.compact(resultsObject, new HashMap(), new JsonLdOptions());
                 if (compact instanceof Map resultsMap) {
@@ -328,7 +379,7 @@ public class SkosmosService {
                     logger.trace("Concept schemes in response: {}", results);
                     List<Object> theList = getJsonList(results);
                     if (theList != null) {
-                        return theList;
+                        return theList.stream();
                     }
                 }
                 logger.warn("Failed to extract search results from response to request {}: {}", request, resultsObject);
@@ -340,7 +391,7 @@ public class SkosmosService {
             logger.warn("Unsuccessful response to request {}: {}", request, response.getStatusInfo());
         }
 
-        return Collections.emptyList();
+        return Stream.empty();
     }
 
     /**
@@ -377,4 +428,21 @@ public class SkosmosService {
         // add scheme if provided
         return scheme.map(s -> baseRequest.queryParam("scheme", s)).orElse(baseRequest);
     }
+
+    public void setExcludedSchemes(Set<String> excludedSchemes) {
+        this.excludedSchemes = excludedSchemes;
+    }
+
+    public void setIncludedSchemes(Set<String> includedSchemes) {
+        this.includedSchemes = includedSchemes;
+    }
+
+    public void setExcludedVocabs(Set<String> excludedVocabs) {
+        this.excludedVocabs = excludedVocabs;
+    }
+
+    public void setIncludedVocabs(Set<String> includedVocabs) {
+        this.includedVocabs = includedVocabs;
+    }
+
 }

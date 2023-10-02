@@ -1,6 +1,7 @@
 package clarin.cmdi.componentregistry.servlet;
 
 import com.github.jsonldjava.utils.JsonUtils;
+import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
@@ -24,12 +25,11 @@ public class ConceptRegistryServlet extends SkosmosServiceServlet {
     private static final long serialVersionUID = 1L;
     private final static Logger logger = LoggerFactory.getLogger(ConceptRegistryServlet.class);
 
-    private String conceptsScheme;
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        conceptsScheme = getConfiguration().getCcrConceptsScheme();
+        // limit search to a single concept scheme
+        getSkosmosService().setIncludedSchemes(ImmutableSet.of(getConfiguration().getCcrConceptsScheme()));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ConceptRegistryServlet extends SkosmosServiceServlet {
         final String keywords = req.getParameter("keywords");
         logger.debug("CCR request: keywords = {}", keywords);
 
-        final List<Object> concepts = getSkosmosService().searchConcepts(keywordToQuery(keywords), conceptsScheme);
+        final List<Object> concepts = getSkosmosService().searchConcepts(keywordToQuery(keywords));
 
         if (concepts == null) {
             resp.sendError(500, "No response from CCR");
