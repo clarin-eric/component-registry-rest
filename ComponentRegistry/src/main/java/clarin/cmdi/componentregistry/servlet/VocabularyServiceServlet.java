@@ -1,5 +1,7 @@
 package clarin.cmdi.componentregistry.servlet;
 
+import clarin.cmdi.componentregistry.Configuration;
+import clarin.cmdi.componentregistry.skosmos.SkosmosService;
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
 import com.github.jsonldjava.utils.JsonUtils;
@@ -10,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class VocabularyServiceServlet extends SkosmosServiceServlet {
-
+    
     private static final long serialVersionUID = 1L;
     private final static Logger logger = LoggerFactory.getLogger(VocabularyServiceServlet.class);
 
@@ -45,7 +48,21 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
 
     //Parameters
     private static final String PARAM_URI = "uri";
-
+    
+    @Override
+    public void init(ServletConfig servletConf) throws ServletException {
+        super.init(servletConf);        
+        
+        
+        //apply include/exclude configuration for skosmos schemes and vocabs
+        final SkosmosService service = getSkosmosService();
+        final Configuration config = getConfiguration();
+        service.setIncludedSchemes(config.getIncludedSchemesForVocabularies());
+        service.setExcludedSchemes(config.getExcludedSchemesForVocabularies());
+        service.setIncludedVocabs(config.getIncludedVocabsForVocabularies());
+        service.setExcludedVocabs(config.getExcludedVocabsForVocabularies());
+    }
+    
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String path = req.getPathInfo();
@@ -66,7 +83,7 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
         }
         resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not found");
     }
-
+    
     private void serveVocabularies(HttpServletRequest servletRequest, HttpServletResponse resp) {
         logger.debug("Retrieving information from service");
         final List<Object> infos
@@ -77,7 +94,7 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
                         .map(uri -> getSkosmosService().getConceptSchemeInfo(uri))
                         //.map(info -> JsonLdProcessor.fromRDF(info, options))
                         .collect(Collectors.toList());
-
+        
         logger.debug("Constructing response");
         // make aggregated JSON-LD output
         //final Map context = new HashMap();
@@ -93,7 +110,7 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
         } catch (IOException ex) {
             logger.error("Error while writing to response stream", ex);
         }
-
+        
         logger.debug("Done");
     }
 
@@ -117,7 +134,7 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "No scheme with URI " + schemeUri);
         } else {
             final List<Object> infos = getSkosmosService().getConceptsInScheme(schemeUri);
-
+            
             logger.debug("Constructing response");
             // make aggregated JSON-LD output
             //final Map context = new HashMap();
@@ -133,11 +150,11 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
             } catch (IOException ex) {
                 logger.error("Error while writing to response stream", ex);
             }
-
+            
             logger.debug("Done");
         }
     }
-
+    
     private void serveVocabularyPage(HttpServletRequest req, HttpServletResponse resp) throws IllegalArgumentException, UriBuilderException, IOException {
         final String schemeUri = getSingleParamValue(req, PARAM_URI);
         if (schemeUri == null) {
@@ -153,9 +170,9 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
                 resp.sendRedirect(resp.encodeRedirectURL(getVocabPageUri(vocabUri).toString()));
             }
         }
-
+        
     }
-
+    
     private String getSingleParamValue(HttpServletRequest req, String param) throws IOException {
         // get id from query parameter
         final String[] idParam = req.getParameterValues(param);
@@ -165,7 +182,7 @@ public class VocabularyServiceServlet extends SkosmosServiceServlet {
             return idParam[0];
         }
     }
-
+    
     private WebResource copyRequestParams(final Map<String, String[]> paramsMap, WebResource serviceReq) {
         if (paramsMap != null) {
             for (Map.Entry<String, String[]> param : paramsMap.entrySet()) {

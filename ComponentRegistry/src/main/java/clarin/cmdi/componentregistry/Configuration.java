@@ -1,11 +1,16 @@
 package clarin.cmdi.componentregistry;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +26,17 @@ public class Configuration {
     private String generalComponentSchema = "https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd";
     private String ccrRestUrl = "https://openskos.meertens.knaw.nl/ccr/api/";
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
-    private String ccrConceptsScheme = "http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128";
     private Collection<String> adminUsers = new HashSet<>();
     private List<String> displayNameShibbolethKeys = new ArrayList<>();
+
+    private Set<String> includedSchemesForConcepts = Collections.emptySet();
+    private Set<String> includedVocabsForConcepts = Collections.emptySet();
+
+    private Set<String> includedSchemesForVocabularies = Collections.emptySet();
+    private Set<String> excludedSchemesForVocabularies = Collections.emptySet();
+    private Set<String> includedVocabsForVocabularies = Collections.emptySet();
+    private Set<String> excludedVocabsForVocabularies = Collections.emptySet();
+
     private long skosmosCacheRefreshRateSeconds = 3600;
 
     {//Default values
@@ -65,10 +78,6 @@ public class Configuration {
 
     public long getSkosmosCacheRefreshRateSeconds() {
         return skosmosCacheRefreshRateSeconds;
-    }
-
-    public String getCcrConceptsScheme() {
-        return ccrConceptsScheme;
     }
 
     public boolean isAdminUser(Principal principal) {
@@ -134,9 +143,69 @@ public class Configuration {
         this.skosmosCacheRefreshRateSeconds = skosmosCacheRefreshRateSeconds;
     }
 
-    public void setCcrConceptsScheme(String ccrConceptsScheme) {
-        LOG.info("Setting ccrConceptsScheme to {}", ccrConceptsScheme);
-        this.ccrConceptsScheme = ccrConceptsScheme;
+    public Set<String> getIncludedSchemesForConcepts() {
+        return includedSchemesForConcepts;
+    }
+
+    public Set<String> getIncludedVocabsForConcepts() {
+        return includedVocabsForConcepts;
+    }
+
+    public Set<String> getIncludedSchemesForVocabularies() {
+        return includedSchemesForVocabularies;
+    }
+
+    public Set<String> getExcludedSchemesForVocabularies() {
+        return excludedSchemesForVocabularies;
+    }
+
+    public Set<String> getIncludedVocabsForVocabularies() {
+        return includedVocabsForVocabularies;
+    }
+
+    public Set<String> getExcludedVocabsForVocabularies() {
+        return excludedVocabsForVocabularies;
+    }
+
+    public void setIncludedVocabsForConcepts(String includedVocabs) {
+        includedVocabsForConcepts = stringPropertyToSet(includedVocabs);
+    }
+
+    public void setIncludedSchemesForConcepts(String includedSchemes) {
+        includedSchemesForConcepts = stringPropertyToSet(includedSchemes);
+    }
+
+    public void setExcludedSchemesForVocabularies(String excludedSchemes) {
+        excludedSchemesForVocabularies = stringPropertyToSet(excludedSchemes);
+    }
+
+    public void setIncludedVocabsForVocabularies(String includedVocabs) {
+        includedVocabsForVocabularies = stringPropertyToSet(includedVocabs);
+    }
+
+    public void setIncludedSchemesForVocabularies(String includedSchemes) {
+        includedSchemesForVocabularies = stringPropertyToSet(includedSchemes);
+    }
+
+    public void setExcludedVocabsForVocabularies(String excludedVocabs) {
+        excludedVocabsForVocabularies = stringPropertyToSet(excludedVocabs);
+    }
+
+    private Set<String> stringPropertyToSet(String value) {
+        //split on whitespace
+        final Splitter stringToSet = Splitter.on(CharMatcher.breakingWhitespace())
+                //with some added tolerance
+                .trimResults()
+                .omitEmptyStrings();
+
+        if (value == null) {
+            return Collections.emptySet();
+        } else {
+            //split and collect into an unmodifiable set
+            return stringToSet
+                    .splitToStream(value)
+                    .collect(Collectors.toUnmodifiableSet());
+        }
     }
 
 }

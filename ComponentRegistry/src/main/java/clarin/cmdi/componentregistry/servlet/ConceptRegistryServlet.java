@@ -1,7 +1,8 @@
 package clarin.cmdi.componentregistry.servlet;
 
+import clarin.cmdi.componentregistry.Configuration;
+import clarin.cmdi.componentregistry.skosmos.SkosmosService;
 import com.github.jsonldjava.utils.JsonUtils;
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
@@ -26,10 +27,14 @@ public class ConceptRegistryServlet extends SkosmosServiceServlet {
     private final static Logger logger = LoggerFactory.getLogger(ConceptRegistryServlet.class);
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        // limit search to a single concept scheme
-        getSkosmosService().setIncludedSchemes(ImmutableSet.of(getConfiguration().getCcrConceptsScheme()));
+    public void init(ServletConfig servletConf) throws ServletException {
+        super.init(servletConf);
+
+        //apply include/exclude configuration for skosmos schemes and vocabs
+        final SkosmosService service = getSkosmosService();
+        final Configuration config = getConfiguration();
+        service.setIncludedSchemes(config.getIncludedSchemesForConcepts());
+        service.setIncludedVocabs(config.getIncludedVocabsForConcepts());
     }
 
     @Override

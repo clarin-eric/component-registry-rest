@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
 
 /**
+ * Service for interfacing with a Skosmos instance
  *
  * @author CLARIN ERIC <clarin@clarin.eu>
  */
@@ -336,16 +337,21 @@ public class SkosmosService {
 
     public List<Object> searchConcepts(String query) {
         if (includedVocabs.isEmpty()) {
+            // search across all vocabularies
             return searchConcepts(query, Optional.empty()).toList();
         } else {
+            // search across configured vocabularies
             return includedVocabs.stream()
+                    //filter out excluded vocabularies
                     .filter(this::isVocabIncluded)
+                    //get concepts for all vocabularies
                     .flatMap(vocabId -> searchConcepts(query, Optional.of(vocabId)))
+                    //collect into a single list
                     .toList();
         }
     }
 
-    public Stream<Object> searchConcepts(String query, Optional<String> vocabularyId) {
+    private Stream<Object> searchConcepts(String query, Optional<String> vocabularyId) {
         if (includedSchemes.isEmpty()) {
             return searchConcepts(query, Optional.empty(), vocabularyId);
         } else {
