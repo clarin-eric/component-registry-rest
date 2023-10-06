@@ -35,6 +35,14 @@
         <component2SchemaXslUrlCmdi11>https://infra.clarin.eu/CMDI/1.1/xslt/comp2schema-v2/comp2schema.xsl</component2SchemaXslUrlCmdi11>
         <ccrRestUrl>https://openskos.meertens.knaw.nl/ccr/api/</ccrRestUrl>
         <clavasRestUrl>https://vocabularies.clarin.eu/clavas/public/api/</clavasRestUrl>
+        
+        <skosmosCacheRefreshRate>3600</skosmosCacheRefreshRate> <!-- Skosmos cache refresh interval in seconds -->
+        <skosmosCcrIncludedVocabs>ccr</skosmosCcrIncludedVocabs>
+        <skosmosCcrIncludedSchemes>http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128</skosmosCcrIncludedSchemes>
+        <skosmosVocabsIncludedSchemes></skosmosVocabsIncludedSchemes>
+        <skosmosVocabsExcludedSchemes></skosmosVocabsExcludedSchemes>
+        <skosmosVocabsIncludedVocabularies></skosmosVocabsIncludedVocabularies>
+        <skosmosVocabsExcludedVocabularies>ccr</skosmosVocabsExcludedVocabularies>
 
         <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
         <spring.version>5.3.30</spring.version>
@@ -527,6 +535,14 @@
                 <component2SchemaXslUrlCmdi11>{{DOCKER_COMPREG_COMPONENT_TO_SCHEMA_XSL_CMDI11}}</component2SchemaXslUrlCmdi11>
                 <ccrRestUrl>{{DOCKER_COMPREG_CCR_REST_SERVICE}}</ccrRestUrl>
                 <clavasRestUrl>{{DOCKER_COMPREG_CLAVAS_REST_SERVICE}}</clavasRestUrl>
+
+                <skosmosCacheRefreshRate>{{DOCKER_COMPREG_SKOSMOS_CACHE_REFRESH_RATE}}</skosmosCacheRefreshRate> <!-- Skosmos cache refresh interval in seconds -->
+                <skosmosCcrIncludedVocabs>{{DOCKER_COMPREG_SKOSMOS_CCR_INCLUDED_VOCABS}}</skosmosCcrIncludedVocabs>
+                <skosmosCcrIncludedSchemes>{{DOCKER_COMPREG_SKOSMOS_CCR_INCLUDED_SCHEMES}}</skosmosCcrIncludedSchemes>
+                <skosmosVocabsIncludedSchemes>{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_SCHEMES}}</skosmosVocabsIncludedSchemes>
+                <skosmosVocabsExcludedSchemes>{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_SCHEMES}}</skosmosVocabsExcludedSchemes>
+                <skosmosVocabsIncludedVocabularies>{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_VOCABS}}</skosmosVocabsIncludedVocabularies>
+                <skosmosVocabsExcludedVocabularies>{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_VOCABS}}</skosmosVocabsExcludedVocabularies>
 
                 <!-- Shibboleth login URI for SHHAA -->
                 <shibLI>{{DOCKER_COMPREG_SHIB_LI}}</shibLI>

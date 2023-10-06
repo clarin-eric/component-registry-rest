@@ -96,5 +96,27 @@
   <!-- Test instance (OpenSKOS 2) -->
   <Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="${clavasRestUrl}"/>
   <!-- Production instance -->
-  <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://openskos.meertens.knaw.nl/clavas/api/"/>-->
+  <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://openskos.meertens.knaw.nl/clavas/api/"/>-->  
+  <!-- Skosmos CCR test instance -->
+  <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://clarin-skosmos.sd.di.huc.knaw.nl"/>-->
+  
+  <!-- Skosmos cache refresh interval in seconds -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds" value="${skosmosCacheRefreshRate}"/>
+  
+  <!-- CCR filters -->
+  <!--    * Included Skosmos vocabularies for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedVocabularies" value="${skosmosCcrIncludedVocabs}" />
+  <!--    * Included Skosmos schemes for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedSchemes" value="${skosmosCcrIncludedSchemes}" />
+
+  <!-- CLAVAS filters -->
+  <!--    * Included Skosmos vocabularies for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedVocabularies" value="${skosmosVocabsIncludedVocabularies}" />
+  <!--    * Excluded Skosmos vocabularies for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedVocabularies" value="${skosmosVocabsExcludedVocabularies}" />
+  <!--    * Included Skosmos schemes for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedSchemes" value="${skosmosVocabsIncludedSchemes}" />
+  <!--    * Excluded Skosmos schemes for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedSchemes" value="${skosmosVocabsExcludedSchemes}" />
+  
 </Context>

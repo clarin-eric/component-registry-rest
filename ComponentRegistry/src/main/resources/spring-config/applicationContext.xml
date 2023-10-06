@@ -64,6 +64,8 @@
                   value="${eu.clarin.cmdi.componentregistry.clavasRestUrl}" />
         <property name="toolkitLocation"
                   value="${eu.clarin.cmdi.componentregistry.toolkitLocation}" />
+        
+        <!-- Skosmos cache refresh interval in seconds -->
         <property name="skosmosCacheRefreshRateSeconds"
                   value="${eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds}" />
         
