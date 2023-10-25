@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.4.27.Final</version>
+            <version>5.6.15.Final</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
@@ -324,7 +324,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>2.7.15</version>
+            <version>2.7.17</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-aop</artifactId>
@@ -428,7 +428,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20230618</version>
+            <version>20231013</version>
         </dependency>
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
