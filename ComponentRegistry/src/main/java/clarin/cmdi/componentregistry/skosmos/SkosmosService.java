@@ -74,6 +74,8 @@ public class SkosmosService {
             .put("notation", "skos:notation")
             .build();
 
+    private static final String CONCEPT_SEARCH_INCLUDED_FIELDS = "definition";
+    
     private final WebResource service;
 
     // Caches
@@ -430,6 +432,7 @@ public class SkosmosService {
                 = service.path(vocabularyId.map(id -> "/" + id + "/search")
                         .orElse("/search"))
                         .queryParam("unique", "true")
+                        .queryParam("fields", CONCEPT_SEARCH_INCLUDED_FIELDS)
                         .queryParam("query", query);
         // add scheme if provided
         return scheme.map(s -> baseRequest.queryParam("scheme", s)).orElse(baseRequest);
