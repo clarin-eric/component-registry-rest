@@ -5,7 +5,6 @@ import clarin.cmdi.componentregistry.skosmos.SkosmosService;
 import com.github.jsonldjava.utils.JsonUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.List;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +42,13 @@ public class ConceptRegistryServlet extends SkosmosServiceServlet {
         final String keywords = req.getParameter("keywords");
         logger.debug("CCR request: keywords = {}", keywords);
 
-        final List<Object> concepts = getSkosmosService().searchConcepts(keywordToQuery(keywords));
+        //final List<Object> concepts = getSkosmosService().searchConcepts(keywordToQuery(keywords));
+        final Object concepts = getSkosmosService().searchConceptsJsonLd(keywordToQuery(keywords));
 
         if (concepts == null) {
             resp.sendError(500, "No response from CCR");
         } else {
-            logger.debug("CCR response: {} concepts", concepts.size());
+            //logger.debug("CCR response: {} concepts", concepts.size());
 
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setHeader("Content-Type", CONTENT_TYPE_HEADER_VALUE_JSON);

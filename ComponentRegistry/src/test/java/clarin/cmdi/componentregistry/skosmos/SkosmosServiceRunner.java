@@ -16,9 +16,12 @@
  */
 package clarin.cmdi.componentregistry.skosmos;
 
+import com.github.jsonldjava.utils.JsonUtils;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.core.UriBuilder;
@@ -41,12 +44,12 @@ public class SkosmosServiceRunner {
     private final static String SERVICE_URI = "https://clarin-skosmos.sd.di.huc.knaw.nl/rest/v1";
     private final static String CONCEPT_SCHEME_METADATA = "http://hdl.handle.net/11459/CCR_P-Metadata_6f3f84d1-6f06-6291-4e20-4cd361cca128";
 
-    public final static void main(String[] args) throws InterruptedException, ExecutionException {
+    public final static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
         mainConcepts();
 //        mainVocabs();
     }
 
-    public final static void mainConcepts() throws InterruptedException, ExecutionException {
+    public final static void mainConcepts() throws InterruptedException, ExecutionException, IOException {
         logger.info("......Testing concept retrieval.....");
 
         final String query = "*test*";
@@ -55,9 +58,10 @@ public class SkosmosServiceRunner {
         logger.info("Searching for \"{}\" in scheme \"{}\"", query, scheme);
         final SkosmosService service = new SkosmosService(UriBuilder.fromUri(SERVICE_URI).build());
         service.setIncludedSchemes(ImmutableSet.of(scheme));
-        final List<Object> results = service.searchConcepts(query);
-        logger.info("Received {} results", results.size());
-        results.forEach(o -> logger.info("Result: {}", o));
+        final Object results = service.searchConceptsJsonLd(query);
+        try (OutputStreamWriter outWriter = new OutputStreamWriter(System.out)) {
+            JsonUtils.writePrettyPrint(outWriter, results);
+        }
     }
 
     public final static void mainVocabs() throws InterruptedException, ExecutionException {

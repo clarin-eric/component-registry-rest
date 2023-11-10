@@ -65,17 +65,29 @@ public class SkosmosService {
     private Set<String> includedVocabs = Collections.emptySet();
 
     /**
-     * JSON-LD contexts that we always want to set
+     * JSON-LD contexts that we always want to setfdefinition
      */
-    private static final ImmutableMap CONTEXTS_TO_SET = ImmutableMap.builder()
+    private static final ImmutableMap JSON_LD_CONTEXT = ImmutableMap.builder()
+            .put("uri", "@id")
+            .put("type", "@type")
             .put("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
             .put("skos", "http://www.w3.org/2004/02/skos/core#")
             .put("onki", "http://schema.onki.fi/onki#")
+            .put("isothes", "http://purl.org/iso25964/skos-thes#")
+            .put("prefLabel", "skos:prefLabel")
+            .put("altLabel", "skos:altLabel")
+            .put("hiddenLabel", "skos:hiddenLabel")
+            .put("definition", "skos:definition")
             .put("notation", "skos:notation")
+            .put("results",
+                    ImmutableMap.builder()
+                            .put("@id", "onki:results")
+                            .put("@container", "@list")
+                            .build())
             .build();
 
-    private static final String CONCEPT_SEARCH_INCLUDED_FIELDS = "definition";
-    
+    private static final String CONCEPT_SEARCH_INCLUDED_FIELDS = "definition notation prefLabel";
+
     private final WebResource service;
 
     // Caches
@@ -337,6 +349,18 @@ public class SkosmosService {
         return Collections.emptyMap();
     }
 
+    public Object searchConceptsJsonLd(String query) throws IOException {
+        final List<Object> results = searchConcepts(query);
+
+        final ImmutableMap<Object, Object> resultMap = ImmutableMap.builder()
+                .put("@context", JSON_LD_CONTEXT)
+                .put("uri", "")
+                .put("results", results)
+                .build();
+
+        return JsonLdProcessor.compact(resultMap, JSON_LD_CONTEXT, new JsonLdOptions());
+    }
+
     public List<Object> searchConcepts(String query) {
         if (includedVocabs.isEmpty()) {
             // search across all vocabularies
@@ -410,7 +434,7 @@ public class SkosmosService {
     private void setContexts(final Object resultsObject) {
         if (resultsObject instanceof Map resultsMap) {
             if (resultsMap.get("@context") instanceof Map contextMap) {
-                contextMap.putAll(CONTEXTS_TO_SET);
+                contextMap.putAll(JSON_LD_CONTEXT);
             }
         }
     }
