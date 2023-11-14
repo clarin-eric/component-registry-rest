@@ -457,8 +457,6 @@ CREATE INDEX idx_user_id ON basedescription USING btree (user_id);
 
 CREATE INDEX idx_basedescription_recommended ON basedescription USING btree (recommended);
 
-CREATE INDEX idx_basedescription_recommended ON basedescription USING btree (recommended);
-
 --
 -- Name: comments comments_user; Type: FK CONSTRAINT; Schema: public; Owner: compreg
 --
