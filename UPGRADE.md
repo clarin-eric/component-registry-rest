@@ -20,6 +20,34 @@
 
 ## Version specific update instructions
 
+### 2.5.0
+
+- The following new context parameter(s) need to be (re)configured:
+
+  <!-- Base location of the Concept Registry service -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.ccrRestUrl" value="{{DOCKER_COMPREG_CCR_REST_SERVICE}}"/>
+  <!--  Base location of the CLAVAS vocabulary service  -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="{{DOCKER_COMPREG_CLAVAS_REST_SERVICE}}"/>
+  
+  <!-- Skosmos cache refresh interval in seconds -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds" value="{{DOCKER_COMPREG_SKOSMOS_CACHE_REFRESH_RATE}}"/>
+  
+  <!-- CCR filters -->
+  <!--    * Included Skosmos vocabularies for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedVocabularies" value="{{DOCKER_COMPREG_SKOSMOS_CCR_INCLUDED_VOCABS}}" />
+  <!--    * Included Skosmos schemes for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedSchemes" value="{{DOCKER_COMPREG_SKOSMOS_CCR_INCLUDED_SCHEMES}}" />
+
+  <!-- CLAVAS filters -->
+  <!--    * Included Skosmos vocabularies for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedVocabularies" value="{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_VOCABS}}" />
+  <!--    * Excluded Skosmos vocabularies for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedVocabularies" value="{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_VOCABS}}" />
+  <!--    * Included Skosmos schemes for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedSchemes" value="{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_SCHEMES}}" />
+  <!--    * Excluded Skosmos schemes for concepts -->
+  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedSchemes" value="{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_SCHEMES}}" />
+
 ### 2.4.0
 - A database schema update is required. The script for this update can be found as
 `upgrade-2.4.sql`

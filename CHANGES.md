@@ -2,6 +2,11 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.5.0 (January 2024)
+- Added Skosmos support for controlled vocabularies and concept registry
+- OpenSKOS support dropped
+- Minor dependency updates
+
 ## Release Component Registry 2.4.5 (April 2023)
 - Fixed issue that allowed publication of components referencing unpublished components
     <https://github.com/clarin-eric/component-registry-rest/issues/75>
