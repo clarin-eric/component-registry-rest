@@ -1,6 +1,7 @@
 package clarin.cmdi.componentregistry.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,6 +65,28 @@ public class RegistryUser implements Serializable {
         } else {
             return String.format("%s [%s]", getName(), getPrincipalName());
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RegistryUser other = (RegistryUser) obj;
+        return Objects.equals(this.id, other.id);
     }
 
 }

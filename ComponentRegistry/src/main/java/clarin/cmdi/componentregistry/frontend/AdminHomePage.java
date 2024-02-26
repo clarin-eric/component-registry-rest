@@ -53,6 +53,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.springframework.dao.DataAccessException;
 import clarin.cmdi.componentregistry.GroupService;
+import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 
 @SuppressWarnings("serial")
 public class AdminHomePage extends SecureAdminWebPage {
@@ -69,11 +71,15 @@ public class AdminHomePage extends SecureAdminWebPage {
     @SpringBean
     private ComponentDao componentDao;
     @SpringBean
+    private UserDao userDao;
+    @SpringBean
     private IMarshaller marshaller;
 
     private Component infoView;
 
     private IModel<Set<AdminTreeNode>> expansionModel = new Model(new HashSet<>());
+    private IModel<List<RegistryUser>> usersModel;
+    final IModel<RegistryUser> selectedItemOwnerModel = new CompoundPropertyModel<>(null);
 
     public AdminHomePage(final PageParameters parameters) throws ComponentRegistryException, ItemNotFoundException {
         super(parameters);
@@ -81,6 +87,7 @@ public class AdminHomePage extends SecureAdminWebPage {
         adminRegistry.setComponentDao(componentDao);
         adminRegistry.setMarshaller(marshaller);
         info = new CMDItemInfo(marshaller);
+        this.usersModel = createUsersModel(userDao);
         addLinks();
 
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
@@ -92,6 +99,7 @@ public class AdminHomePage extends SecureAdminWebPage {
                 .add(feedback)
                 .add(createPublishDeleteForm())
                 .add(createEditForm(feedback))
+                .add(createOwnershipForm())
                 .setDefaultModel(new CompoundPropertyModel<>(info))
                 .setOutputMarkupId(true));
 
@@ -115,6 +123,19 @@ public class AdminHomePage extends SecureAdminWebPage {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        expansionModel.detach();
+        usersModel.detach();
+        selectedItemOwnerModel.detach();
     }
 
     @Override
@@ -176,6 +197,39 @@ public class AdminHomePage extends SecureAdminWebPage {
         };
         form.add(undeleteButton);
         return form;
+    }
+
+    private void transferOwnership(RegistryUser targetUser) {
+        LOG.info("Transfer of ownership for item {} to user {} requested", info.getId(), targetUser);
+        //TODO: transfer ownership
+    }
+
+    private Form createOwnershipForm() {
+        final Form form = new Form("transferOwnershipForm") {
+            @Override
+            protected void onSubmit() {
+                super.onSubmit();
+                transferOwnership(selectedItemOwnerModel.getObject());
+            }
+
+        };
+        form.add(new DropDownChoice<>("principal", selectedItemOwnerModel, usersModel)
+                .add(new DisableOnDeletedBehavior(info))
+        );
+
+        form.add(new IndicatingAjaxButton("submit", form) {
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                transferOwnership(selectedItemOwnerModel.getObject());
+                if (target != null) {
+                    target.add(infoView);
+                }
+            }
+        }.add(new DisableOnDeletedBehavior(info)));
+
+        return form;
+
     }
 
     private Form createEditForm(final FeedbackPanel feedback) throws ItemNotFoundException, ComponentRegistryException {
@@ -401,6 +455,10 @@ public class AdminHomePage extends SecureAdminWebPage {
                     String content = componentDao.getContent(dn.isDeleted(), desc.getId());
                     info.setContent(content);
                 }
+
+                //update owner model for selection
+                final RegistryUser itemOwner = userDao.getPrincipalNameById(dn.getDescription().getDbUserId());
+                selectedItemOwnerModel.setObject(itemOwner);
             } catch (ComponentRegistryException ex) {
                 LOG.error("Error getting node data", ex);
                 getSession().error("Could not get data for node. See Tomcat log for details.");

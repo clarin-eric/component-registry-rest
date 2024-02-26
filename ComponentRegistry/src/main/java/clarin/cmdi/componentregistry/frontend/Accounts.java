@@ -38,7 +38,7 @@ public class Accounts extends SecureAdminWebPage {
         super(parameters);
         super.addLinks();
 
-        usersModel = createUsersModel();
+        usersModel = createUsersModel(userDao);
 
         add(new FeedbackPanel("feedback"));
 
@@ -69,24 +69,6 @@ public class Accounts extends SecureAdminWebPage {
                 .add(new TextField("name").setRequired(true))
         );
 
-    }
-
-    private IModel<List<RegistryUser>> createUsersModel() {
-        return new AbstractReadOnlyModel<List<RegistryUser>>() {
-
-            @Override
-            public List<RegistryUser> getObject() {
-                // return all users sorted by their tostring value (ignoring case)
-                return new Ordering<Object>() {
-
-                    @Override
-                    public int compare(Object t, Object t1) {
-                        return t.toString().compareToIgnoreCase(t1.toString());
-                    }
-
-                }.sortedCopy(userDao.getAllUsers());
-            }
-        };
     }
 
     private class AccountDeleteButton extends Link {

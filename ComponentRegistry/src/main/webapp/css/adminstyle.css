@@ -46,6 +46,10 @@ form.manageAccount label .manageAccountValue {
     font-size: initial;    
 }
 
+form.itemOwner select {
+    max-width: 25em;
+}
+
 a.remove {
     font-size: small;
     text-decoration: none;

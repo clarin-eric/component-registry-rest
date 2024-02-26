@@ -23,24 +23,34 @@
             </div>
             <div wicket:id="infoView" class="infoView">
                 Item: <span wicket:id="name">[name]</span> (<span wicket:id="id"></span>)
-                
+
                 <div id="feedbackPanel">
                     <span wicket:id="feedback"></span>
                 </div>
-                
+
                 <form wicket:id="actionsForm">
                     <button wicket:id="delete" title="Press delete button to delete this item">Delete</button>
                     <button wicket:id="undelete" title="Press undelete button to put this item back in the registry">Undelete</button>
                 </form>
                 
                 <hr />
-                
+
                 <form wicket:id="form">
                     <input type="checkbox" wicket:id="forceUpdate" /> forceUpdate
                     <button wicket:id="submit">Submit edit changes</button>
                     <button wicket:id="publish">Submit edit changes and PUBLISH</button>
                     <textarea  class="descriptionTextArea" wicket:id="description" >text</textarea>
                     <textarea  class="contentTextArea" wicket:id="content" >text</textarea>
+                </form>
+
+                <hr />
+
+                <form class="itemOwner" wicket:id="transferOwnershipForm">
+                    Item owner:
+                    <select wicket:id="principal">
+                        <option>user</option>
+                    </select>
+                    <input wicket:id="submit" type="submit" value="Set new owner" />
                 </form>
             </div>
         </div>
