@@ -54,6 +54,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.springframework.dao.DataAccessException;
 import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
+import java.util.Objects;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 
 @SuppressWarnings("serial")
@@ -99,7 +100,7 @@ public class AdminHomePage extends SecureAdminWebPage {
                 .add(feedback)
                 .add(createPublishDeleteForm())
                 .add(createEditForm(feedback))
-                .add(createOwnershipForm())
+                .add(createOwnershipForm(feedback))
                 .setDefaultModel(new CompoundPropertyModel<>(info))
                 .setOutputMarkupId(true));
 
@@ -199,31 +200,43 @@ public class AdminHomePage extends SecureAdminWebPage {
         return form;
     }
 
-    private void transferOwnership(RegistryUser targetUser) {
-        LOG.info("Transfer of ownership for item {} to user {} requested", info.getId(), targetUser);
-        //TODO: transfer ownership
-    }
-
-    private Form createOwnershipForm() {
-        final Form form = new Form("transferOwnershipForm") {
-            @Override
-            protected void onSubmit() {
-                super.onSubmit();
-                transferOwnership(selectedItemOwnerModel.getObject());
-            }
-
-        };
+    private Form createOwnershipForm(FeedbackPanel feedback) {
+        final Form form = new Form("transferOwnershipForm");
+        // target user selection dropdown
         form.add(new DropDownChoice<>("principal", selectedItemOwnerModel, usersModel)
                 .add(new DisableOnDeletedBehavior(info))
         );
 
+        // action button
         form.add(new IndicatingAjaxButton("submit", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
-                transferOwnership(selectedItemOwnerModel.getObject());
+                final RegistryUser targetUser = selectedItemOwnerModel.getObject();
+                if (targetUser != null) {
+                    LOG.info("Transfer of ownership for item {} to user {} requested", info.getId(), targetUser);
+                    if (Objects.equals(targetUser.getId(), info.getDataNode().getDescription().getDbUserId())) {
+                        warn("Target user is equal to current user. Ownership has NOT been changed.");
+                    } else {
+                        final Long itemId = info.getDataNode().getDescription().getDbId();
+                        componentDao.setOwner(itemId, targetUser.getId());
+
+                        // check results
+                        final BaseDescription updatedDescription = componentDao.getById(itemId);
+                        if (Objects.equals(targetUser.getId(), updatedDescription.getDbUserId())) {
+                            // success
+                            info("Owner of item '" + updatedDescription.getName() + "' has been set to [" + targetUser.getPrincipalName() + "]");
+                            // update description
+                            info.setDescription(updatedDescription);
+                        } else {
+                            error("User ID check failed: owner id NOT set to requested user id. Current owner of '" + updatedDescription.getName() + "': [" + targetUser.getPrincipalName() + "]");
+                        }
+                    }
+                }
+
                 if (target != null) {
                     target.add(infoView);
+                    target.add(feedback);
                 }
             }
         }.add(new DisableOnDeletedBehavior(info)));
@@ -267,7 +280,9 @@ public class AdminHomePage extends SecureAdminWebPage {
                 //reload tree after publish
                 try {
                     reloadTreeModel(info);
-                    target.add(tree);
+                    if (target != null) {
+                        target.add(tree);
+                    }
                 } catch (UserUnauthorizedException | ItemNotFoundException ex) {
                     LOG.error("error reloading tree model", ex);
                 }

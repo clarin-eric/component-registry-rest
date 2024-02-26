@@ -454,4 +454,11 @@ public class ComponentDaoImpl implements ComponentDao {
             return jpaComponentDao.findAllItemIdsInGroup(false, prefix + "%", groupId, statusFilter);
         }
     }
+
+    @Override
+    public void setOwner(Long itemId, Long ownerId) {
+        final BaseDescription copy = jpaComponentDao.findById(itemId).orElseThrow();
+        copy.setDbUserId(ownerId);
+        jpaComponentDao.saveAndFlush(copy);
+    }
 }

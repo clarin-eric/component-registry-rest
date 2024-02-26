@@ -33,6 +33,14 @@
                     <button wicket:id="undelete" title="Press undelete button to put this item back in the registry">Undelete</button>
                 </form>
                 
+                <form class="itemOwner" wicket:id="transferOwnershipForm">
+                    Item owner:
+                    <select wicket:id="principal">
+                        <option>user</option>
+                    </select>
+                    <button wicket:id="submit">Set new owner</button>
+                </form>
+                
                 <hr />
 
                 <form wicket:id="form">
@@ -41,16 +49,6 @@
                     <button wicket:id="publish">Submit edit changes and PUBLISH</button>
                     <textarea  class="descriptionTextArea" wicket:id="description" >text</textarea>
                     <textarea  class="contentTextArea" wicket:id="content" >text</textarea>
-                </form>
-
-                <hr />
-
-                <form class="itemOwner" wicket:id="transferOwnershipForm">
-                    Item owner:
-                    <select wicket:id="principal">
-                        <option>user</option>
-                    </select>
-                    <input wicket:id="submit" type="submit" value="Set new owner" />
                 </form>
             </div>
         </div>

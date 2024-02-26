@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 
 import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
+import clarin.cmdi.componentregistry.model.RegistryUser;
 import java.util.Collection;
 
 /**
@@ -180,5 +181,7 @@ public interface ComponentDao {
             
     // Olha was here
     public List<String> getAllItemIdsInGroup(String prefix, Long groupId, Collection<ComponentStatus> statusFilter);
+
+    public void setOwner(Long itemId, Long ownerId);
 
 }

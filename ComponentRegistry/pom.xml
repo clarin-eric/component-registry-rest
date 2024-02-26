@@ -45,7 +45,7 @@
         <skosmosVocabsExcludedVocabularies>ccr</skosmosVocabsExcludedVocabularies>
 
         <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
-        <spring.version>5.3.30</spring.version>
+        <spring.version>5.3.31</spring.version>
         <wicket.version>8.14.0</wicket.version>
         <jackson.version>2.16.1</jackson.version>
         <jackson-databind.version>${jackson.version}</jackson-databind.version>
@@ -316,7 +316,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>5.3.31</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
