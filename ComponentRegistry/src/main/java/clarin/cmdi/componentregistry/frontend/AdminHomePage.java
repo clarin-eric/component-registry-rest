@@ -56,6 +56,7 @@ import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import java.util.Objects;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.link.ExternalLink;
 
 @SuppressWarnings("serial")
 public class AdminHomePage extends SecureAdminWebPage {
@@ -94,15 +95,26 @@ public class AdminHomePage extends SecureAdminWebPage {
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
 
+        final CompoundPropertyModel<CMDItemInfo> infoModel = new CompoundPropertyModel<>(info);
+
         add(infoView = new WebMarkupContainer("infoView")
                 .add(new Label("name"))
                 .add(new Label("id"))
+                .add(new ExternalLink("itemInfo", createItemLinkModel(infoModel)))
+                .add(new Label("status", createStatusModel(infoModel)))
                 .add(feedback)
                 .add(createPublishDeleteForm())
                 .add(createEditForm(feedback))
                 .add(createOwnershipForm(feedback))
-                .setDefaultModel(new CompoundPropertyModel<>(info))
-                .setOutputMarkupId(true));
+                .add(new Behavior() {
+                    @Override
+                    public void onConfigure(Component component) {
+                        component.setVisible(info != null && info.getDataNode() != null);
+                    }
+
+                })
+                .setDefaultModel(infoModel)
+                .setOutputMarkupPlaceholderTag(true));
 
         try {
             tree = createTree("tree", createDBTreeModel());
@@ -415,6 +427,19 @@ public class AdminHomePage extends SecureAdminWebPage {
     @Override
     protected final void addLinks() {
         //no call to super - no home link needed
+    }
+
+    private IModel<String> createStatusModel(IModel<CMDItemInfo> infoModel) {
+        return () -> {
+            final CMDItemInfo inf = infoModel.getObject();
+            return String.format("%s (%s in %s)", inf.getStatus(), inf.isPublished() ? "published" : "unpublished", inf.getSpace());
+        };
+    }
+
+    private IModel<String> createItemLinkModel(CompoundPropertyModel<CMDItemInfo> infoModel) {
+        return () -> {
+            return "../rest/items/" + infoModel.getObject().getId();
+        };
     }
 
     private static class DisableOnDeletedBehavior extends Behavior {
