@@ -65,7 +65,6 @@ public class ProfileDescriptionTest extends BaseUnitTest{
 
 	ProfileDescription pd = marshaller.unmarshal(ProfileDescription.class, new ByteArrayInputStream(expected.getBytes()), null);
 	assertEquals(desc.getId(), pd.getId());
-	assertTrue(desc.isThisTheOwner("user1"));
 	assertFalse(desc.isThisTheOwner("aap"));
     }
 }

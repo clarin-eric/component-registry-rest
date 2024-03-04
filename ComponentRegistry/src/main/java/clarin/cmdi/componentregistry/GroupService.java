@@ -77,6 +77,15 @@ public interface GroupService {
     boolean canUserAccessComponentEitherOnHisOwnOrThroughGroupMembership(RegistryUser user, BaseDescription baseDescription);
 
     /**
+     * Determines whether a user has write access to a component. Factors that allow access are:
+     * @param user
+     * @param baseDescription
+     * @return
+     */
+    boolean isUserOwnerEitherOnHisOwnOrThroughGroupMembership(String principalName, BaseDescription baseDescription);
+
+    
+    /**
      * Make a user a mamber of a group
      * @param userName
      * @param groupName

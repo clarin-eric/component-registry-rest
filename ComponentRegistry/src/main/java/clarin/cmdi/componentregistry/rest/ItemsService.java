@@ -40,6 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import clarin.cmdi.componentregistry.GroupService;
+import clarin.cmdi.componentregistry.model.ItemRights;
+import java.util.Optional;
 
 /**
  *
@@ -68,10 +70,8 @@ public class ItemsService extends AbstractComponentRegistryRestService {
         MediaType.APPLICATION_JSON})
     @ApiOperation(value = "The description (metadata) of a single component or profile item")
     @ApiResponses(value = {
-        @ApiResponse(code = 401, message = "Item requires authorisation and user is not authenticated")
-        ,
-        @ApiResponse(code = 403, message = "Non-public item is not owned by current user and user is no administrator")
-        ,
+        @ApiResponse(code = 401, message = "Item requires authorisation and user is not authenticated"),
+        @ApiResponse(code = 403, message = "Non-public item is not owned by current user and user is no administrator"),
         @ApiResponse(code = 404, message = "Item does not exist")
     })
     public BaseDescription getBaseDescription(@PathParam("itemId") String itemId) throws ComponentRegistryException, IOException {
@@ -97,6 +97,49 @@ public class ItemsService extends AbstractComponentRegistryRestService {
     @ApiOperation(value = "Returns a listing of groups to which an item belongs")
     public List<Group> getGroupsTheItemIsAMemberOf(@PathParam("itemId") String itemId) {
         return groupService.getGroupsTheItemIsAMemberOf(itemId);
+    }
+
+    @GET
+    @Path("/{itemId}/rights")
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML,
+        MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Returns information about the rights to an item for the current user")
+    public ItemRights getItemRights(@PathParam("itemId") String itemId) throws ComponentRegistryException, IOException {
+        final Principal principal = security.getUserPrincipal();
+        try {
+            final BaseDescription item = getItemDescriptionAccesControled(itemId);
+            return itemRightsForPrincipal(principal, item);
+        } catch (UserUnauthorizedException | AuthenticationRequiredException ex) {
+            return new ItemRights(itemId, principal == null ? "": principal.getName(), false, false);
+        } catch (ItemNotFoundException ex) {
+            servletResponse.sendError(Response.Status.NOT_FOUND.getStatusCode(), "No such item");
+            return null;
+        } catch (ComponentRegistryException ex) {
+            logger.warn("Failed to get description on access information request: {}", ex.getMessage());
+            logger.debug("Failed to get description", ex);
+            throw ex;
+        }
+    }
+
+    private ItemRights itemRightsForPrincipal(final Principal principal, final BaseDescription item) {
+        final String principalName = Optional.ofNullable(principal).map(Principal::getName).orElse("");
+
+        boolean canRead;
+        boolean canWrite;
+        if (principal != null && isOwnerOrInOwningGroup(principal, item)) {
+            //(group) owner can always read
+            canRead = true;
+            //(group) owner can edit while in development status
+            canWrite = item.getStatus() == ComponentStatus.DEVELOPMENT;
+        } else {
+            canRead = item.isPublic();
+            canWrite = false;
+        }
+        return new ItemRights(item.getId(), principalName, canRead, canWrite);
+    }
+
+    private boolean isOwnerOrInOwningGroup(Principal principal, BaseDescription item) {
+        return groupService.isUserOwnerEitherOnHisOwnOrThroughGroupMembership(principal.getName(), item);
     }
 
     @POST

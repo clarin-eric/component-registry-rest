@@ -20,7 +20,6 @@ import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.Group;
 import clarin.cmdi.componentregistry.model.GroupMembership;
 import clarin.cmdi.componentregistry.model.Ownership;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 import clarin.cmdi.componentregistry.persistence.jpa.GroupDao;
@@ -31,6 +30,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.springframework.dao.DataAccessException;
 import clarin.cmdi.componentregistry.GroupService;
+import com.google.common.collect.Streams;
+import java.util.stream.Stream;
 
 /**
  * Service that manages groups, memberships and ownerships. It exposes some
@@ -107,12 +108,39 @@ public class GroupServiceImpl implements GroupService {
         throw new RuntimeException("not implemented");
     }
 
+    @Override
+    public boolean isUserOwnerEitherOnHisOwnOrThroughGroupMembership(String principalName, BaseDescription description) {
+        final RegistryUser user = userDao.getByPrincipalName(principalName);
+
+        // TODO make some joins and multi-id queries to speed the entire method
+        // up
+        final long userId = user.getId();
+
+        // user is the owner
+        if (description.getUserId().equals(userId + "")) {
+            return true;
+        }
+
+        final String itemId = description.getId();
+        // a co-ownership on the profile also allows access
+        if (null != ownershipDao.findOwnershipByUserAndComponent(userId, itemId)) {
+            return true;
+        }
+        
+        final Stream<Long> groupIdStreams = Streams.concat(
+                groupDao.findGroupOwnedByUser(userId).stream().map(Group::getId),
+                groupMembershipDao.findGroupsTheUserIsAmemberOf(userId).stream().map(GroupMembership::getGroupId));
+
+        // user is owner if the item is in group owned or a member of
+         return (groupIdStreams
+                .anyMatch(groupId -> (null != ownershipDao.findOwnershipByGroupAndComponent(groupId, itemId))));
+    }
+
     private boolean canUserAccessAbstractDescriptionEitherOnHisOwnOrThroughGroupMembership(RegistryUser user,
             BaseDescription description) {
         // TODO make some joins and multi-id queries to speed the entire method
         // up
-        boolean isProfile = (description instanceof ProfileDescription);
-        long userId = user.getId().longValue();
+        final long userId = user.getId();
         // anyone can access public profile
         if (componentDao.isPublic(description.getId())) {
             return true;
