@@ -2,6 +2,13 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.5.1 (March 2024)
+-  Fixed: Team members cannot edit a published item with development status
+	<https://github.com/clarin-eric/component-registry-rest/issues/79>
+- Fixed: Transfer of ownership
+	<https://github.com/clarin-eric/component-registry-rest/issues/78>
+- Minor dependency updates
+
 ## Release Component Registry 2.5.0 (January 2024)
 - Added Skosmos support for controlled vocabularies and concept registry
 - OpenSKOS support dropped

@@ -20,6 +20,9 @@
 
 ## Version specific update instructions
 
+### 2.5.1
+Maintenance release, no special actions required if upgrading from 2.5.0
+
 ### 2.5.0
 
 - The following new context parameter(s) need to be (re)configured:
