@@ -1,4 +1,5 @@
 <%-- Configuration hosted next to the front end index page, from which it is loaded --%>
+<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.net.URI" %>
 <%@ page import="clarin.cmdi.componentregistry.rest.ComponentRegistryRestService" %>
 <%
