@@ -2,6 +2,10 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## 
+- Fixed: error response on getting item rights information while unauthenticated
+	<https://github.com/clarin-eric/component-registry-rest/issues/80>
+
 ## Release Component Registry 2.5.1 (March 2024)
 -  Fixed: Team members cannot edit a published item with development status
 	<https://github.com/clarin-eric/component-registry-rest/issues/79>
