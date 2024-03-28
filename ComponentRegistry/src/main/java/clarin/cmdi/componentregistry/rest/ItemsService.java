@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import clarin.cmdi.componentregistry.GroupService;
 import clarin.cmdi.componentregistry.model.ItemRights;
+import com.google.common.base.Strings;
 import java.util.Optional;
 
 /**
@@ -110,7 +111,7 @@ public class ItemsService extends AbstractComponentRegistryRestService {
             final BaseDescription item = getItemDescriptionAccesControled(itemId);
             return itemRightsForPrincipal(principal, item);
         } catch (UserUnauthorizedException | AuthenticationRequiredException ex) {
-            return new ItemRights(itemId, principal == null ? "": principal.getName(), false, false);
+            return new ItemRights(itemId, principal == null ? "" : principal.getName(), false, false);
         } catch (ItemNotFoundException ex) {
             servletResponse.sendError(Response.Status.NOT_FOUND.getStatusCode(), "No such item");
             return null;
@@ -126,7 +127,7 @@ public class ItemsService extends AbstractComponentRegistryRestService {
 
         boolean canRead;
         boolean canWrite;
-        if (principal != null && isOwnerOrInOwningGroup(principal, item)) {
+        if (isOwnerOrInOwningGroup(principal, item)) {
             //(group) owner can always read
             canRead = true;
             //(group) owner can edit while in development status
@@ -139,7 +140,12 @@ public class ItemsService extends AbstractComponentRegistryRestService {
     }
 
     private boolean isOwnerOrInOwningGroup(Principal principal, BaseDescription item) {
-        return groupService.isUserOwnerEitherOnHisOwnOrThroughGroupMembership(principal.getName(), item);
+        if (principal == null) {
+            //no principal -> no ownership
+            return false;
+        } else {
+            return groupService.isUserOwnerEitherOnHisOwnOrThroughGroupMembership(principal.getName(), item);
+        }
     }
 
     @POST
