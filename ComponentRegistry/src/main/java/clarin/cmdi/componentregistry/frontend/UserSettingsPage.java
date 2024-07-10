@@ -5,7 +5,7 @@
 package clarin.cmdi.componentregistry.frontend;
 
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 
@@ -45,7 +45,7 @@ public class UserSettingsPage extends WebPage {
         
         final HttpServletRequest request = (HttpServletRequest) getRequest().getContainerRequest();
         final Principal userPrincipal = request.getUserPrincipal();
-        registryUser = componentRegistryFactory.getOrCreateUser(new UserCredentials(userPrincipal));
+        registryUser = componentRegistryFactory.getOrCreateUser(new ShhaaUserCredentials(userPrincipal));
         
         add(new Label("userName", registryUser.getPrincipalName()));
         

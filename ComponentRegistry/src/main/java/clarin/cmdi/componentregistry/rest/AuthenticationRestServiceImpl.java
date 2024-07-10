@@ -3,7 +3,7 @@ package clarin.cmdi.componentregistry.rest;
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.Configuration;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.model.AuthenticationInfo;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
@@ -76,7 +76,7 @@ public class AuthenticationRestServiceImpl implements AuthenticationRestService 
             logger.trace("User principal set but no user name ({}): {}", userPrincipal.getName(), userPrincipal);
             authInfo = new AuthenticationInfo(false);
         } else {
-            final UserCredentials credentials = new UserCredentials(userPrincipal);
+            final ShhaaUserCredentials credentials = new ShhaaUserCredentials(userPrincipal);
             final RegistryUser user = userDao.getByPrincipalName(userPrincipal.getName());
 
             final Long id;

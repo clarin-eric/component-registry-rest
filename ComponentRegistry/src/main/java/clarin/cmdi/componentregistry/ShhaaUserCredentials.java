@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry;
 
+import clarin.cmdi.componentregistry.model.UserCredentials;
 import java.security.Principal;
 import java.util.List;
 
@@ -13,22 +14,25 @@ import de.mpg.aai.shhaa.model.AuthPrincipal;
  * Wrapper class to hold the userPrincipal and a displayName
  * 
  */
-public class UserCredentials {
+public class ShhaaUserCredentials implements UserCredentials {
 
     private final Principal userPrincipal;
 
-    public UserCredentials(Principal userPrincipal) {
+    public ShhaaUserCredentials(Principal userPrincipal) {
         this.userPrincipal = userPrincipal;
     }
 
+    @Override
     public Principal getPrincipal() {
         return userPrincipal;
     }
 
+    @Override
     public String getPrincipalName() {
         return userPrincipal.getName();
     }
 
+    @Override
     public String getPrincipalNameMD5Hex() {
         return getPrincipalNameMD5Hex(userPrincipal.getName());
     }
@@ -37,6 +41,7 @@ public class UserCredentials {
 	return DigestUtils.md5Hex(name);
     }
 
+    @Override
     public String getDisplayName() {
         String result = null;
         if (userPrincipal instanceof AuthPrincipal) {

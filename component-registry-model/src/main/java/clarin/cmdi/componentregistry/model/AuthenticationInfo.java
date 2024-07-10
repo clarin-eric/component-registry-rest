@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry.model;
 
-import clarin.cmdi.componentregistry.UserCredentials;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 

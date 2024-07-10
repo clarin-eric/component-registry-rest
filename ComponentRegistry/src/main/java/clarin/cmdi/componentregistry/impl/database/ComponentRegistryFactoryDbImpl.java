@@ -6,7 +6,7 @@ import clarin.cmdi.componentregistry.Configuration;
 import clarin.cmdi.componentregistry.Owner;
 import clarin.cmdi.componentregistry.OwnerUser;
 import clarin.cmdi.componentregistry.RegistrySpace;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
@@ -59,7 +59,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
 
     @Override
     public ComponentRegistry getComponentRegistry(RegistrySpace space,
-            Owner owner, UserCredentials credentials, Number groupId)
+            Owner owner, ShhaaUserCredentials credentials, Number groupId)
             throws UserUnauthorizedException {
 
         switch (space) {
@@ -76,7 +76,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
         }
     }
 
-    private ComponentRegistry getGroupRegistry(Number groupId, Owner owner, UserCredentials credentials) {
+    private ComponentRegistry getGroupRegistry(Number groupId, Owner owner, ShhaaUserCredentials credentials) {
         if (owner == null || owner instanceof OwnerUser) {
             RegistryUser user = this.getOrCreateUser(credentials);
             owner = new OwnerUser(user.getId());
@@ -89,7 +89,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
     }
 
     private ComponentRegistry getPrivateRegistry(Owner owner,
-            UserCredentials credentials) throws IllegalArgumentException,
+            ShhaaUserCredentials credentials) throws IllegalArgumentException,
             DataAccessException, UserUnauthorizedException {
         if (owner == null || owner instanceof OwnerUser) {
             RegistryUser user = getOrCreateUser(credentials);
@@ -168,7 +168,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
     }
 
     @Override
-    public ComponentRegistry getBaseRegistry(UserCredentials credentials) {
+    public ComponentRegistry getBaseRegistry(ShhaaUserCredentials credentials) {
         RegistryUser user = this.getOrCreateUser(credentials);
         ComponentRegistry componentRegistryDbImpl = componentRegistryBeanFactory.getNewComponentRegistry();// default public registry
         if (user != null) {
@@ -182,7 +182,7 @@ public class ComponentRegistryFactoryDbImpl implements ComponentRegistryFactory 
     }
 
     @Override
-    public RegistryUser getOrCreateUser(UserCredentials credentials) {
+    public RegistryUser getOrCreateUser(ShhaaUserCredentials credentials) {
         if (credentials != null
                 && !ANONYMOUS_USER.equals(credentials.getPrincipalName())) {
             String principalName = credentials.getPrincipalName();

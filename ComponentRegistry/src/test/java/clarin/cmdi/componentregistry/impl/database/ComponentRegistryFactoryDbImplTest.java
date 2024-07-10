@@ -8,7 +8,7 @@ import clarin.cmdi.componentregistry.BaseUnitTest;
 import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.OwnerUser;
 import clarin.cmdi.componentregistry.RegistrySpace;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.rest.DummyPrincipal;
 
@@ -63,7 +63,7 @@ public class ComponentRegistryFactoryDbImplTest extends BaseUnitTest {
 
         // Get for non-existing user
         final RegistryUser testUser = UserDaoTest.createTestUser();
-        UserCredentials credentials = new DummyPrincipal(
+        ShhaaUserCredentials credentials = new DummyPrincipal(
                 testUser.getPrincipalName()).getCredentials();
 
         final ComponentRegistry cr1 = componentRegistryFactory
@@ -79,7 +79,7 @@ public class ComponentRegistryFactoryDbImplTest extends BaseUnitTest {
         assertEquals(cr1.getRegistryOwner(), cr2.getRegistryOwner());
 
         // Get for another new user
-        final UserCredentials credentials2 = new DummyPrincipal(
+        final ShhaaUserCredentials credentials2 = new DummyPrincipal(
                 testUser.getPrincipalName() + "2").getCredentials();
         final ComponentRegistry cr3 = componentRegistryFactory
                 .getComponentRegistry(RegistrySpace.PRIVATE, null,
@@ -91,7 +91,7 @@ public class ComponentRegistryFactoryDbImplTest extends BaseUnitTest {
     @Test
     public void testGetOtherUserComponentRegistry()
             throws UserUnauthorizedException {
-        UserCredentials userCredentials = DummyPrincipal.DUMMY_PRINCIPAL
+        ShhaaUserCredentials userCredentials = DummyPrincipal.DUMMY_PRINCIPAL
                 .getCredentials();
 
         // Create registry for new user

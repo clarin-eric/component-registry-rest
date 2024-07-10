@@ -22,13 +22,13 @@ public interface ComponentRegistryFactory {
      * @param credentials credentials that authenticate user, can be left null if requested registry has a public status
      * @return
      */
-    ComponentRegistry getComponentRegistry(RegistrySpace space, Owner owner, UserCredentials credentials, Number groupId) throws UserUnauthorizedException;
+    ComponentRegistry getComponentRegistry(RegistrySpace space, Owner owner, ShhaaUserCredentials credentials, Number groupId) throws UserUnauthorizedException;
 
     ComponentRegistry getPublicRegistry();
     
     ComponentRegistry getOtherUserComponentRegistry(Principal adminPrincipal, Owner owner);
     
-    ComponentRegistry getBaseRegistry(UserCredentials credentials);
+    ComponentRegistry getBaseRegistry(ShhaaUserCredentials credentials);
 
-    RegistryUser getOrCreateUser(UserCredentials credentials);
+    RegistryUser getOrCreateUser(ShhaaUserCredentials credentials);
 }

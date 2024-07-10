@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.servlet;
 
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import java.io.IOException;
 import java.security.Principal;
 import javax.servlet.Filter;
@@ -53,7 +53,7 @@ public class UserRegistrationAuthenticationFilter implements Filter {
                         .setAttribute("user", user);
 
                 //Check if user exists and/or register user in data store
-                if (componentRegistryFactory.getOrCreateUser(new UserCredentials(user)) == null) {
+                if (componentRegistryFactory.getOrCreateUser(new ShhaaUserCredentials(user)) == null) {
                     logger.error("User could not retrieved or registered: {}", user);
                 }
             }

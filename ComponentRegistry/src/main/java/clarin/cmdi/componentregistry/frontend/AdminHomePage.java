@@ -24,7 +24,7 @@ import clarin.cmdi.componentregistry.IMarshaller;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.OwnerUser;
 import clarin.cmdi.componentregistry.RegistrySpace;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.impl.ComponentUtils;
 import clarin.cmdi.componentregistry.impl.database.AdminRegistry;
@@ -377,7 +377,7 @@ public class AdminHomePage extends SecureAdminWebPage {
             addRegistry(rootNode, registry, registry.getName());
         }
 
-        final UserCredentials userCredentials = new UserCredentials(getUserPrincipal());
+        final ShhaaUserCredentials userCredentials = new ShhaaUserCredentials(getUserPrincipal());
         final RegistryUser user = componentRegistryFactory.getOrCreateUser(userCredentials);
 
         final List<String> groups = groupService.listGroupNames();

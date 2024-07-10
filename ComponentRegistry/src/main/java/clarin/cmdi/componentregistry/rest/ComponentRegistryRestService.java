@@ -15,7 +15,7 @@ import clarin.cmdi.componentregistry.DeleteFailedException;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.MDMarshaller;
 import clarin.cmdi.componentregistry.RegistrySpace;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.impl.ComponentUtils;
@@ -235,7 +235,7 @@ public class ComponentRegistryRestService {
 
         private ComponentRegistry getRegistry(RegistrySpace space, Number groupId) {
             Principal userPrincipal = security.getUserPrincipal();
-            UserCredentials userCredentials = this.getUserCredentials(userPrincipal);
+            ShhaaUserCredentials userCredentials = this.getUserCredentials(userPrincipal);
             try {
                 return componentRegistryFactory.getComponentRegistry(space, null, userCredentials, groupId);
             } catch (UserUnauthorizedException uuEx) {
@@ -1334,7 +1334,7 @@ public class ComponentRegistryRestService {
                 @FormDataParam(DOMAIN_FORM_FIELD) String domainName) {
             try {
                 Principal principal = checkAndGetUserPrincipal();
-                UserCredentials userCredentials = getUserCredentials(principal);
+                ShhaaUserCredentials userCredentials = getUserCredentials(principal);
                 ProfileDescription desc = this.createNewProfileDescription();
                 desc.setCreatorName(userCredentials.getDisplayName());
                 desc.setUserId(userCredentials.getPrincipalName()); // Hash used to be created here, now Id is constructed by impl
@@ -1374,7 +1374,7 @@ public class ComponentRegistryRestService {
                 @FormDataParam(DOMAIN_FORM_FIELD) String domainName) {
             try {
                 Principal principal = checkAndGetUserPrincipal();
-                UserCredentials userCredentials = getUserCredentials(principal);
+                ShhaaUserCredentials userCredentials = getUserCredentials(principal);
                 ComponentDescription desc = this.createNewComponentDescription();
                 desc.setCreatorName(userCredentials.getDisplayName());
                 desc.setUserId(userCredentials.getPrincipalName()); // Hash used to
@@ -1964,7 +1964,7 @@ public class ComponentRegistryRestService {
                     // If user name is left empty, fill it using the user's display
                     // name
                     Principal principal = this.checkAndGetUserPrincipal();
-                    UserCredentials userCredentials = this.getUserCredentials(principal);
+                    ShhaaUserCredentials userCredentials = this.getUserCredentials(principal);
                     if (null == com.getUserName() || "".equals(com.getUserName())) {
                         if (userCredentials != null) {
                             com.setUserName(userCredentials.getDisplayName());

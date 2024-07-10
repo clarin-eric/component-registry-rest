@@ -18,13 +18,13 @@ public class UserCredentialsTest {
 
     @Test
     public void testUserCredentials() throws Exception {
-        UserCredentials creds = new UserCredentials(new DummyPrincipal("noot"));
+        ShhaaUserCredentials creds = new ShhaaUserCredentials(new DummyPrincipal("noot"));
         assertEquals("noot", creds.getDisplayName());
         assertEquals("noot", creds.getPrincipalName());
         assertEquals(DigestUtils.md5Hex("noot"), creds.getPrincipalNameMD5Hex());
 
         AuthPrincipal principal = new AuthPrincipal("noot");
-        creds = new UserCredentials(principal);
+        creds = new ShhaaUserCredentials(principal);
         assertEquals("noot", creds.getDisplayName());
         assertEquals("noot", creds.getPrincipalName());
         assertEquals(DigestUtils.md5Hex("noot"), creds.getPrincipalNameMD5Hex());
@@ -34,7 +34,7 @@ public class UserCredentialsTest {
         values.add(new BaseAuthAttribute<String>("displayName", "Mr. Noot"));
         AuthAttributes attributes = new AuthAttributes(values);
         principal.setAttribues(attributes);
-        creds = new UserCredentials(principal);
+        creds = new ShhaaUserCredentials(principal);
         assertEquals("Mr. Noot", creds.getDisplayName());
         assertEquals("noot", creds.getPrincipalName());
         assertEquals(DigestUtils.md5Hex("noot"), creds.getPrincipalNameMD5Hex());

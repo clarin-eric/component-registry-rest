@@ -17,7 +17,7 @@ import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.DeleteFailedException;
 import clarin.cmdi.componentregistry.IMarshaller;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
-import clarin.cmdi.componentregistry.UserCredentials;
+import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.frontend.CMDItemInfo;
@@ -77,7 +77,7 @@ public class AdminRegistry {
             spec = marshaller.unmarshal(ComponentSpec.class,
                     IOUtils.toInputStream(info.getContent(), "UTF-8"), null);
             checkId(originalDescription.getId(), description.getId());
-            ComponentRegistry cr = this.getRegistry(new UserCredentials(userPrincipal));
+            ComponentRegistry cr = this.getRegistry(new ShhaaUserCredentials(userPrincipal));
             int result;
             if (publish) {
                 description.setPublic(true);
@@ -147,7 +147,7 @@ public class AdminRegistry {
             return;
         }
 
-        ComponentRegistry registry = this.getRegistry(new UserCredentials(userPrincipal));
+        ComponentRegistry registry = this.getRegistry(new ShhaaUserCredentials(userPrincipal));
         LOG.info("Deleting item: " + desc);
         if (desc.isProfile()) {
             registry.deleteMDProfile(desc.getId());
@@ -156,7 +156,7 @@ public class AdminRegistry {
         }
     }
 
-    private ComponentRegistry getRegistry(UserCredentials credentials) throws UserUnauthorizedException {
+    private ComponentRegistry getRegistry(ShhaaUserCredentials credentials) throws UserUnauthorizedException {
         return componentRegistryFactory.getBaseRegistry(credentials);
     }
 
