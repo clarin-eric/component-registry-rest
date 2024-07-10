@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import clarin.cmdi.componentregistry.BaseDescription;
-import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
 
 public class DescriptionValidatorTest {
 

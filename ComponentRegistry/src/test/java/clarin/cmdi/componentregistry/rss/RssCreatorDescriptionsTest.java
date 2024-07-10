@@ -2,9 +2,9 @@ package clarin.cmdi.componentregistry.rss;
 
 import clarin.cmdi.componentregistry.DatesHelper;
 import clarin.cmdi.componentregistry.ComponentUtils;
-import clarin.cmdi.componentregistry.BaseDescription;
-import clarin.cmdi.componentregistry.ComponentDescription;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

@@ -4,7 +4,7 @@
  */
 package clarin.cmdi.componentregistry.rest;
 
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.RegistrySpace;
@@ -12,10 +12,10 @@ import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.model.CommentResponse;
-import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.Group;
 import clarin.cmdi.componentregistry.model.Ownership;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.CommentsDao;

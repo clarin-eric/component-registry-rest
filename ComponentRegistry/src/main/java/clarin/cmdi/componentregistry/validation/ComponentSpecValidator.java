@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.validation;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.MDMarshaller;
@@ -10,7 +10,7 @@ import clarin.cmdi.componentregistry.RegistrySpace;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.components.ComponentType;
-import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.schema.cmd.ValidatorException;
 import eu.clarin.cmdi.toolkit.CMDToolkit;
 import java.io.ByteArrayInputStream;

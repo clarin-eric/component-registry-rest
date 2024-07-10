@@ -1,6 +1,6 @@
 package clarin.cmdi.componentregistry.impl.database;
 
-import clarin.cmdi.componentregistry.CMDComponentSpecExpander;
+import clarin.cmdi.componentregistry.BaseCMDComponentSpecExpander;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 
@@ -8,7 +8,7 @@ import clarin.cmdi.componentregistry.components.ComponentSpec;
  *
  * @author Twan Goosen <twan.goosen@mpi.nl>
  */
-public class CMDComponentSpecExpanderDbImpl extends CMDComponentSpecExpander {
+public class CMDComponentSpecExpanderDbImpl extends BaseCMDComponentSpecExpander {
 
     private ComponentRegistryDbImpl dbImplRegistry;
     

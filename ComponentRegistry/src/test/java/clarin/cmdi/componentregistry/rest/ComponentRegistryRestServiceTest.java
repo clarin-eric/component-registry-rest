@@ -1,18 +1,18 @@
 package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.validation.ComponentSpecValidator;
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
-import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.model.CommentResponse;
-import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import static clarin.cmdi.componentregistry.model.ComponentStatus.DEVELOPMENT;
 import static clarin.cmdi.componentregistry.model.ComponentStatus.PRODUCTION;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestServiceTestCase.COMPONENT_LIST_GENERICTYPE;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestService.REGISTRY_SPACE_PARAM;

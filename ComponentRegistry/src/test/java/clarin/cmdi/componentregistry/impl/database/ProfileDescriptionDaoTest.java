@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.impl.database;
 
-import clarin.cmdi.componentregistry.BaseDescription;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 import clarin.cmdi.componentregistry.rest.RegistryTestHelper;
 

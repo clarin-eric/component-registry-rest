@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry.model;
 
-import clarin.cmdi.componentregistry.BaseDescription;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

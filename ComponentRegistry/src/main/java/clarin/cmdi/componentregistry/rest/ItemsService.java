@@ -1,18 +1,18 @@
 package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ItemIsLockedException;
 import clarin.cmdi.componentregistry.ItemLockService;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
-import clarin.cmdi.componentregistry.BaseDescription;
-import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.model.Group;
 import clarin.cmdi.componentregistry.model.ItemLock;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestService.GROUPID_PARAM;
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.resource.Singleton;

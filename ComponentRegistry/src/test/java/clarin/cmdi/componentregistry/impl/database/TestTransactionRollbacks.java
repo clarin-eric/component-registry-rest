@@ -8,8 +8,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.BaseDescription;
-import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 import org.junit.Ignore;
 

@@ -1,9 +1,8 @@
 package clarin.cmdi.componentregistry.impl.database;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.CMDComponentSpecExpander;
 import clarin.cmdi.componentregistry.CmdVersion;
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentSpecConverter;
 import clarin.cmdi.componentregistry.Configuration;
@@ -18,12 +17,13 @@ import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.components.ComponentType;
 import clarin.cmdi.componentregistry.impl.ComponentRegistryImplBase;
 import clarin.cmdi.componentregistry.ComponentUtils;
-import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.CMDComponentSpecExpander;
 import clarin.cmdi.componentregistry.model.Comment;
-import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.model.Group;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 import clarin.cmdi.componentregistry.persistence.jpa.CommentsDao;

@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.rss;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.DatesHelper;
@@ -9,7 +9,7 @@ import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.MDMarshaller;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.ComponentUtils;
-import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.rest.RegistryTestHelper;
 

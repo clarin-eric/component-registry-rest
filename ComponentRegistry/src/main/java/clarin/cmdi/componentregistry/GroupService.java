@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry;
 
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.impl.database.ValidationException;
 import java.util.List;
 

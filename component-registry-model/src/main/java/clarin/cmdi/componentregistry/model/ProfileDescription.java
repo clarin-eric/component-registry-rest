@@ -1,5 +1,6 @@
-package clarin.cmdi.componentregistry;
+package clarin.cmdi.componentregistry.model;
 
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,7 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.IdSequence;
 import clarin.cmdi.componentregistry.IdSequence;
 
 @XmlRootElement(name = "profileDescription")

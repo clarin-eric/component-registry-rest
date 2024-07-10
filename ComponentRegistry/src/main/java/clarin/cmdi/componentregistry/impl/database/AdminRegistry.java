@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 
-import clarin.cmdi.componentregistry.ComponentRegistry;
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.DeleteFailedException;
@@ -22,9 +22,9 @@ import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.frontend.CMDItemInfo;
 import clarin.cmdi.componentregistry.frontend.SubmitFailedException;
-import clarin.cmdi.componentregistry.BaseDescription;
-import clarin.cmdi.componentregistry.ComponentDescription;
-import clarin.cmdi.componentregistry.ProfileDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 
 /**

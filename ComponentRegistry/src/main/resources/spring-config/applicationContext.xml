@@ -138,7 +138,8 @@
         <property name="jpaDialect">
             <bean class="clarin.cmdi.componentregistry.impl.database.PostgresJpaDialect"/>
         </property>
-        <property name="persistenceUnitName" value="clarin.cmdi.componentregistry" />
+        <!--<property name="persistenceUnitName" value="component-registry-backend" />-->
+        <property name="persistenceUnitName" value="component-registry-model" />
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">${eu.clarin.cmdi.componentregistry.jpaDialect}</prop>

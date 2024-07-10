@@ -1,6 +1,15 @@
-package clarin.cmdi.componentregistry;
+package clarin.cmdi.componentregistry.model;
 
+import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import clarin.cmdi.componentregistry.CMDComponentSpecExpander;
+import clarin.cmdi.componentregistry.CmdVersion;
+import clarin.cmdi.componentregistry.ComponentRegistryException;
+import clarin.cmdi.componentregistry.DeleteFailedException;
+import clarin.cmdi.componentregistry.ItemNotFoundException;
+import clarin.cmdi.componentregistry.Owner;
+import clarin.cmdi.componentregistry.RegistrySpace;
+import clarin.cmdi.componentregistry.UserUnauthorizedException;
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.model.ComponentStatus;

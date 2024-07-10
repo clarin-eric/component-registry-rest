@@ -1,8 +1,6 @@
 package clarin.cmdi.componentregistry.model;
 
 
-import clarin.cmdi.componentregistry.ProfileDescription;
-import clarin.cmdi.componentregistry.ComponentDescription;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;

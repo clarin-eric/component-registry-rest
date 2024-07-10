@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry;
 
+import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.components.ComponentType;
 import com.google.common.collect.Lists;
@@ -15,12 +16,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Twan Goosen <twan.goosen@mpi.nl>
  */
-public abstract class CMDComponentSpecExpander {
+public abstract class BaseCMDComponentSpecExpander implements CMDComponentSpecExpander {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CMDComponentSpecExpander.class);
+    private final static Logger LOG = LoggerFactory.getLogger(BaseCMDComponentSpecExpander.class);
     protected final ComponentRegistry registry;
 
-    public CMDComponentSpecExpander(ComponentRegistry registry) {
+    public BaseCMDComponentSpecExpander(ComponentRegistry registry) {
         this.registry = registry;
     }
 
@@ -30,6 +31,7 @@ public abstract class CMDComponentSpecExpander {
      * @param id
      * @throws ComponentRegistryException
      */
+    @Override
     public void expandNestedComponent(List<ComponentType> cmdComponents, String id) throws ComponentRegistryException {
         expandNestedComponent(cmdComponents, new HashSet<String>(Collections.singleton(id)));
     }

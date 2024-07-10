@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.validation;
 
 import clarin.cmdi.componentregistry.MDMarshaller;
-import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.Comment;
 import java.io.InputStream;
 import java.util.Arrays;

@@ -1,5 +1,8 @@
 package clarin.cmdi.componentregistry;
 
+import clarin.cmdi.componentregistry.model.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.model.BaseDescription;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
