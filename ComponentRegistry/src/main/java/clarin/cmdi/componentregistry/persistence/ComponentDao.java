@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import java.util.Collection;

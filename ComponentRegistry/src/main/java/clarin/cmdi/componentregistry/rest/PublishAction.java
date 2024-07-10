@@ -8,7 +8,7 @@ import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 
 public class PublishAction implements RegisterAction {

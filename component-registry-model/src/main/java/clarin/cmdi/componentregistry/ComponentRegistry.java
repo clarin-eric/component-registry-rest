@@ -1,11 +1,9 @@
 package clarin.cmdi.componentregistry;
 
+import clarin.cmdi.componentregistry.CMDComponentSpecExpander;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
-import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.Comment;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;

@@ -22,9 +22,9 @@ import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.frontend.CMDItemInfo;
 import clarin.cmdi.componentregistry.frontend.SubmitFailedException;
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.ProfileDescription;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 
 /**

@@ -1,6 +1,7 @@
-package clarin.cmdi.componentregistry.model;
+package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.impl.ComponentUtils;
+import clarin.cmdi.componentregistry.ComponentUtils;
+import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.util.XmlDateAdapter;
 
 import java.io.Serializable;

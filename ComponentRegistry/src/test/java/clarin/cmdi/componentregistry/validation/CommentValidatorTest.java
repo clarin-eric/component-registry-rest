@@ -1,9 +1,9 @@
 package clarin.cmdi.componentregistry.validation;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.ProfileDescription;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

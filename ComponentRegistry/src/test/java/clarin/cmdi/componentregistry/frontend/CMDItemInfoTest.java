@@ -5,8 +5,8 @@ import clarin.cmdi.componentregistry.RegistrySpace;
 
 import org.junit.Test;
 
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.ProfileDescription;
 
 public class CMDItemInfoTest extends BaseUnitTest{
 

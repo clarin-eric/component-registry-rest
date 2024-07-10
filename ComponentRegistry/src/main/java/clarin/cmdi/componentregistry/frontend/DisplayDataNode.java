@@ -3,7 +3,7 @@ package clarin.cmdi.componentregistry.frontend;
 import clarin.cmdi.componentregistry.RegistrySpace;
 import java.io.Serializable;
 
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
 import java.util.Objects;
 
 public class DisplayDataNode implements Serializable {

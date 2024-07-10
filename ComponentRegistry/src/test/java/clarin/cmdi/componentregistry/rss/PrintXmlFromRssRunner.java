@@ -8,8 +8,8 @@ import clarin.cmdi.componentregistry.DatesHelper;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.MDMarshaller;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
-import clarin.cmdi.componentregistry.impl.ComponentUtils;
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.ComponentUtils;
+import clarin.cmdi.componentregistry.BaseDescription;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.rest.RegistryTestHelper;
 

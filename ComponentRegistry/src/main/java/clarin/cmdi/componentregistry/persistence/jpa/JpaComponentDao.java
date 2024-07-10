@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.persistence.ComponentDao;
 import java.util.Collection;

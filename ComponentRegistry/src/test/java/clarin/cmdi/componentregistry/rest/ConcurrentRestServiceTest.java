@@ -2,9 +2,9 @@ package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.RegistrySpace;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
+import clarin.cmdi.componentregistry.ComponentDescription;
+import clarin.cmdi.componentregistry.ProfileDescription;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 
 import com.sun.jersey.api.client.ClientResponse;

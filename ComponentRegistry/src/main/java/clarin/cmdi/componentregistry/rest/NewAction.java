@@ -3,7 +3,7 @@ package clarin.cmdi.componentregistry.rest;
 import static clarin.cmdi.componentregistry.CmdVersion.CANONICAL_CMD_VERSION;
 import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 

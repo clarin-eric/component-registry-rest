@@ -6,9 +6,9 @@ import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 
 import clarin.cmdi.componentregistry.model.Comment;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
+import clarin.cmdi.componentregistry.ComponentDescription;
 import clarin.cmdi.componentregistry.model.Group;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.ProfileDescription;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.persistence.jpa.UserDao;
 import com.google.common.collect.ImmutableMap;

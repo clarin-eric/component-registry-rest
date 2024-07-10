@@ -1,4 +1,4 @@
-package clarin.cmdi.componentregistry.model;
+package clarin.cmdi.componentregistry;
 
 import java.io.Serializable;
 import java.util.Date;

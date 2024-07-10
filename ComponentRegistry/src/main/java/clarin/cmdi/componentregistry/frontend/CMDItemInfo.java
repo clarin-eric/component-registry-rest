@@ -4,7 +4,7 @@ import clarin.cmdi.componentregistry.IMarshaller;
 import java.io.Serializable;
 
 import clarin.cmdi.componentregistry.RegistrySpace;
-import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 
 public class CMDItemInfo implements Serializable {

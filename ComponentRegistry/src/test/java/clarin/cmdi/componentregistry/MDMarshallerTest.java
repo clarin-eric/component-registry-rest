@@ -1,7 +1,5 @@
 package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
 import java.io.ByteArrayInputStream;
 import junit.framework.Assert;
 import org.junit.Test;

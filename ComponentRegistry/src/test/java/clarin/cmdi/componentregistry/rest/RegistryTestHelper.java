@@ -21,11 +21,11 @@ import clarin.cmdi.componentregistry.MDMarshaller;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.model.Comment;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
+import clarin.cmdi.componentregistry.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import static clarin.cmdi.componentregistry.model.ComponentStatus.DEVELOPMENT;
 import static clarin.cmdi.componentregistry.model.ComponentStatus.PRODUCTION;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.ProfileDescription;
 import clarin.cmdi.componentregistry.persistence.jpa.CommentsDao;
 
 import java.io.BufferedReader;

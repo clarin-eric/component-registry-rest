@@ -1,4 +1,4 @@
-package clarin.cmdi.componentregistry.model;
+package clarin.cmdi.componentregistry;
 
 import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.IdSequence;

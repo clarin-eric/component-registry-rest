@@ -1,6 +1,5 @@
-package clarin.cmdi.componentregistry.impl;
+package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.ComponentRegistryException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,10 +9,6 @@ import java.util.List;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
-
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ComponentDescription;
-import clarin.cmdi.componentregistry.model.ProfileDescription;
 
 /**
  * Utilities for working with {@link BaseDescription}s

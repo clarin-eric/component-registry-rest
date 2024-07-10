@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry.model;
 
+import clarin.cmdi.componentregistry.ComponentDescription;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;

@@ -4,7 +4,6 @@
  */
 package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.impl.ComponentUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
