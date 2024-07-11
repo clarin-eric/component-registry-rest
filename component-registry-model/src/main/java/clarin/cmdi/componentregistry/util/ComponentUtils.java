@@ -127,7 +127,7 @@ public class ComponentUtils {
         if (baseDescription == null) {
             return null;
         }
-        List<ProfileDescription> list = new ArrayList<ProfileDescription>();
+        List<ProfileDescription> list = new ArrayList<>();
         for (BaseDescription c : baseDescription) {
             try {
                 list.add(toProfile(c));
@@ -142,7 +142,7 @@ public class ComponentUtils {
         if (baseDescription == null) {
             return null;
         }
-        List<ComponentDescription> list = new ArrayList<ComponentDescription>();
+        List<ComponentDescription> list = new ArrayList<>();
         for (BaseDescription c : baseDescription) {
             try {
                 list.add(toComponent(c));

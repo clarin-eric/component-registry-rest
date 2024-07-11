@@ -7,8 +7,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
-import clarin.cmdi.componentregistry.IdSequence;
+import clarin.cmdi.componentregistry.util.IdSequence;
 
 @XmlRootElement(name = "profileDescription")
 public class ProfileDescription extends BaseDescription implements Serializable {

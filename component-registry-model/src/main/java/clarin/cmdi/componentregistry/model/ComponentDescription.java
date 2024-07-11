@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.model;
 
 import static clarin.cmdi.componentregistry.ComponentRegistryConstants.REGISTRY_ID;
-import clarin.cmdi.componentregistry.IdSequence;
+import clarin.cmdi.componentregistry.util.IdSequence;
 
 import java.io.Serializable;
 import java.util.Comparator;

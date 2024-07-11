@@ -1,4 +1,4 @@
-package clarin.cmdi.componentregistry;
+package clarin.cmdi.componentregistry.util;
 
 public final class IdSequence {
     static long current = System.currentTimeMillis();
