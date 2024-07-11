@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry.model;
 
+import static clarin.cmdi.componentregistry.ComponentRegistryConstants.REGISTRY_ID;
 import clarin.cmdi.componentregistry.IdSequence;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class ComponentDescription extends BaseDescription implements Serializabl
     
     // Attention! COMPONENT_PREFIX here and the client's Config.COMPONENT_PREFIX must be the same 
     // If you change COMPONENT_PREFIX here, then change the client's  config.COMPONENT_PREFIX
-    public static final String COMPONENT_PREFIX = ComponentRegistry.REGISTRY_ID + "c_";
+    public static final String COMPONENT_PREFIX = REGISTRY_ID + "c_";
     
     private static final long serialVersionUID = 1L;
     

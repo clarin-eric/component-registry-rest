@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.DeleteFailedException;

@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.DeleteFailedException;
 import clarin.cmdi.componentregistry.MDMarshaller;

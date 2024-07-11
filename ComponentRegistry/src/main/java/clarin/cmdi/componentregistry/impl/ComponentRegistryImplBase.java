@@ -3,6 +3,7 @@ package clarin.cmdi.componentregistry.impl;
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import clarin.cmdi.componentregistry.CmdVersion;
 import static clarin.cmdi.componentregistry.CmdVersion.CANONICAL_CMD_VERSION;
+import static clarin.cmdi.componentregistry.ComponentRegistryConstants.REGISTRY_ID;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentSpecConverter;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
@@ -75,7 +76,7 @@ public abstract class ComponentRegistryImplBase implements ComponentRegistry {
 
     /* HELPER METHODS */
     protected static String stripRegistryId(String id) {
-        return StringUtils.removeStart(id, ComponentRegistry.REGISTRY_ID);
+        return StringUtils.removeStart(id, REGISTRY_ID);
     }
 
     protected void syncSpecDescriptionHeaders(ComponentSpec spec, BaseDescription description) throws ComponentRegistryException {

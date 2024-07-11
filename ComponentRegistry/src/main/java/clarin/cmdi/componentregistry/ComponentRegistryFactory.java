@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import java.security.Principal;
 import java.util.List;

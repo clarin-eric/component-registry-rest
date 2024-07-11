@@ -1,15 +1,16 @@
-package clarin.cmdi.componentregistry.model;
+package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.CMDComponentSpecExpander;
 import clarin.cmdi.componentregistry.CmdVersion;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.DeleteFailedException;
-import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.Owner;
 import clarin.cmdi.componentregistry.RegistrySpace;
-import clarin.cmdi.componentregistry.UserUnauthorizedException;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
+import clarin.cmdi.componentregistry.model.BaseDescription;
+import clarin.cmdi.componentregistry.model.Comment;
+import clarin.cmdi.componentregistry.model.ComponentDescription;
+import clarin.cmdi.componentregistry.model.ComponentStatus;
+import clarin.cmdi.componentregistry.model.ProfileDescription;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;
@@ -23,9 +24,6 @@ import java.util.Set;
  */
 public interface ComponentRegistry {
 
-    // Attention! REGISTRY_ID here and the client's Config.REGISTRY_ID must be the same 
-    // If you change REGISTRY_ID here, then change the client's  Config.REGISTRY_ID
-    public static final String REGISTRY_ID = "clarin.eu:cr1:";
     public static final String PUBLIC_NAME = "Public Registry";
 
     public Owner getRegistryOwner();

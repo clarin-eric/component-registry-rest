@@ -2,7 +2,7 @@ package clarin.cmdi.componentregistry.impl.database;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import clarin.cmdi.componentregistry.CmdVersion;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentSpecConverter;
 import clarin.cmdi.componentregistry.Configuration;

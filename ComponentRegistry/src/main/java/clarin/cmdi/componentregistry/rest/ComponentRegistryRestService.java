@@ -7,7 +7,7 @@ import clarin.cmdi.componentregistry.CmdVersion;
 import clarin.cmdi.componentregistry.AllowedAttributetypesXML;
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
 import static clarin.cmdi.componentregistry.CmdVersion.CANONICAL_CMD_VERSION;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.ComponentSpecConverter;

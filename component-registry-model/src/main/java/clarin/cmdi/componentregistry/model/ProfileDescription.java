@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry.model;
 
+import static clarin.cmdi.componentregistry.ComponentRegistryConstants.REGISTRY_ID;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,7 +15,7 @@ public class ProfileDescription extends BaseDescription implements Serializable 
 
     // Attention! PROFILE_PREFIX here and the client's Config.PROFILE_PREFIX must be the same 
     // If you change PROFILE_PREFIX here, then the client's  Config.PROFILE_PREFIX
-    public static final String PROFILE_PREFIX = ComponentRegistry.REGISTRY_ID + "p_";
+    public static final String PROFILE_PREFIX = REGISTRY_ID + "p_";
     
     private static final long serialVersionUID = 1L;
 

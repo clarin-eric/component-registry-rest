@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.validation;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.OwnerUser;
 import clarin.cmdi.componentregistry.RegistrySpace;

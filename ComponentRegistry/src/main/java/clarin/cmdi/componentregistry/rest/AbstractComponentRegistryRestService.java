@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import com.sun.jersey.api.core.InjectParam;

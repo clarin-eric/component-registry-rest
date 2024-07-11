@@ -16,21 +16,13 @@
  */
 package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.components.ComponentType;
-import java.util.List;
-
 /**
  *
  * @author twagoo
  */
-public interface CMDComponentSpecExpander {
+public class ComponentRegistryConstants {
 
-    /**
-     *
-     * @param cmdComponents a *mutable* list of components
-     * @param id
-     * @throws ComponentRegistryException
-     */
-    void expandNestedComponent(List<ComponentType> cmdComponents, String id) throws ComponentRegistryException;
-    
+    // Attention! REGISTRY_ID here and the client's Config.REGISTRY_ID must be the same 
+    // If you change REGISTRY_ID here, then change the client's  Config.REGISTRY_ID
+    public static final String REGISTRY_ID = "clarin.eu:cr1:";
 }

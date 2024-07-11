@@ -1,7 +1,8 @@
 package clarin.cmdi.componentregistry.rest;
 
+import static clarin.cmdi.componentregistry.ComponentRegistryConstants.REGISTRY_ID;
 import clarin.cmdi.componentregistry.validation.ComponentSpecValidator;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryFactory;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.impl.database.ComponentRegistryTestDatabase;
@@ -1177,7 +1178,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         assertEquals(expectedUserId("JUnit@test.com"), profileDesc.getUserId());
         assertEquals("Database test user", profileDesc.getCreatorName());
         assertTrue(profileDesc.getId().startsWith(
-                ComponentRegistry.REGISTRY_ID + "p_"));
+                REGISTRY_ID + "p_"));
         assertNotNull(profileDesc.getRegistrationDate());
         assertEquals(
                 "http://localhost:9998" + REGISTRY_BASE + "/profiles/"
@@ -1408,7 +1409,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         assertEquals(expectedUserId("JUnit@test.com"), profileDesc.getUserId());
         assertEquals("Database test user", profileDesc.getCreatorName());
         assertTrue(profileDesc.getId().startsWith(
-                ComponentRegistry.REGISTRY_ID + "p_"));
+                REGISTRY_ID + "p_"));
         assertNotNull(profileDesc.getRegistrationDate());
         assertEquals(
                 "http://localhost:9998" + REGISTRY_BASE + "/profiles/"
@@ -1583,7 +1584,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         assertEquals("Database test user", desc.getCreatorName());
         assertEquals("TestGroup", desc.getGroupName());
         assertTrue(desc.getId()
-                .startsWith(ComponentRegistry.REGISTRY_ID + "c_"));
+                .startsWith(REGISTRY_ID + "c_"));
         assertNotNull(desc.getRegistrationDate());
         {
             final String url = getResource().path(REGISTRY_BASE + "/components/" + desc.getId()).getUriBuilder().build().toString();
@@ -1878,7 +1879,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         assertEquals("TestGroup", desc.getGroupName());
         assertEquals("TestDomain", desc.getDomainName());
         assertTrue(desc.getId()
-                .startsWith(ComponentRegistry.REGISTRY_ID + "c_"));
+                .startsWith(REGISTRY_ID + "c_"));
         assertNotNull(desc.getRegistrationDate());
         String url = getResource().path(REGISTRY_BASE + "/components/" + desc.getId()).getUriBuilder().build().toString();
         assertEquals(url,

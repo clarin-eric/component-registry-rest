@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.AuthenticationRequiredException;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.ItemIsLockedException;
 import clarin.cmdi.componentregistry.ItemLockService;

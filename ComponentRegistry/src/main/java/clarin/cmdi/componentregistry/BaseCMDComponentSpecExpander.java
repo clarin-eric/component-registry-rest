@@ -1,6 +1,5 @@
 package clarin.cmdi.componentregistry;
 
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
 import clarin.cmdi.componentregistry.components.ComponentSpec;
 import clarin.cmdi.componentregistry.components.ComponentType;
 import com.google.common.collect.Lists;

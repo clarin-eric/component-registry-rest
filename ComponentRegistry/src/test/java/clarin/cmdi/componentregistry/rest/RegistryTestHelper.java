@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.util.DatesHelper;
 import clarin.cmdi.componentregistry.ItemNotFoundException;
 import clarin.cmdi.componentregistry.MDMarshaller;

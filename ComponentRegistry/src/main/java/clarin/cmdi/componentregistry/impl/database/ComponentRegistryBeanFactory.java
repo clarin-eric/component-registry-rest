@@ -1,6 +1,6 @@
 package clarin.cmdi.componentregistry.impl.database;
 
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 
 /**
  * Interface for a simple service factory (with ComponentRegistry implementation

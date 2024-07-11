@@ -5,7 +5,7 @@ import org.junit.Before;
 
 import clarin.cmdi.componentregistry.model.RegistryUser;
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
+import clarin.cmdi.componentregistry.ComponentRegistry;
 import clarin.cmdi.componentregistry.OwnerUser;
 import clarin.cmdi.componentregistry.RegistrySpace;
 import clarin.cmdi.componentregistry.ShhaaUserCredentials;
