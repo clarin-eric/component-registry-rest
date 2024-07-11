@@ -652,6 +652,34 @@
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
+            
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- This makes the entire toolkit available, to be used as resources for tests -->
+                        <id>unpack-toolkit</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>eu.clarin.cmdi</groupId>
+                                    <artifactId>cmd-toolkit</artifactId>
+                                    <version>${cmd-toolkit.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/cmd-toolkit</outputDirectory>
+                                    <includes>toolkit/**/*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>
