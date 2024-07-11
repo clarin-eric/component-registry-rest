@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.rss;
 
-import clarin.cmdi.componentregistry.DatesHelper;
-import clarin.cmdi.componentregistry.ComponentUtils;
+import clarin.cmdi.componentregistry.util.DatesHelper;
+import clarin.cmdi.componentregistry.util.ComponentUtils;
 import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ProfileDescription;

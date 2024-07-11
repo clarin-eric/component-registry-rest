@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package clarin.cmdi.componentregistry;
+package clarin.cmdi.componentregistry.util;
 
 
 import java.text.ParseException;

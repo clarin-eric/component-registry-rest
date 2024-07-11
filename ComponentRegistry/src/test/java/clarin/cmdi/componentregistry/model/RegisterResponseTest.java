@@ -8,7 +8,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.DatesHelper;
+import clarin.cmdi.componentregistry.util.DatesHelper;
 
 public class RegisterResponseTest extends BaseUnitTest {
 

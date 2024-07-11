@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import clarin.cmdi.componentregistry.DatesHelper;
 
 /**
  * Formats dates for XML (de)serialization into XML date time (with timezones) format

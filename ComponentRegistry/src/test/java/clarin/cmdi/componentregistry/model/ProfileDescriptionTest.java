@@ -15,7 +15,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.DatesHelper;
+import clarin.cmdi.componentregistry.util.DatesHelper;
 import clarin.cmdi.componentregistry.MDMarshaller;
 
 import javax.xml.transform.TransformerException;

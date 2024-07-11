@@ -1,8 +1,5 @@
 package clarin.cmdi.componentregistry.model;
 
-import clarin.cmdi.componentregistry.model.BaseDescription;
-import clarin.cmdi.componentregistry.model.ComponentRegistry;
-import clarin.cmdi.componentregistry.IdSequence;
 import clarin.cmdi.componentregistry.IdSequence;
 
 import java.io.Serializable;

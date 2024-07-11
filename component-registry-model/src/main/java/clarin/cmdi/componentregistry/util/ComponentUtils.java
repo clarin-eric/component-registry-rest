@@ -1,5 +1,6 @@
-package clarin.cmdi.componentregistry;
+package clarin.cmdi.componentregistry.util;
 
+import clarin.cmdi.componentregistry.ComponentRegistryException;
 import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ProfileDescription;
 import clarin.cmdi.componentregistry.model.BaseDescription;

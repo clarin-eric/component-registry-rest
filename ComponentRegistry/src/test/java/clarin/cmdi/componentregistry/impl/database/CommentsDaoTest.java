@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.impl.database;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.DatesHelper;
+import clarin.cmdi.componentregistry.util.DatesHelper;
 import clarin.cmdi.componentregistry.model.Comment;
 import clarin.cmdi.componentregistry.persistence.jpa.CommentsDao;
 

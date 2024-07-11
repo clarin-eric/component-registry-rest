@@ -26,7 +26,7 @@ import clarin.cmdi.componentregistry.OwnerUser;
 import clarin.cmdi.componentregistry.RegistrySpace;
 import clarin.cmdi.componentregistry.ShhaaUserCredentials;
 import clarin.cmdi.componentregistry.UserUnauthorizedException;
-import clarin.cmdi.componentregistry.ComponentUtils;
+import clarin.cmdi.componentregistry.util.ComponentUtils;
 import clarin.cmdi.componentregistry.impl.database.AdminRegistry;
 import clarin.cmdi.componentregistry.model.BaseDescription;
 import clarin.cmdi.componentregistry.model.ComponentDescription;

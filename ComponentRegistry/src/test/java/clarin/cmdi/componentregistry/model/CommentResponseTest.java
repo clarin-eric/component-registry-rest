@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.DatesHelper;
+import clarin.cmdi.componentregistry.util.DatesHelper;
 import clarin.cmdi.componentregistry.MDMarshaller;
 
 import java.io.ByteArrayInputStream;

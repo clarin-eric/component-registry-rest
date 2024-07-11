@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.model;
 
-import clarin.cmdi.componentregistry.ComponentUtils;
-import clarin.cmdi.componentregistry.ComponentUtils;
+import clarin.cmdi.componentregistry.util.ComponentUtils;
+import clarin.cmdi.componentregistry.util.ComponentUtils;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.util.XmlDateAdapter;
 

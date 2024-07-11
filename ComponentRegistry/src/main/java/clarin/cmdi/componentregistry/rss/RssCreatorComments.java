@@ -1,6 +1,6 @@
 package clarin.cmdi.componentregistry.rss;
 
-import clarin.cmdi.componentregistry.DatesHelper;
+import clarin.cmdi.componentregistry.util.DatesHelper;
 import clarin.cmdi.componentregistry.model.Comment;
 import java.util.Comparator;
 import java.util.List;

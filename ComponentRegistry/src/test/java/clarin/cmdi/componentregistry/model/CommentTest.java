@@ -1,7 +1,7 @@
 package clarin.cmdi.componentregistry.model;
 
 import clarin.cmdi.componentregistry.BaseUnitTest;
-import clarin.cmdi.componentregistry.DatesHelper;
+import clarin.cmdi.componentregistry.util.DatesHelper;
 import clarin.cmdi.componentregistry.MDMarshaller;
 
 import java.io.ByteArrayInputStream;

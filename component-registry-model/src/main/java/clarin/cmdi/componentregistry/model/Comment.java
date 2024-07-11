@@ -1,6 +1,6 @@
 package clarin.cmdi.componentregistry.model;
 
-import clarin.cmdi.componentregistry.ComponentUtils;
+import clarin.cmdi.componentregistry.util.ComponentUtils;
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
