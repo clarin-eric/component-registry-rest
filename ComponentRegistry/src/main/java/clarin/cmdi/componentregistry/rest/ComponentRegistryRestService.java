@@ -245,6 +245,7 @@ public class ComponentRegistryRestService {
                 throw new WebApplicationException(uuEx, Status.FORBIDDEN);
             }
         }
+
         /**
          *
          * @return Principal of current request
@@ -390,6 +391,7 @@ public class ComponentRegistryRestService {
             MediaType.APPLICATION_JSON})
         @ApiOperation(value = "The component specification of a single component")
         @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The component specification for the identified component", response = ComponentSpec.class),
             @ApiResponse(code = 401, message = "Item requires authorisation and user is not authenticated"),
             @ApiResponse(code = 403, message = "Non-public item is not owned by current user"),
             @ApiResponse(code = 404, message = "Item does not exist")
@@ -453,6 +455,7 @@ public class ComponentRegistryRestService {
             MediaType.APPLICATION_JSON})
         @ApiOperation(value = "The component specification of a single profile")
         @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The component specification for the identified profile", response = ComponentSpec.class),
             @ApiResponse(code = 401, message = "Item requires authorisation and user is not authenticated"),
             @ApiResponse(code = 403, message = "Non-public item is not owned by current user"),
             @ApiResponse(code = 404, message = "Item does not exist")
@@ -479,6 +482,7 @@ public class ComponentRegistryRestService {
         @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML})
         @ApiOperation(value = "The expanded XML or XSD represenation of the component specification of a single component (publicly accessible regardless of state!)")
         @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The component specification for the identified profile", response = ComponentSpec.class),
             @ApiResponse(code = 404, message = "Item does not exist")
         })
         public Response getRegisteredComponentRawType(
@@ -1885,7 +1889,7 @@ public class ComponentRegistryRestService {
             if (servletRequest != null) {
                 if (userPrincipal != null
                         && !ComponentRegistryFactory.ANONYMOUS_USER
-                        .equals(userPrincipal.getName())) {
+                                .equals(userPrincipal.getName())) {
                     stillActive = !((HttpServletRequest) servletRequest).getSession()
                             .isNew();
                 }
@@ -2066,8 +2070,8 @@ public class ComponentRegistryRestService {
          * @param registry registry on which we are registering
          * @param action current registration action
          * @param response response object we are building (will be modified)
-         * @return the original (unexpanded) component spec object unmarshalled from the input stream
-         * while validating
+         * @return the original (unexpanded) component spec object unmarshalled
+         * from the input stream while validating
          * @throws UserUnauthorizedException
          */
         private ComponentSpec validate(BaseDescription desc, InputStream input, ComponentRegistry registry, RegisterAction action, final RegisterResponse response) throws UserUnauthorizedException {
@@ -2102,11 +2106,11 @@ public class ComponentRegistryRestService {
                 }
             });
             expandedSpecValidator.setPreRegistrationMode(action.isPreRegistration());
-            
+
             //apply all the validators
-            applyValidators(response, 
+            applyValidators(response,
                     descriptionValidator, specValidator, recursionDetector, expandedSpecValidator);
-            
+
             //return component spec for reuse
             return specValidator.getComponentSpec();
         }
