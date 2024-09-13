@@ -1,5 +1,6 @@
 package clarin.cmdi.componentregistry.util;
 
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Date;
 
 //import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -15,17 +16,17 @@ import java.util.Date;
  * 
  */
 public class XmlDateAdapter
-//        extends XmlAdapter<String, Date> 
+        extends XmlAdapter<String, Date> 
 {
-//
-//    @Override
-//    public String marshal(Date v) throws Exception {
-//	return DatesHelper.formatXmlDateTime(v);
-//    }
-//
-//    @Override
-//    public Date unmarshal(String v) throws Exception {
-//	return DatesHelper.parseXmlDateTime(v);
-//    }
+
+    @Override
+    public String marshal(Date v) throws Exception {
+        return DatesHelper.formatXmlDateTime(v);
+    }
+
+    @Override
+    public Date unmarshal(String v) throws Exception {
+        return DatesHelper.parseXmlDateTime(v);
+    }
 
 }

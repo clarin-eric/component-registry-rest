@@ -39,7 +39,8 @@ public class ComponentRegistryController {
 
     @GET
     @Path("/test")
-    @Produces(APPLICATION_JSON)
+//    @Produces(APPLICATION_JSON)
+    @Produces(APPLICATION_XML)
     public BaseDescription getTestItem() {
         return registryService.getTestComponent();
     }

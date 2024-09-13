@@ -2,6 +2,12 @@ package eu.clarin.cmdi.componentregistry.jersey.model;
 
 import clarin.cmdi.componentregistry.util.ComponentUtils;
 import clarin.cmdi.componentregistry.util.XmlDateAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -19,8 +25,8 @@ import java.util.Date;
  * @author george.georgovassilis@mpi.nl
  *
  */
-//@XmlRootElement(name = "description")
-//@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "description")
+@XmlAccessorType(XmlAccessType.FIELD)
 //@XmlSeeAlso({ComponentDescription.class, ProfileDescription.class})
 //@Entity
 //@Table(name = "basedescription")
@@ -31,10 +37,10 @@ public class BaseDescription implements Serializable {
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "basedescription_id_seq")
 //    @Id
 //    @Column(name = "id")
-//    @XmlTransient
+    @XmlTransient
     private Long dbId;
 //
-//    @XmlElement(name = "id")
+    @XmlElement(name = "id")
 //    @Column(name = "component_id", nullable = false, unique = true)
     private String componentId;
 
@@ -45,13 +51,13 @@ public class BaseDescription implements Serializable {
     private String description;
 
 //    @Column(name = "registration_date")
-//    @XmlJavaTypeAdapter(XmlDateAdapter.class)
+    @XmlJavaTypeAdapter(XmlDateAdapter.class)
     private Date registrationDate;
 
 //    @Column(name = "creator_name")
     private String creatorName;
 
-//    @XmlTransient
+    @XmlTransient
 //    @Column(name = "user_id", columnDefinition = "integer")
     private long dbUserId;
 
@@ -62,7 +68,7 @@ public class BaseDescription implements Serializable {
     private String domainName;
 //
 //    @Transient
-//    @XmlElement(namespace = "http://www.w3.org/1999/xlink")
+    @XmlElement(namespace = "http://www.w3.org/1999/xlink")
     private String href;
 //
 //    @Column(name = "group_name")
@@ -81,23 +87,23 @@ public class BaseDescription implements Serializable {
     private int commentsCount;
 //
 //    @Column(name = "show_in_editor", nullable = false)
-//    @XmlTransient
+    @XmlTransient
     private boolean shownInEditor = true;
 //
-//    @XmlTransient
+    @XmlTransient
 //    @Column(name = "content", nullable = false)
 //    @Transient
     private String content = "";
 //
-//    @XmlElement(name = "isPublic")
+    @XmlElement(name = "isPublic")
 //    @Column(name = "is_public", nullable = false)
     private boolean ispublic;
 //
-//    @XmlTransient
+    @XmlTransient
 //    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 //
-//    @XmlElement(name = "recommended")
+    @XmlElement(name = "recommended")
 //    @Column(name = "recommended", nullable = false)
     private boolean recommended;
 
