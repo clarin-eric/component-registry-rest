@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.componentregistry.jersey;
+package eu.clarin.cmdi.componentregistry.jersey.service;
 
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 

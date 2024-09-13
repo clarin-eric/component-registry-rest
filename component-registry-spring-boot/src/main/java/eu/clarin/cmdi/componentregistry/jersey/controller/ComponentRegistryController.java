@@ -14,25 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey;
+package eu.clarin.cmdi.componentregistry.jersey.controller;
 
+import eu.clarin.cmdi.componentregistry.jersey.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
-import org.springframework.stereotype.Service;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_XML;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author twagoo
  */
-@Service
-public class ComponentRegistryServiceImpl implements ComponentRegistryService {
-    
-    @Override
-    public BaseDescription getTestComponent() {
-        final BaseDescription descr = new BaseDescription();
-        
-        descr.setName("Test item");
-        descr.setDescription("Just a test");
-        return descr;
+@Component
+@Path("/registry")
+public class ComponentRegistryController {
+
+    @Autowired
+    private ComponentRegistryService registryService;
+
+    @GET
+    @Path("/test")
+    @Produces(APPLICATION_JSON)
+    public BaseDescription getTestItem() {
+        return registryService.getTestComponent();
     }
-    
+
 }

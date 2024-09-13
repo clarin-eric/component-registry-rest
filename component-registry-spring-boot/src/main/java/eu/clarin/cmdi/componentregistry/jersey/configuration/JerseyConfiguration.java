@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey;
+package eu.clarin.cmdi.componentregistry.jersey.configuration;
 
+import eu.clarin.cmdi.componentregistry.jersey.controller.ComponentRegistryController;
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
