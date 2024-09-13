@@ -27,6 +27,7 @@ import clarin.cmdi.componentregistry.model.ComponentDescription;
 import clarin.cmdi.componentregistry.model.ComponentRegistryResponse;
 import clarin.cmdi.componentregistry.model.ComponentStatus;
 import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescriptionsObject;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestService.APPLICATION_URL_BASE_PARAM;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestService.APPLICATION_URL_HOST_HEADER_PARAM;
@@ -251,7 +252,6 @@ public class ComponentRegistryRestService {
          * @return Principal of current request
          * @throws AuthenticationRequiredException If no user principal found
          */
-
         private ComponentRegistry initialiseRegistry(String space, String groupId) throws AuthenticationRequiredException {
             //checking credentials 
             RegistrySpace regSpace = RegistrySpace.valueOf(space.toUpperCase());
@@ -2382,6 +2382,29 @@ public class ComponentRegistryRestService {
                 return statusSet;
             }
         }
+
+        @GET
+        @Path("/profilesList")
+        @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML,
+            MediaType.APPLICATION_JSON})
+        @ApiOperation(value = "A listing of the descriptions of profiles in the specified registry space")
+        @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "Registry requires authorisation and user is not authenticated"),
+            @ApiResponse(code = 403, message = "Non-public registry is not owned by current user"),
+            @ApiResponse(code = 404, message = "Registry space does not exist")
+        })
+        public ProfileDescriptionsObject getRegisteredProfilesObject(
+                @QueryParam(REGISTRY_SPACE_PARAM) @DefaultValue(REGISTRY_SPACE_PUBLISHED) String registrySpace,
+                @QueryParam(METADATA_EDITOR_PARAM) @DefaultValue("false") boolean metadataEditor,
+                @QueryParam(GROUPID_PARAM) String groupId,
+                @QueryParam(STATUS_FILTER_PARAM) List<String> status,
+                @Deprecated @QueryParam(USER_SPACE_PARAM) @DefaultValue("") String userSpace
+        )
+                throws ComponentRegistryException, IOException {
+            final List<ProfileDescription> profiles = getRegisteredProfiles(registrySpace, metadataEditor, groupId, status, userSpace);
+            return new ProfileDescriptionsObject(profiles);
+        }
+
     }
 
     /**

@@ -14,6 +14,7 @@ import clarin.cmdi.componentregistry.model.ComponentStatus;
 import static clarin.cmdi.componentregistry.model.ComponentStatus.DEVELOPMENT;
 import static clarin.cmdi.componentregistry.model.ComponentStatus.PRODUCTION;
 import clarin.cmdi.componentregistry.model.ProfileDescription;
+import clarin.cmdi.componentregistry.model.ProfileDescriptionsObject;
 import clarin.cmdi.componentregistry.model.RegisterResponse;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestServiceTestCase.COMPONENT_LIST_GENERICTYPE;
 import static clarin.cmdi.componentregistry.rest.ComponentRegistryRestService.REGISTRY_SPACE_PARAM;
@@ -65,7 +66,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         createUserRecord();
         baseRegistry = componentRegistryFactory.getBaseRegistry(DummyPrincipal.DUMMY_CREDENTIALS);
     }
-    
+
     private String expectedUserId(String principal) {
         return getExpectedUserId(principal).toString();
     }
@@ -547,12 +548,12 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         // Try to delete from other component
         ClientResponse response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + id2 + "/comments/" + component1Comment4.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(404, response.getStatus());
         // Delete from correct component
         response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + id + "/comments/" + component1Comment3.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(200, response.getStatus());
 
         comments = this.getAuthenticatedResource(getResource().path(
@@ -562,7 +563,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
 
         response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + id + "/comments/" + component1Comment4.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(200, response.getStatus());
 
         comments = this.getAuthenticatedResource(getResource().path(
@@ -594,7 +595,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         ClientResponse response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + ComponentDescription.COMPONENT_PREFIX
                 + "component1/comments/" + component1Comment3.getId()).post(ClientResponse.class,
-                        manipulateForm);
+                manipulateForm);
         assertEquals(200, response.getStatus());
 
         comments = this.getAuthenticatedResource(getResource().path(
@@ -668,7 +669,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         ClientResponse response = getAuthenticatedResource(
                 REGISTRY_BASE + "/profiles/" + ProfileDescription.PROFILE_PREFIX
                 + "profile1/comments/" + profile1Comment2.getId()).post(ClientResponse.class,
-                        manipulateForm);
+                manipulateForm);
         assertEquals(200, response.getStatus());
 
         comments = this.getAuthenticatedResource(getResource().path(
@@ -869,7 +870,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
 
         ClientResponse response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + compDesc1.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
         assertEquals(
                 "Component is still in use by other components or profiles. Request component usage for details.",
@@ -881,15 +882,15 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
 
         response = getAuthenticatedResource(
                 REGISTRY_BASE + "/profiles/" + profile.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(200, response.getStatus());
         response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + compDesc2.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(200, response.getStatus());
         response = getAuthenticatedResource(
                 REGISTRY_BASE + "/components/" + compDesc1.getId()).delete(
-                        ClientResponse.class);
+                ClientResponse.class);
         assertEquals(200, response.getStatus());
         components = this.getAuthenticatedResource(getResource().path(REGISTRY_BASE + "/components")).get(
                 COMPONENT_LIST_GENERICTYPE);
@@ -1667,7 +1668,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                 "UPDATE DESCRIPTION!");
         cResponse = getAuthenticatedResource(getResource().path(
                 REGISTRY_BASE + "/components/" + desc.getId() + "/update")).type(
-                        MediaType.MULTIPART_FORM_DATA).post(ClientResponse.class, form);
+                MediaType.MULTIPART_FORM_DATA).post(ClientResponse.class, form);
         assertEquals(ClientResponse.Status.OK.getStatusCode(),
                 cResponse.getStatus());
         response = cResponse.getEntity(RegisterResponse.class);
@@ -1677,7 +1678,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
         assertTrue(
                 "There error message should specify the point of recursion",
                 response.getErrors().get(0)
-                .contains("already contains " + desc.getId()));
+                        .contains("already contains " + desc.getId()));
 
     }
 
@@ -1724,7 +1725,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                 "UPDATE DESCRIPTION!");
         cResponse = getAuthenticatedResource(getResource().path(
                 REGISTRY_BASE + "/components/" + desc.getId() + "/update")).type(
-                        MediaType.MULTIPART_FORM_DATA).post(ClientResponse.class, form);
+                MediaType.MULTIPART_FORM_DATA).post(ClientResponse.class, form);
         assertEquals(ClientResponse.Status.OK.getStatusCode(),
                 cResponse.getStatus());
         response = cResponse.getEntity(RegisterResponse.class);
@@ -1789,7 +1790,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                 "UPDATE DESCRIPTION!");
         cResponse = getAuthenticatedResource(getResource().path(
                 REGISTRY_BASE + "/profiles/" + desc.getId() + "/update")).type(
-                        MediaType.MULTIPART_FORM_DATA).post(ClientResponse.class, form);
+                MediaType.MULTIPART_FORM_DATA).post(ClientResponse.class, form);
         assertEquals(ClientResponse.Status.OK.getStatusCode(),
                 cResponse.getStatus());
         response = cResponse.getEntity(RegisterResponse.class);
@@ -2541,7 +2542,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getUserComponents().get(0).getSuccessor());
         }
@@ -2553,7 +2554,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getPublicComponents().get(0).getSuccessor());
         }
@@ -2569,7 +2570,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, "NON-EXISTING-ID"));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, "NON-EXISTING-ID"));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getPublicComponents().get(0).getSuccessor());
         }
@@ -2580,7 +2581,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, getPublicProfiles().get(0).getId()));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, getPublicProfiles().get(0).getId()));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getPublicComponents().get(0).getSuccessor());
         }
@@ -2591,7 +2592,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.OK.getStatusCode(), cResponse.getStatus());
             assertEquals("Successor should have been set", successorId, getPublicComponents().get(0).getSuccessor());
         }
@@ -2602,7 +2603,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertEquals("Successor should have been kept", successorId, getPublicComponents().get(0).getSuccessor());
         }
@@ -2685,7 +2686,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getUserProfiles().get(0).getSuccessor());
         }
@@ -2697,7 +2698,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getPublicProfiles().get(0).getSuccessor());
         }
@@ -2713,7 +2714,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, "NON-EXISTING-ID"));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, "NON-EXISTING-ID"));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getPublicProfiles().get(0).getSuccessor());
         }
@@ -2724,7 +2725,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, getPublicProfiles().get(0).getId()));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, getPublicProfiles().get(0).getId()));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertNull("No successor should have been set", getPublicProfiles().get(0).getSuccessor());
         }
@@ -2735,7 +2736,7 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.OK.getStatusCode(), cResponse.getStatus());
             assertEquals("Successor should have been set", successorId, getPublicProfiles().get(0).getSuccessor());
         }
@@ -2746,9 +2747,30 @@ public class ComponentRegistryRestServiceTest extends ComponentRegistryRestServi
                     .type(MediaType.MULTIPART_FORM_DATA)
                     .post(ClientResponse.class,
                             new FormDataMultiPart()
-                            .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
+                                    .field(ComponentRegistryRestService.SUCCESSOR_ID_FORM_FIELD, successorId));
             assertEquals(ClientResponse.Status.BAD_REQUEST.getStatusCode(), cResponse.getStatus());
             assertEquals("Successor should have been kept", successorId, getPublicProfiles().get(0).getSuccessor());
         }
+    }
+
+    @Test
+    public void testGetProfilesObject() throws Exception {
+        System.out.println("testGetProfilesObject");
+
+        fillUpPublicItems();
+
+        RegistryTestHelper.addProfile(baseRegistry, "PROFILE2", true);
+        ProfileDescriptionsObject response = getResource()
+                .path(REGISTRY_BASE + "/profilesList").accept(MediaType.APPLICATION_XML)
+                .get(ProfileDescriptionsObject.class);
+        assertEquals(3, response.getProfileDescriptions().size());
+        response = getResource()
+                .path(REGISTRY_BASE + "/profilesList")
+                .accept(MediaType.APPLICATION_JSON)
+                .get(ProfileDescriptionsObject.class);
+        assertEquals(3, response.getProfileDescriptions().size());
+        assertEquals("profile1", response.getProfileDescriptions().get(0).getName());
+        assertEquals("PROFILE2", response.getProfileDescriptions().get(1).getName());
+        assertEquals("profile2", response.getProfileDescriptions().get(2).getName());
     }
 }
