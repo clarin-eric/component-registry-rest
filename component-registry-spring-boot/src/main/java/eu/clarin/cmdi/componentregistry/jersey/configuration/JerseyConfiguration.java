@@ -17,6 +17,7 @@
 package eu.clarin.cmdi.componentregistry.jersey.configuration;
 
 import eu.clarin.cmdi.componentregistry.jersey.controller.ComponentRegistryController;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -32,6 +33,10 @@ public class JerseyConfiguration extends ResourceConfig {
 
     @PostConstruct
     public void init() {
+        //OpenAPI
+        packages(true, "eu.clarin.cmdi.componentregistry.jersey");
+        register(OpenApiResource.class);
+        
         register(ComponentRegistryController.class);
     }
 }
