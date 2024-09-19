@@ -18,6 +18,9 @@ package eu.clarin.cmdi.componentregistry.jersey.configuration;
 
 import eu.clarin.cmdi.componentregistry.jersey.controller.ComponentRegistryController;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
 import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -29,6 +32,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ApplicationPath("/rest")
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Component Registry API",
+                version = "1.0",
+                description = "Components and profiles registry for the Component Metadata Infrastructure",
+                contact = @Contact(url = "https://www.clarin.eu", name = "CLARIN ERIC", email = "cmdi@clarin.eu")
+        )
+)
 public class JerseyConfiguration extends ResourceConfig {
 
     @PostConstruct
@@ -36,7 +47,7 @@ public class JerseyConfiguration extends ResourceConfig {
         //OpenAPI
         packages(true, "eu.clarin.cmdi.componentregistry.jersey");
         register(OpenApiResource.class);
-        
+
         register(ComponentRegistryController.class);
     }
 }
