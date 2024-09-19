@@ -11,7 +11,7 @@
     <groupId>eu.clarin.cmdi</groupId>
     <artifactId>component-registry-spring-boot</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>component-registry-spring-boot</name>
+    <name>Component Registry REST service (spring boot)</name>
     <organization>
         <name>CLARIN ERIC</name>
     </organization>

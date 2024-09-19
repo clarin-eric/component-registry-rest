@@ -2,6 +2,7 @@ package eu.clarin.cmdi.componentregistry.jersey.model;
 
 import clarin.cmdi.componentregistry.util.ComponentUtils;
 import clarin.cmdi.componentregistry.util.XmlDateAdapter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -96,6 +97,7 @@ public class BaseDescription implements Serializable {
     private String content = "";
 //
     @XmlElement(name = "isPublic")
+    @JsonProperty("isPublic")
 //    @Column(name = "is_public", nullable = false)
     private boolean ispublic;
 //
@@ -123,7 +125,7 @@ public class BaseDescription implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
-
+    
     public boolean isDeleted() {
         return deleted;
     }
