@@ -17,6 +17,9 @@
 package eu.clarin.cmdi.componentregistry.jersey.service;
 
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,14 +28,26 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ComponentRegistryServiceImpl implements ComponentRegistryService {
-    
+
+    private final RegistryItemRepository itemRepository;
+
+    @Autowired
+    public ComponentRegistryServiceImpl(RegistryItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
+    }
+
     @Override
     public BaseDescription getTestComponent() {
         final BaseDescription descr = new BaseDescription();
-        
+
         descr.setName("Test item");
         descr.setDescription("Just a test");
         return descr;
     }
-    
+
+    @Override
+    public List<BaseDescription> getPublishedComponents() {
+        return itemRepository.findPublicItems();
+    }
+
 }

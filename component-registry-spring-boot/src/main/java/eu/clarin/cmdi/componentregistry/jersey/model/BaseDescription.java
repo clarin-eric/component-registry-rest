@@ -3,6 +3,11 @@ package eu.clarin.cmdi.componentregistry.jersey.model;
 import clarin.cmdi.componentregistry.util.ComponentUtils;
 import clarin.cmdi.componentregistry.util.XmlDateAdapter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -29,84 +34,84 @@ import java.util.Date;
 @XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlSeeAlso({ComponentDescription.class, ProfileDescription.class})
-//@Entity
-//@Table(name = "basedescription")
+@Entity
+@Table(name = "basedescription")
 public class BaseDescription implements Serializable {
     //TODO: Add status, derivedFrom and successor fields
 //
 //    @SequenceGenerator(name = "basedescription_id_seq", sequenceName = "basedescription_id_seq", allocationSize = 1, initialValue = 1)
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "basedescription_id_seq")
-//    @Id
-//    @Column(name = "id")
+    @Id
+    @Column(name = "id")
     @XmlTransient
     private Long dbId;
 //
     @XmlElement(name = "id")
-//    @Column(name = "component_id", nullable = false, unique = true)
+    @Column(name = "component_id", nullable = false, unique = true)
     private String componentId;
 
-//    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-//    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
-//    @Column(name = "registration_date")
+    @Column(name = "registration_date")
     @XmlJavaTypeAdapter(XmlDateAdapter.class)
     private Date registrationDate;
 
-//    @Column(name = "creator_name")
+    @Column(name = "creator_name")
     private String creatorName;
 
     @XmlTransient
-//    @Column(name = "user_id", columnDefinition = "integer")
+    @Column(name = "user_id", columnDefinition = "integer")
     private long dbUserId;
 
-//    @Transient
+    @Transient
     private String userId;
 //
-//    @Column(name = "domain_name")
+    @Column(name = "domain_name")
     private String domainName;
 //
-//    @Transient
+    @Transient
     @XmlElement(namespace = "http://www.w3.org/1999/xlink")
     private String href;
 //
-//    @Column(name = "group_name")
+    @Column(name = "group_name")
     private String groupName;
 //
-//    @Column(name = "status")
+    @Column(name = "status")
     private ComponentStatus status;
 //
-//    @Column(name = "derivedfrom", nullable = true)
+    @Column(name = "derivedfrom", nullable = true)
     private String derivedfrom; 
 //
-//    @Column(name = "successor", nullable = true)
+    @Column(name = "successor", nullable = true)
     private String successor; 
 //
-//    @Transient
+    @Transient
     private int commentsCount;
 //
-//    @Column(name = "show_in_editor", nullable = false)
+    @Column(name = "show_in_editor", nullable = false)
     @XmlTransient
     private boolean shownInEditor = true;
 //
     @XmlTransient
-//    @Column(name = "content", nullable = false)
-//    @Transient
+    @Column(name = "content", nullable = false)
+    @Transient
     private String content = "";
 //
     @XmlElement(name = "isPublic")
     @JsonProperty("isPublic")
-//    @Column(name = "is_public", nullable = false)
+    @Column(name = "is_public", nullable = false)
     private boolean ispublic;
 //
     @XmlTransient
-//    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 //
     @XmlElement(name = "recommended")
-//    @Column(name = "recommended", nullable = false)
+    @Column(name = "recommended", nullable = false)
     private boolean recommended;
 
     public long getDbUserId() {

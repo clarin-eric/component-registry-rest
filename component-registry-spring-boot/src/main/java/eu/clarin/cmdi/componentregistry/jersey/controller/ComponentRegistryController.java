@@ -23,6 +23,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_XML;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,10 +40,16 @@ public class ComponentRegistryController {
 
     @GET
     @Path("/test")
-//    @Produces(APPLICATION_JSON)
-    @Produces(APPLICATION_XML)
+    @Produces({APPLICATION_JSON, APPLICATION_XML})
     public BaseDescription getTestItem() {
         return registryService.getTestComponent();
+    }
+
+    @GET
+    @Path("/items")
+    @Produces({APPLICATION_JSON, APPLICATION_XML})
+    public List<BaseDescription> getItems() {
+        return registryService.getPublishedComponents();
     }
 
 }

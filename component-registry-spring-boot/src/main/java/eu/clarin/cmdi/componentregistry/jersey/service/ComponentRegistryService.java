@@ -1,6 +1,7 @@
 package eu.clarin.cmdi.componentregistry.jersey.service;
 
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
+import java.util.List;
 
 /**
  *
@@ -9,5 +10,7 @@ import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 public interface ComponentRegistryService {
 
     BaseDescription getTestComponent();
+    
+    List<BaseDescription> getPublishedComponents();
 
 }
