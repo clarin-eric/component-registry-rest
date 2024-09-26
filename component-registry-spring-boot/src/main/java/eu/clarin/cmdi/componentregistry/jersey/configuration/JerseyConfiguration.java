@@ -16,7 +16,7 @@
  */
 package eu.clarin.cmdi.componentregistry.jersey.configuration;
 
-import eu.clarin.cmdi.componentregistry.jersey.controller.ComponentRegistryController;
+import eu.clarin.cmdi.componentregistry.jersey.resource.ComponentRegistryResource;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -48,6 +48,6 @@ public class JerseyConfiguration extends ResourceConfig {
         packages(true, "eu.clarin.cmdi.componentregistry.jersey");
         register(OpenApiResource.class);
 
-        register(ComponentRegistryController.class);
+        register(ComponentRegistryResource.class);
     }
 }

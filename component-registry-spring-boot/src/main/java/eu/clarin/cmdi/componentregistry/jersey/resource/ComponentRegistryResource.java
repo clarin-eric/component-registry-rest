@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey.controller;
+package eu.clarin.cmdi.componentregistry.jersey.resource;
 
 import eu.clarin.cmdi.componentregistry.jersey.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("/registry")
-public class ComponentRegistryController {
+public class ComponentRegistryResource {
 
     @Autowired
     private ComponentRegistryService registryService;
