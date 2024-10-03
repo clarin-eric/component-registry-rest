@@ -1,0 +1,11 @@
+spring:
+    application:
+        name: component-registry-rest
+
+    datasource:
+        hikari:
+            connectionTimeout: 20000
+            maximumPoolSize: 5
+        url: jdbc:postgresql://localhost:5442/compreg
+        username: compreg
+        password: compreg

@@ -17,22 +17,20 @@
 package eu.clarin.cmdi.componentregistry.jersey.service;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.jersey.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
