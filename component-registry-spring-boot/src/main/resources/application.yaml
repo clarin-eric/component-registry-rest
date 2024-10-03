@@ -6,6 +6,6 @@ spring:
         hikari:
             connectionTimeout: 20000
             maximumPoolSize: 5
-        url: jdbc:postgresql://localhost:5442/compreg
-        username: compreg
-        password: compreg
+#        url: jdbc:postgresql://localhost:5443/compreg
+#        username: <....>
+#        password: <....>
