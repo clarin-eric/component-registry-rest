@@ -101,11 +101,13 @@ public class BaseDescription implements Serializable {
 //
     @Column(name = "show_in_editor", nullable = false)
     @XmlTransient
+    @Builder.Default
     private boolean shownInEditor = true;
 //
     @XmlTransient
     @Column(name = "content", nullable = false)
     @Transient
+    @Builder.Default
     private String content = "";
 //
     @XmlElement(name = "isPublic")

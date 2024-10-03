@@ -4,7 +4,6 @@
  */
 package clarin.cmdi.componentregistry.util;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +18,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
  */
 public class DatesHelper {
 
-    public final static Locale RFC822DATEFORMAT_LOCALE = new Locale("en", "US", "POSIX");
+    public final static Locale RFC822DATEFORMAT_LOCALE = Locale.of("en", "US", "POSIX");
     public final static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat(
             "EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", RFC822DATEFORMAT_LOCALE);
 
