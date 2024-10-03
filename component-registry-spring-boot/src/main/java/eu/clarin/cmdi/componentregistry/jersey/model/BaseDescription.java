@@ -18,9 +18,12 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 //import org.apache.commons.codec.digest.DigestUtils;
-
 /**
  * The BaseComponent (formally AbstractDescription) models profiles and
  * components alike by containing <strong>all</strong> their persistent
@@ -31,12 +34,16 @@ import java.util.Date;
  * @author george.georgovassilis@mpi.nl
  *
  */
+@Builder
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @XmlRootElement(name = "description")
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlSeeAlso({ComponentDescription.class, ProfileDescription.class})
 @Entity
 @Table(name = "basedescription")
 public class BaseDescription implements Serializable {
+
     //TODO: Add status, derivedFrom and successor fields
 //
 //    @SequenceGenerator(name = "basedescription_id_seq", sequenceName = "basedescription_id_seq", allocationSize = 1, initialValue = 1)
@@ -84,10 +91,10 @@ public class BaseDescription implements Serializable {
     private ComponentStatus status;
 //
     @Column(name = "derivedfrom", nullable = true)
-    private String derivedfrom; 
+    private String derivedfrom;
 //
     @Column(name = "successor", nullable = true)
-    private String successor; 
+    private String successor;
 //
     @Transient
     private int commentsCount;
@@ -130,7 +137,7 @@ public class BaseDescription implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
-    
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -306,7 +313,6 @@ public class BaseDescription implements Serializable {
 //    public String getType() {
 //        return isProfile() ? "profile" : "component";
 //    }
-
     /**
      * Helper method.
      *
@@ -317,7 +323,6 @@ public class BaseDescription implements Serializable {
 //        String userHash = DigestUtils.md5Hex(userId);
 //        return userHash.equals(getUserId());
 //    }
-
     public boolean isPublic() {
         return ispublic;
     }
