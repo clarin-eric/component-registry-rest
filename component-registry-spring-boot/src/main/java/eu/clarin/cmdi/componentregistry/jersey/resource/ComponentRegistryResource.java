@@ -18,13 +18,16 @@ package eu.clarin.cmdi.componentregistry.jersey.resource;
 
 import eu.clarin.cmdi.componentregistry.jersey.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_XML;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 /**
@@ -48,8 +51,13 @@ public class ComponentRegistryResource {
     @GET
     @Path("/items")
     @Produces({APPLICATION_JSON, APPLICATION_XML})
-    public List<BaseDescription> getItems() {
-        return registryService.getPublishedComponents();
+    public List<BaseDescription> getItems(
+            @DefaultValue("name")
+            @QueryParam(value = "sortBy") String sortBy,
+            @DefaultValue("ASC")
+            @QueryParam(value = "sortDirection") Direction sortDirection
+    ) {
+        return registryService.getPublishedComponents(sortBy, sortDirection);
     }
 
 }

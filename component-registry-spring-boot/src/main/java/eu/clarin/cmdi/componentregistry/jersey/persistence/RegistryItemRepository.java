@@ -18,6 +18,7 @@ package eu.clarin.cmdi.componentregistry.jersey.persistence;
 
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -31,7 +32,7 @@ public interface RegistryItemRepository extends JpaRepository<BaseDescription, L
 
 //    @Query("SELECT c FROM BaseDescription c WHERE c.componentId = ?1")
 //    BaseDescription findByComponentId(String componentId);
-
-    @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true and c.deleted = false ORDER BY c.recommended desc, upper(c.name), c.id")
-    List<BaseDescription> findPublicItems();
+    @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true and c.deleted = false")
+    //+ "ORDER BY c.recommended desc, upper(c.name), c.id")
+    List<BaseDescription> findPublicItems(Sort sort);
 }
