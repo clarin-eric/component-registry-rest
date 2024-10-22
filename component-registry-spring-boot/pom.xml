@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
@@ -22,7 +22,7 @@
         <netbeans.hint.license>gpl30</netbeans.hint.license>                                              
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>      
         
-        <swagger.version>2.2.22</swagger.version>                          
+        <swagger.version>2.2.25</swagger.version>                          
     </properties>
     
     <dependencies>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.3.0-jre</version>
+            <version>33.3.1-jre</version>
         </dependency>
                 
         <dependency>
