@@ -22,7 +22,9 @@ import eu.clarin.cmdi.componentregistry.jersey.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
 @Sql("/sql/create.sql")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ComponentRegistryServiceImplTest {
@@ -70,33 +71,43 @@ public class ComponentRegistryServiceImplTest {
     }
 
     @Test
-    public void testGetPublishedComponents() {
-        //TODO: inject some test data
+    @Transactional
+    public void testGetPublishedDescriptions() {
+        long userId = insertUser("TestUser");
+        insertDescriptions(1001, 5, userId);
 
-        final long userId = 1L;
-        userRepository.saveAndFlush(createUser(userId));
-
-        itemRepository.saveAllAndFlush(ImmutableList.of(BaseDescription.builder()
-                .dbId(1001L)
-                .dbUserId(userId)
-                .ispublic(true)
-                .componentId("item1")
-                .name("item1")
-                .description("item 1")
-                .build()
-        ));
-
-        List<BaseDescription> result = instance.getPublishedComponents();
+        List<BaseDescription> result = instance.getPublishedDescriptions();
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(5, result.size());
     }
 
-    private static RegistryUser createUser(final long userId) {
-        return RegistryUser.builder()
+    private final static AtomicInteger userIdGenerator = new AtomicInteger(100);
+
+    private long insertUser(String name) {
+        final long userId = userIdGenerator.getAndIncrement();
+        RegistryUser user = RegistryUser.builder()
                 .id(userId)
-                .name("TestUser")
-                .principalName("TestUser")
+                .name(name)
+                .principalName(name)
                 .build();
+        return userRepository.saveAndFlush(user).getId();
+    }
+
+    private long insertDescriptions(long startId, long number, Long userId) {
+        final ImmutableList.Builder<BaseDescription> descriptions = ImmutableList.builder();
+        for (long id = startId; id < startId + number; id++) {
+            descriptions.add(BaseDescription.builder()
+                    .dbId(id)
+                    .dbUserId(userId)
+                    .ispublic(true)
+                    .componentId("item" + id)
+                    .name("item" + id)
+                    .description("Item number " + id)
+                    .build()
+            );
+        }
+        return itemRepository.saveAllAndFlush(descriptions.build())
+                .getLast().getDbId();
     }
 
 }
