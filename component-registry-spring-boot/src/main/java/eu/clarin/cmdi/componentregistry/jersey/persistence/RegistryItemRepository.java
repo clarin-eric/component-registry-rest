@@ -30,9 +30,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RegistryItemRepository extends JpaRepository<BaseDescription, Long> {
 
-//    @Query("SELECT c FROM BaseDescription c WHERE c.componentId = ?1")
-//    BaseDescription findByComponentId(String componentId);
-    @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true and c.deleted = false")
-    //+ "ORDER BY c.recommended desc, upper(c.name), c.id")
+    @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true AND c.deleted = false") //+ "ORDER BY c.recommended desc, upper(c.name), c.id")
     List<BaseDescription> findPublicItems(Sort sort);
+
+    @Query("SELECT c FROM BaseDescription c WHERE c.deleted = false AND c.componentId = ?1")
+    public BaseDescription findByComponentId(String componentId);
 }

@@ -10,10 +10,12 @@ import org.springframework.data.domain.Sort;
  */
 public interface ComponentRegistryService {
 
-    BaseDescription getTestComponent();
+    BaseDescription getItemDescription(String componentId);
 
-    List<BaseDescription> getPublishedComponents();
+    BaseDescription getItemSpecification(String componentId);
 
-    List<BaseDescription> getPublishedComponents(String sortBy, Sort.Direction sortDirection);
+    List<BaseDescription> getPublishedDescriptions();
+
+    List<BaseDescription> getPublishedDescriptions(String sortBy, Sort.Direction sortDirection);
 
 }

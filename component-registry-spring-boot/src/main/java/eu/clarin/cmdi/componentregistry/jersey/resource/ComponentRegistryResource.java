@@ -42,13 +42,6 @@ public class ComponentRegistryResource {
     private ComponentRegistryService registryService;
 
     @GET
-    @Path("/test")
-    @Produces({APPLICATION_JSON, APPLICATION_XML})
-    public BaseDescription getTestItem() {
-        return registryService.getTestComponent();
-    }
-
-    @GET
     @Path("/items")
     @Produces({APPLICATION_JSON, APPLICATION_XML})
     public List<BaseDescription> getItems(
@@ -57,7 +50,16 @@ public class ComponentRegistryResource {
             @DefaultValue("ASC")
             @QueryParam(value = "sortDirection") Direction sortDirection
     ) {
-        return registryService.getPublishedComponents(sortBy, sortDirection);
+        return registryService.getPublishedDescriptions(sortBy, sortDirection);
+    }
+
+    @GET
+    @Path("/item")
+    @Produces({APPLICATION_JSON, APPLICATION_XML})
+    public BaseDescription getItem(
+            @QueryParam(value = "componentId") String componentId
+    ) {
+        return registryService.getItemDescription(componentId);
     }
 
 }

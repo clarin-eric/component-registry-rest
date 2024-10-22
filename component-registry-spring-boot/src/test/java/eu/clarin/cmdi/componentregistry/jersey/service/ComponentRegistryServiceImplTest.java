@@ -22,10 +22,9 @@ import eu.clarin.cmdi.componentregistry.jersey.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +45,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 @Sql("/sql/create.sql")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ComponentRegistryServiceImplTest {
@@ -71,14 +71,26 @@ public class ComponentRegistryServiceImplTest {
     }
 
     @Test
-    @Transactional
     public void testGetPublishedDescriptions() {
         long userId = insertUser("TestUser");
         insertDescriptions(1001, 5, userId);
 
         List<BaseDescription> result = instance.getPublishedDescriptions();
-        assertNotNull(result);
-        assertEquals(5, result.size());
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(5);
+    }
+
+    @Test
+    public void testGetDescriptionById() {
+        long userId = insertUser("TestUser");
+        insertDescriptions(1001, 1, userId);
+
+        final BaseDescription descr = instance.getItemDescription("item1001");
+        assertThat(descr).isNotNull();
+        assertThat(descr).hasFieldOrPropertyWithValue("id", "item1001");
+
+        final BaseDescription descr2 = instance.getItemDescription("item1002");
+        assertThat(descr2).isNull();
     }
 
     private final static AtomicInteger userIdGenerator = new AtomicInteger(100);

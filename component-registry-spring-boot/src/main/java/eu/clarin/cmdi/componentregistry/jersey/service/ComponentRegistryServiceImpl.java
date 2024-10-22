@@ -20,10 +20,8 @@ import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,22 +39,23 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     }
 
     @Override
-    public BaseDescription getTestComponent() {
-        final BaseDescription descr = new BaseDescription();
-
-        descr.setName("Test item");
-        descr.setDescription("Just a test");
-        return descr;
-    }
-
-    @Override
-    public List<BaseDescription> getPublishedComponents() {
+    public List<BaseDescription> getPublishedDescriptions() {
         return itemRepository.findPublicItems(Sort.unsorted());
     }
 
     @Override
-    public List<BaseDescription> getPublishedComponents(String sortBy, Direction sortDirection) {
+    public List<BaseDescription> getPublishedDescriptions(String sortBy, Direction sortDirection) {
         return itemRepository.findPublicItems(Sort.by(sortDirection, sortBy));
+    }
+
+    @Override
+    public BaseDescription getItemDescription(String componentId) {
+        return itemRepository.findByComponentId(componentId);
+    }
+
+    @Override
+    public BaseDescription getItemSpecification(String componentId) {
+        throw new UnsupportedOperationException();
     }
 
 }
