@@ -35,4 +35,7 @@ public interface RegistryItemRepository extends JpaRepository<BaseDescription, L
 
     @Query("SELECT c FROM BaseDescription c WHERE c.deleted = false AND c.componentId = ?1")
     public BaseDescription findByComponentId(String componentId);
+
+    @Query("SELECT c.content FROM BaseDescription c WHERE c.deleted = false AND c.componentId = ?1")
+    public String getContentByComponentId(String componentId);
 }

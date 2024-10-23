@@ -106,7 +106,6 @@ public class BaseDescription implements Serializable {
 //
     @XmlTransient
     @Column(name = "content", nullable = false)
-    @Transient
     @Builder.Default
     private String content = "";
 //

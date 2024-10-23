@@ -17,13 +17,17 @@
 package eu.clarin.cmdi.componentregistry.jersey.service;
 
 import com.google.common.collect.ImmutableList;
+import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.jersey.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
+import eu.clarin.cmdi.componentregistry.jersey.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,13 +65,16 @@ public class ComponentRegistryServiceImplTest {
     private RegistryItemRepository itemRepository;
 
     @Autowired
+    private ComponentSpecMarshaller specMarshaller;
+
+    @Autowired
     private UserRepository userRepository;
 
     private ComponentRegistryServiceImpl instance;
 
     @BeforeEach
     public void setUp() {
-        instance = new ComponentRegistryServiceImpl(itemRepository);
+        instance = new ComponentRegistryServiceImpl(itemRepository, specMarshaller);
     }
 
     @Test
@@ -93,6 +100,25 @@ public class ComponentRegistryServiceImplTest {
         assertThat(descr2).isNull();
     }
 
+    @Test
+    public void testGetSpecById() {
+        final String xml
+                = """
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <ComponentSpec isProfile="true"/>
+                  """;
+
+        final long userId = insertUser("TestUser");
+        insertDescriptions(1001, 1, userId,
+                b -> {
+                    b.content(xml);
+                });
+
+        final ComponentSpec spec = instance.getItemSpecification("item1001");
+        assertThat(spec).isNotNull();
+        assertThat(spec).hasFieldOrPropertyWithValue("isProfile", true);
+    }
+
     private final static AtomicInteger userIdGenerator = new AtomicInteger(100);
 
     private long insertUser(String name) {
@@ -106,17 +132,24 @@ public class ComponentRegistryServiceImplTest {
     }
 
     private long insertDescriptions(long startId, long number, Long userId) {
+        return insertDescriptions(startId, number, userId, null);
+    }
+
+    private long insertDescriptions(long startId, long number, Long userId, Consumer<BaseDescription.BaseDescriptionBuilder> descriptionConfigurer) {
         final ImmutableList.Builder<BaseDescription> descriptions = ImmutableList.builder();
         for (long id = startId; id < startId + number; id++) {
-            descriptions.add(BaseDescription.builder()
+            final BaseDescription.BaseDescriptionBuilder builder = BaseDescription.builder()
                     .dbId(id)
                     .dbUserId(userId)
                     .ispublic(true)
                     .componentId("item" + id)
                     .name("item" + id)
-                    .description("Item number " + id)
-                    .build()
-            );
+                    .description("Item number " + id);
+            if (descriptionConfigurer != null) {
+                // configure more
+                descriptionConfigurer.accept(builder);
+            }
+            descriptions.add(builder.build());
         }
         return itemRepository.saveAllAndFlush(descriptions.build())
                 .getLast().getDbId();

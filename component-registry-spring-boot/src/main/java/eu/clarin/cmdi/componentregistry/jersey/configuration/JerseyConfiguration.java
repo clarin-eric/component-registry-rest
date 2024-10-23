@@ -45,7 +45,9 @@ public class JerseyConfiguration extends ResourceConfig {
     @PostConstruct
     public void init() {
         //OpenAPI
-        packages(true, "eu.clarin.cmdi.componentregistry.jersey");
+        packages(true,
+                "eu.clarin.cmdi.componentregistry.jersey",
+                "eu.clarin.cmdi.componentregistry.components");
         register(OpenApiResource.class);
 
         register(ComponentRegistryResource.class);

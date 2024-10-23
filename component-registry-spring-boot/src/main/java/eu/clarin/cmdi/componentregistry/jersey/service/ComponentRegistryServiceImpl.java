@@ -16,8 +16,11 @@
  */
 package eu.clarin.cmdi.componentregistry.jersey.service;
 
+import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
+import eu.clarin.cmdi.componentregistry.jersey.spec.ComponentSpecMarshaller;
+import jakarta.xml.bind.JAXBException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -32,10 +35,14 @@ import org.springframework.stereotype.Service;
 public class ComponentRegistryServiceImpl implements ComponentRegistryService {
 
     private final RegistryItemRepository itemRepository;
+    private final ComponentSpecMarshaller specMarshaller;
 
     @Autowired
-    public ComponentRegistryServiceImpl(RegistryItemRepository itemRepository) {
+    public ComponentRegistryServiceImpl(
+            RegistryItemRepository itemRepository,
+            ComponentSpecMarshaller specMarshaller) {
         this.itemRepository = itemRepository;
+        this.specMarshaller = specMarshaller;
     }
 
     @Override
@@ -54,10 +61,17 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     }
 
     @Override
-    public BaseDescription getItemSpecification(String componentId) {
-        BaseDescription item = itemRepository.findByComponentId(componentId);
-        String xml = item.getContent();
-        throw new UnsupportedOperationException();
+    public ComponentSpec getItemSpecification(String componentId) {
+        final String xml = itemRepository.getContentByComponentId(componentId);
+        if (xml == null) {
+            return null;
+        } else {
+            try {
+                return specMarshaller.unmarshall(xml);
+            } catch (JAXBException ex) {
+                throw new RuntimeException("", ex);
+            }
+        }
     }
 
 }

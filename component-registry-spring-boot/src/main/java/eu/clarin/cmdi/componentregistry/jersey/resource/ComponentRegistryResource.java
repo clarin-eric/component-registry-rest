@@ -16,11 +16,13 @@
  */
 package eu.clarin.cmdi.componentregistry.jersey.resource;
 
+import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.jersey.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -54,12 +56,21 @@ public class ComponentRegistryResource {
     }
 
     @GET
-    @Path("/item")
+    @Path("/items/{componentId}")
     @Produces({APPLICATION_JSON, APPLICATION_XML})
     public BaseDescription getItem(
-            @QueryParam(value = "componentId") String componentId
+            @PathParam(value = "componentId") String componentId
     ) {
         return registryService.getItemDescription(componentId);
+    }
+
+    @GET
+    @Path("/items/{componentId}/spec")
+    @Produces({APPLICATION_JSON, APPLICATION_XML})
+    public ComponentSpec getItemSpec(
+            @PathParam(value = "componentId") String componentId
+    ) {
+        return registryService.getItemSpecification(componentId);
     }
 
 }
