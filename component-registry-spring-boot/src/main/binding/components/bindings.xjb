@@ -1,0 +1,16 @@
+<bindings xmlns="https://jakarta.ee/xml/ns/jaxb"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema"
+          version="3.0"> 
+   <bindings schemaLocation="toolkit/xsd/cmd-component.xsd"
+     node="/xs:schema/xs:complexType[@name='Element_type']/xs:sequence/xs:element[@name='ValueScheme']">
+      <property name="ValueScheme" />
+   </bindings>
+   <bindings schemaLocation="toolkit/xsd/cmd-component.xsd"
+     node="/xs:schema/xs:complexType[@name='AttributeList_type']/xs:sequence/xs:element[@name='Attribute']/xs:complexType/xs:sequence/xs:element[@name='ValueScheme']">
+      <property name="AttributeValueScheme" />
+   </bindings>
+   <bindings schemaLocation="toolkit/xsd/cmd-component.xsd"
+     node="/xs:schema/xs:attributeGroup[@name='element_attributes']/xs:attribute[@name='ValueScheme']">
+      <property name="ValueSchemeAttribute" />
+   </bindings>
+</bindings>

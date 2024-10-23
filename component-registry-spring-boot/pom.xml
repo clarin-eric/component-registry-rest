@@ -163,6 +163,62 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            
+            <plugin>
+                <groupId>org.jvnet.jaxb</groupId>
+                <artifactId>jaxb-maven-plugin</artifactId>
+                <version>4.0.8</version>
+                <executions>
+                    <execution>
+                        <id>jaxb-components</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/binding/components</schemaDirectory>
+                            <schemaIncludes>
+                                <include>toolkit/xsd/cmd-component.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/binding/components</bindingDirectory>
+                            <extension>true</extension>
+                            <!--<generateDirectory>${basedir}/src/generated/jaxb/components</generateDirectory>-->
+                            <generatePackage>eu.clarin.cmdi.componentregistry.components</generatePackage>
+                            <!--<catalog>src/main/resources/catalog.cat</catalog>-->
+                            <!--<catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>-->
+                            <strict>false</strict>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!--            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.15.3</version>
+                <executions>
+                    <execution>
+                        <id>jaxb-components</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/binding/components</schemaDirectory>
+                            <schemaIncludes>
+                                <include>toolkit/xsd/cmd-component.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/binding/components</bindingDirectory>
+                            <extension>true</extension>
+                            <generateDirectory>${basedir}/src/generated/jaxb/components</generateDirectory>
+                            <generatePackage>eu.clarin.cmdi.componentregistry.components</generatePackage>
+                            <catalog>src/main/resources/catalog.cat</catalog>
+                            <catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>
+                            <strict>false</strict>
+                        </configuration>
+                    </execution>
+                     Excluded when transferring from original project: RSS 
+                </executions>
+            </plugin>-->
+            
         </plugins>
     </build>
     
