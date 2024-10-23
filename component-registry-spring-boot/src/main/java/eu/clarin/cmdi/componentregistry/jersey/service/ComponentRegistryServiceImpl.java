@@ -55,6 +55,8 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
 
     @Override
     public BaseDescription getItemSpecification(String componentId) {
+        BaseDescription item = itemRepository.findByComponentId(componentId);
+        String xml = item.getContent();
         throw new UnsupportedOperationException();
     }
 
