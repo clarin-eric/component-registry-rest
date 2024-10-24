@@ -9,3 +9,11 @@ spring:
 #        url: jdbc:postgresql://localhost:5443/compreg
 #        username: <....>
 #        password: <....>
+
+server:
+    servlet:
+        context-path: /rest
+
+springdoc:
+    api-docs:
+        path: /openapi.json

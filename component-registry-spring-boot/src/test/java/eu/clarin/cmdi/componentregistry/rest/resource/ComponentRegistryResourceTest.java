@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey.resource;
+package eu.clarin.cmdi.componentregistry.rest.resource;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;

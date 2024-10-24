@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey.persistence;
+package eu.clarin.cmdi.componentregistry.rest.persistence;
 
-import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

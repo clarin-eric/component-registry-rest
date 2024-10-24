@@ -1,7 +1,7 @@
-package eu.clarin.cmdi.componentregistry.jersey.service;
+package eu.clarin.cmdi.componentregistry.rest.service;
 
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
-import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 

@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey;
+package eu.clarin.cmdi.componentregistry.rest;
 
-import eu.clarin.cmdi.componentregistry.jersey.configuration.JerseyConfiguration;
-import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
-import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
-import eu.clarin.cmdi.componentregistry.jersey.resource.ComponentRegistryResource;
+import eu.clarin.cmdi.componentregistry.rest.controller.ComponentRegistryController;
+import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
+import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,18 +34,13 @@ public class ComponentRegistrySpringBootApplicationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private ComponentRegistryResource registryResource;
-
-    @Autowired
-    private JerseyConfiguration jerseyConfiguration;
+    private ComponentRegistryController registryContoller;
 
     @Test
     void contextLoads() {
         assertThat(itemRepository).isNotNull();
         assertThat(userRepository).isNotNull();
-        assertThat(registryResource).isNotNull();
-        assertThat(jerseyConfiguration).isNotNull();
-        assertThat(jerseyConfiguration.isRegistered(ComponentRegistryResource.class)).isTrue();
+        assertThat(registryContoller).isNotNull();
     }
 
 }

@@ -1,4 +1,4 @@
-package eu.clarin.cmdi.componentregistry.jersey.model;
+package eu.clarin.cmdi.componentregistry.rest.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

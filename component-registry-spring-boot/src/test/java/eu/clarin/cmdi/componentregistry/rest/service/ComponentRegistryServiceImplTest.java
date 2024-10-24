@@ -14,15 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey.service;
+package eu.clarin.cmdi.componentregistry.rest.service;
 
+import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryServiceImpl;
 import com.google.common.collect.ImmutableList;
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
-import eu.clarin.cmdi.componentregistry.jersey.model.BaseDescription;
-import eu.clarin.cmdi.componentregistry.jersey.model.RegistryUser;
-import eu.clarin.cmdi.componentregistry.jersey.persistence.RegistryItemRepository;
-import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
-import eu.clarin.cmdi.componentregistry.jersey.spec.ComponentSpecMarshaller;
+import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
+import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
+import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

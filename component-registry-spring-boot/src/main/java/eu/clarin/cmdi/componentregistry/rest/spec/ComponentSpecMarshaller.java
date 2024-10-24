@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.jersey.spec;
+package eu.clarin.cmdi.componentregistry.rest.spec;
 
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import jakarta.xml.bind.JAXBContext;
@@ -23,8 +23,6 @@ import jakarta.xml.bind.Marshaller;
 import java.io.StringReader;
 import java.io.Writer;
 import org.springframework.stereotype.Component;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.ext.DefaultHandler2;
 
 /**
  *

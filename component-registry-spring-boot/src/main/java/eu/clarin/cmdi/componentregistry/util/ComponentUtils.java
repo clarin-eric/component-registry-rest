@@ -1,4 +1,4 @@
-package clarin.cmdi.componentregistry.util;
+package eu.clarin.cmdi.componentregistry.util;
 //
 //import clarin.cmdi.componentregistry.ComponentRegistryException;
 //import clarin.cmdi.componentregistry.model.ComponentDescription;

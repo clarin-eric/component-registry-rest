@@ -1,7 +1,7 @@
-package eu.clarin.cmdi.componentregistry.jersey.model;
+package eu.clarin.cmdi.componentregistry.rest.model;
 
-import clarin.cmdi.componentregistry.util.ComponentUtils;
-import clarin.cmdi.componentregistry.util.XmlDateAdapter;
+import eu.clarin.cmdi.componentregistry.util.ComponentUtils;
+import eu.clarin.cmdi.componentregistry.util.XmlDateAdapter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

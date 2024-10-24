@@ -16,7 +16,7 @@
  */
 package eu.clarin.cmdi.componentregistry.spec;
 
-import eu.clarin.cmdi.componentregistry.jersey.spec.ComponentSpecMarshaller;
+import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.components.ObjectFactory;
 import java.io.StringWriter;

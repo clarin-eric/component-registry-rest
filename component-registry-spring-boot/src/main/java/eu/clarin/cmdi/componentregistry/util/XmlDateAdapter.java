@@ -1,4 +1,4 @@
-package clarin.cmdi.componentregistry.util;
+package eu.clarin.cmdi.componentregistry.util;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.Date;

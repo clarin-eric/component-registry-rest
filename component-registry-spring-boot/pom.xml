@@ -17,7 +17,7 @@
     </organization>
     
     <properties>
-        <start-class>eu.clarin.cmdi.componentregistry.jersey.ComponentRegistrySpringBootApplication</start-class>
+        <start-class>eu.clarin.cmdi.componentregistry.rest.ComponentRegistrySpringBootApplication</start-class>
         <java.version>21</java.version>
         <netbeans.hint.license>gpl30</netbeans.hint.license>                                              
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>      
@@ -26,23 +26,25 @@
     </properties>
     
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jersey</artifactId>
-        </dependency>
         
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+                        
         <!-- Data serialization -->
         
-        <dependency>    
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-jaxb</artifactId>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
-        
+
         <dependency>    
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
@@ -88,33 +90,6 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
-        
-        <!-- OpenAPI / Swagger -->
-        
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-core-jakarta</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2-jakarta</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        
-        <!-- Swagger UI -->
-        <!--
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
-        </dependency>
-        -->
         
         <!-- Tests -->
         <dependency>
@@ -279,7 +254,7 @@
             
             <!-- 
                 TODO: 
-                use resource plugin and org.webjars.swagger-ui to serve 
+                use maven-dependency plugin and org.webjars.swagger-ui to serve 
                 swagger-ui with adapted  configuration to default to 
                 /rest/openapi.json 
             -->

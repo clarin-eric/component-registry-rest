@@ -1,5 +1,6 @@
-package eu.clarin.cmdi.componentregistry.jersey.model;
+package eu.clarin.cmdi.componentregistry.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.xml.bind.annotation.XmlEnumValue;
 
 /**
@@ -26,6 +27,7 @@ public enum ComponentStatus {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return stringValue;
     }
