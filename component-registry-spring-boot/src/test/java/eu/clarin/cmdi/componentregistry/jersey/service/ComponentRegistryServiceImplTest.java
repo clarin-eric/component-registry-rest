@@ -25,7 +25,6 @@ import eu.clarin.cmdi.componentregistry.jersey.persistence.UserRepository;
 import eu.clarin.cmdi.componentregistry.jersey.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -170,6 +170,21 @@
     </dependencies>
 
     <build>
+        
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/generated/jaxb/components</directory>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -187,13 +202,25 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb</groupId>
+                                    <artifactId>jaxb-plugin-annotate</artifactId>
+                                    <version>4.0.8</version>
+                                </plugin>
+                            </plugins>
+                            <args>
+                                <arg>-Xannotate</arg>
+                            </args>
+                            
                             <schemaDirectory>src/main/binding/components</schemaDirectory>
                             <schemaIncludes>
                                 <include>toolkit/xsd/cmd-component.xsd</include>
                             </schemaIncludes>
                             <bindingDirectory>src/main/binding/components</bindingDirectory>
                             <extension>true</extension>
-                            <!--<generateDirectory>${basedir}/src/generated/jaxb/components</generateDirectory>-->
+                            
+                            <generateDirectory>${basedir}/src/generated/jaxb/components</generateDirectory>
                             <generatePackage>eu.clarin.cmdi.componentregistry.components</generatePackage>
                             <!--<catalog>src/main/resources/catalog.cat</catalog>-->
                             <!--<catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>-->
