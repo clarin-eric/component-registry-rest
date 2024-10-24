@@ -22,6 +22,7 @@ import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,13 +34,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @author twagoo
  */
 @RestController
-@RequestMapping("/registry")
+@RequestMapping("/registry/items")
 public class ComponentRegistryController {
 
     @Autowired
     private ComponentRegistryService registryService;
 
-    @GetMapping("/items")
+    @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Direction sortDirection
@@ -47,14 +48,14 @@ public class ComponentRegistryController {
         return registryService.getPublishedDescriptions(sortBy, sortDirection);
     }
 
-    @GetMapping("/items/{componentId}")
+    @GetMapping(path = "/{componentId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public BaseDescription getItem(
             @PathVariable("componentId") String componentId
     ) {
         return registryService.getItemDescription(componentId);
     }
 
-    @GetMapping("/items/{componentId}/spec")
+    @GetMapping(path = "/{componentId}/spec", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ComponentSpec getItemSpec(
             @PathVariable(value = "componentId") String componentId
     ) {
