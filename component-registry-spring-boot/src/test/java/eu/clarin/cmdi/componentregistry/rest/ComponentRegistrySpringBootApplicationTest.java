@@ -16,7 +16,7 @@
  */
 package eu.clarin.cmdi.componentregistry.rest;
 
-import eu.clarin.cmdi.componentregistry.rest.controller.ComponentRegistryController;
+import eu.clarin.cmdi.componentregistry.rest.controller.ItemsController;
 import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,13 +34,13 @@ public class ComponentRegistrySpringBootApplicationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private ComponentRegistryController registryContoller;
+    private ItemsController itemsController;
 
     @Test
     void contextLoads() {
         assertThat(itemRepository).isNotNull();
         assertThat(userRepository).isNotNull();
-        assertThat(registryContoller).isNotNull();
+        assertThat(itemsController).isNotNull();
     }
 
 }

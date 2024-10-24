@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/registry/items")
-public class ComponentRegistryController {
+public class ItemsController {
 
     @Autowired
     private ComponentRegistryService registryService;
