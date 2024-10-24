@@ -16,12 +16,12 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.service;
 
-import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryServiceImpl;
 import com.google.common.collect.ImmutableList;
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
+import eu.clarin.cmdi.componentregistry.rest.persistence.SpecRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
@@ -56,13 +56,16 @@ public class ComponentRegistryServiceImplTest {
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.4-alpine3.20")
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.4-alpine3.20")
             .withDatabaseName("compreg-test")
             .withUsername("compreg")
             .withPassword("compreg");
 
     @Autowired
     private RegistryItemRepository itemRepository;
+
+    @Autowired
+    private SpecRepository contentRepository;
 
     @Autowired
     private ComponentSpecMarshaller specMarshaller;
@@ -74,7 +77,7 @@ public class ComponentRegistryServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        instance = new ComponentRegistryServiceImpl(itemRepository, specMarshaller);
+        instance = new ComponentRegistryServiceImpl(itemRepository, contentRepository, specMarshaller);
     }
 
     @Test
@@ -109,9 +112,9 @@ public class ComponentRegistryServiceImplTest {
                   """;
 
         final long userId = insertUser("TestUser");
-        insertDescriptions(1001, 1, userId,
-                b -> {
-                    b.content(xml);
+        insertDescriptions(1001, 1, userId)
+                .forEach(id -> {
+                    //contentRepository.getContentByComponentId();
                 });
 
         final ComponentSpec spec = instance.getItemSpecification("item1001");
@@ -131,11 +134,11 @@ public class ComponentRegistryServiceImplTest {
         return userRepository.saveAndFlush(user).getId();
     }
 
-    private long insertDescriptions(long startId, long number, Long userId) {
+    private Iterable<Long> insertDescriptions(long startId, long number, Long userId) {
         return insertDescriptions(startId, number, userId, null);
     }
 
-    private long insertDescriptions(long startId, long number, Long userId, Consumer<BaseDescription.BaseDescriptionBuilder> descriptionConfigurer) {
+    private Iterable<Long> insertDescriptions(long startId, long number, Long userId, Consumer<BaseDescription.BaseDescriptionBuilder> descriptionConfigurer) {
         final ImmutableList.Builder<BaseDescription> descriptions = ImmutableList.builder();
         for (long id = startId; id < startId + number; id++) {
             final BaseDescription.BaseDescriptionBuilder builder = BaseDescription.builder()
@@ -152,7 +155,7 @@ public class ComponentRegistryServiceImplTest {
             descriptions.add(builder.build());
         }
         return itemRepository.saveAllAndFlush(descriptions.build())
-                .getLast().getDbId();
+                .stream().map(BaseDescription::getDbId).toList();
     }
 
 }

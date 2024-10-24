@@ -104,11 +104,6 @@ public class BaseDescription implements Serializable {
     @Builder.Default
     private boolean shownInEditor = true;
 //
-    @XmlTransient
-    @Column(name = "content", nullable = false)
-    @Builder.Default
-    private String content = "";
-//
     @XmlElement(name = "isPublic")
     @JsonProperty("isPublic")
     @Column(name = "is_public", nullable = false)
@@ -129,14 +124,6 @@ public class BaseDescription implements Serializable {
     public void setDbUserId(long dbUserId) {
         this.dbUserId = dbUserId;
         setUserId("" + dbUserId);
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public boolean isDeleted() {

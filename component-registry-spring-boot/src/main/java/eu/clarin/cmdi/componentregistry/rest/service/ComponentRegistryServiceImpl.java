@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import eu.clarin.cmdi.componentregistry.rest.persistence.SpecRepository;
 
 /**
  *
@@ -35,13 +36,16 @@ import org.springframework.stereotype.Service;
 public class ComponentRegistryServiceImpl implements ComponentRegistryService {
 
     private final RegistryItemRepository itemRepository;
+    private final SpecRepository specRepository;
     private final ComponentSpecMarshaller specMarshaller;
 
     @Autowired
     public ComponentRegistryServiceImpl(
             RegistryItemRepository itemRepository,
+            SpecRepository contentRepository,
             ComponentSpecMarshaller specMarshaller) {
         this.itemRepository = itemRepository;
+        this.specRepository = contentRepository;
         this.specMarshaller = specMarshaller;
     }
 
@@ -62,7 +66,7 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
 
     @Override
     public ComponentSpec getItemSpecification(String componentId) {
-        final String xml = itemRepository.getContentByComponentId(componentId);
+        final String xml = specRepository.getSpecByComponentId(componentId);
         if (xml == null) {
             return null;
         } else {

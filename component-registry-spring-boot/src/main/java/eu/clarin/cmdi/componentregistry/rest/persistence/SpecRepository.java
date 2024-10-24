@@ -16,9 +16,7 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.persistence;
 
-import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
-import java.util.List;
-import org.springframework.data.domain.Sort;
+import eu.clarin.cmdi.componentregistry.rest.model.SpecItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -28,11 +26,9 @@ import org.springframework.stereotype.Repository;
  * @author twagoo
  */
 @Repository
-public interface RegistryItemRepository extends JpaRepository<BaseDescription, Long> {
+public interface SpecRepository extends JpaRepository<SpecItem, Long> {
 
-    @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true AND c.deleted = false") //+ "ORDER BY c.recommended desc, upper(c.name), c.id")
-    List<BaseDescription> findPublicItems(Sort sort);
+    @Query("SELECT c.content FROM SpecItem c WHERE c.deleted = false AND c.componentId = ?1")
+    public String getSpecByComponentId(String componentId);
 
-    @Query("SELECT c FROM BaseDescription c WHERE c.deleted = false AND c.componentId = ?1")
-    public BaseDescription findByComponentId(String componentId);
 }
