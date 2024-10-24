@@ -78,4 +78,9 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
         }
     }
 
+    @Override
+    public String getItemSpecificationXml(String componentId) {
+        return specRepository.getSpecByComponentId(componentId);
+    }
+
 }

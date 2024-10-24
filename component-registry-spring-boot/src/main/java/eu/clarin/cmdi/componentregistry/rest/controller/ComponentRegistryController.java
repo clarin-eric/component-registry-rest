@@ -61,4 +61,11 @@ public class ComponentRegistryController {
     ) {
         return registryService.getItemSpecification(componentId);
     }
+
+    @GetMapping(path = "/{componentId}/spec", produces = {MediaType.APPLICATION_XML_VALUE})
+    public String getItemSpecXml(
+            @PathVariable(value = "componentId") String componentId
+    ) {
+        return registryService.getItemSpecificationXml(componentId);
+    }
 }

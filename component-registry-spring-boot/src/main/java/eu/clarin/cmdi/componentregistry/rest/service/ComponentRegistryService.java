@@ -15,6 +15,8 @@ public interface ComponentRegistryService {
 
     ComponentSpec getItemSpecification(String componentId);
 
+    String getItemSpecificationXml(String componentId);
+
     List<BaseDescription> getPublishedDescriptions();
 
     List<BaseDescription> getPublishedDescriptions(String sortBy, Sort.Direction sortDirection);
