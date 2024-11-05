@@ -17,6 +17,8 @@
 package eu.clarin.cmdi.componentregistry.rest.persistence;
 
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +31,23 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RegistryItemRepository extends JpaRepository<BaseDescription, Long> {
+//
+//        @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true and c.deleted = false and c.componentId like ?1 ORDER BY c.recommended desc, upper(c.name) asc")
+//    List<BaseDescription> findPublishedItems(String idPrefix);
+//
+//    @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true and c.deleted = false and c.componentId like ?1 and status in ?2 ORDER BY c.recommended desc, upper(c.name) asc")
+//    List<BaseDescription> findPublishedItems(String idPrefix, Collection<ComponentStatus> statusFilter);
+
+    @Query("SELECT c FROM BaseDescription c"
+            + " WHERE c.componentId like ?1"
+            + " AND c.ispublic = ?2"
+            + " AND status in ?3"
+            + " AND c.deleted = false")
+    List<BaseDescription> findItems(
+            String idPrefix,
+            boolean isPublic,
+            Collection<ComponentStatus> status,
+            Sort sort);
 
     @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true AND c.deleted = false") //+ "ORDER BY c.recommended desc, upper(c.name), c.id")
     List<BaseDescription> findPublicItems(Sort sort);

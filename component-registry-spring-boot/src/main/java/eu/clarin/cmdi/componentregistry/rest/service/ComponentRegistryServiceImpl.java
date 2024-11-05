@@ -18,6 +18,8 @@ package eu.clarin.cmdi.componentregistry.rest.service;
 
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.xml.bind.JAXBException;
@@ -27,6 +29,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import eu.clarin.cmdi.componentregistry.rest.persistence.SpecRepository;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  *
@@ -38,6 +42,10 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     private final RegistryItemRepository itemRepository;
     private final SpecRepository specRepository;
     private final ComponentSpecMarshaller specMarshaller;
+
+    public static final String REGISTRY_ID_PREFIX = "clarin.eu:cr1:";
+    private final String COMPONENT_ID_PREFIX = REGISTRY_ID_PREFIX + "c_";
+    private final String PROFILE_ID_PREFIX = REGISTRY_ID_PREFIX + "p_";
 
     @Autowired
     public ComponentRegistryServiceImpl(
@@ -57,6 +65,23 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     @Override
     public List<BaseDescription> getPublishedDescriptions(String sortBy, Direction sortDirection) {
         return itemRepository.findPublicItems(Sort.by(sortDirection, sortBy));
+    }
+
+    @Override
+    public List<BaseDescription> getPublishedDescriptions(ItemType type, Collection<ComponentStatus> status,
+            Optional<String> sortBy, Optional<Direction> sortDirection) {
+        return itemRepository.findItems(prefixForType(type) + "%",
+                true,
+                status,
+                sortBy
+                        .map(property -> Sort.by(
+                        sortDirection.orElse(Direction.ASC),
+                        property))
+                        .orElseGet(Sort::unsorted));
+    }
+
+    private String prefixForType(ItemType type) {
+        return ItemType.PROFILE.equals(type) ? PROFILE_ID_PREFIX : COMPONENT_ID_PREFIX;
     }
 
     @Override

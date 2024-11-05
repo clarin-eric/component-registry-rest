@@ -19,6 +19,8 @@ package eu.clarin.cmdi.componentregistry.rest.service;
 import com.google.common.collect.ImmutableList;
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.SpecRepository;
@@ -26,6 +28,7 @@ import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -81,9 +85,9 @@ public class ComponentRegistryServiceImplTest {
     }
 
     @Test
-    public void testGetPublishedDescriptions() {
+    public void testGetAllPublishedDescriptions() {
         long userId = insertUser("TestUser");
-        insertDescriptions(1001, 5, userId);
+        insertDescriptions("id", 1001, 5, userId);
 
         List<BaseDescription> result = instance.getPublishedDescriptions();
         assertThat(result).isNotNull();
@@ -91,15 +95,46 @@ public class ComponentRegistryServiceImplTest {
     }
 
     @Test
+    public void testGetPublishedComponentsAndProfiles() {
+        long userId = insertUser("TestUser");
+        //insert components
+        insertDescriptions("clarin.eu:cr1:c_", 1001, 7, userId);
+        //insert profiles
+        insertDescriptions("clarin.eu:cr1:p_", 2001, 3, userId);
+
+        //get components
+        {
+            final List<BaseDescription> result = instance.getPublishedDescriptions(
+                    ItemType.COMPONENT,
+                    ImmutableList.of(ComponentStatus.PRODUCTION),
+                    //no sorting
+                    Optional.empty(), Optional.empty());
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(7);
+        }
+        
+        //get profiles
+        {
+            final List<BaseDescription> result = instance.getPublishedDescriptions(
+                    ItemType.PROFILE,
+                    ImmutableList.of(ComponentStatus.PRODUCTION),
+                    //no sorting
+                    Optional.empty(), Optional.empty());
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(3);
+        }
+    }
+
+    @Test
     public void testGetDescriptionById() {
         long userId = insertUser("TestUser");
-        insertDescriptions(1001, 1, userId);
+        insertDescriptions("id", 1001, 1, userId);
 
-        final BaseDescription descr = instance.getItemDescription("item1001");
+        final BaseDescription descr = instance.getItemDescription("id1001");
         assertThat(descr).isNotNull();
-        assertThat(descr).hasFieldOrPropertyWithValue("id", "item1001");
+        assertThat(descr).hasFieldOrPropertyWithValue("id", "id1001");
 
-        final BaseDescription descr2 = instance.getItemDescription("item1002");
+        final BaseDescription descr2 = instance.getItemDescription("id1002");
         assertThat(descr2).isNull();
     }
 
@@ -112,12 +147,12 @@ public class ComponentRegistryServiceImplTest {
                   """;
 
         final long userId = insertUser("TestUser");
-        insertDescriptions(1001, 1, userId)
+        insertDescriptions("id", 1001, 1, userId)
                 .forEach(id -> {
-                    //contentRepository.getContentByComponentId();
+                    contentRepository.getReferenceById(id).setContent(xml);
                 });
 
-        final ComponentSpec spec = instance.getItemSpecification("item1001");
+        final ComponentSpec spec = instance.getItemSpecification("id1001");
         assertThat(spec).isNotNull();
         assertThat(spec).hasFieldOrPropertyWithValue("isProfile", true);
     }
@@ -134,20 +169,21 @@ public class ComponentRegistryServiceImplTest {
         return userRepository.saveAndFlush(user).getId();
     }
 
-    private Iterable<Long> insertDescriptions(long startId, long number, Long userId) {
-        return insertDescriptions(startId, number, userId, null);
+    private Iterable<Long> insertDescriptions(String idPrefix, long startId, long number, Long userId) {
+        return insertDescriptions(idPrefix, startId, number, userId, null);
     }
 
-    private Iterable<Long> insertDescriptions(long startId, long number, Long userId, Consumer<BaseDescription.BaseDescriptionBuilder> descriptionConfigurer) {
+    private Iterable<Long> insertDescriptions(String idPrefix, long startId, long number, Long userId, Consumer<BaseDescription.BaseDescriptionBuilder> descriptionConfigurer) {
         final ImmutableList.Builder<BaseDescription> descriptions = ImmutableList.builder();
         for (long id = startId; id < startId + number; id++) {
             final BaseDescription.BaseDescriptionBuilder builder = BaseDescription.builder()
                     .dbId(id)
                     .dbUserId(userId)
                     .ispublic(true)
-                    .componentId("item" + id)
+                    .componentId(idPrefix + id)
                     .name("item" + id)
-                    .description("Item number " + id);
+                    .description("Item number " + id)
+                    .status(ComponentStatus.PRODUCTION);
             if (descriptionConfigurer != null) {
                 // configure more
                 descriptionConfigurer.accept(builder);
