@@ -16,10 +16,13 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.controller;
 
-import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
+import com.google.common.collect.ImmutableList;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -36,31 +39,70 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/registry")
 public class RegistryController {
-    
+
+    final ImmutableList<ComponentStatus> DEFAULT_STATUS = ImmutableList.of(ComponentStatus.PRODUCTION);
+
     @Autowired
     private ComponentRegistryService registryService;
 
-    @GetMapping(path = "/components", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(path = "/components",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getComponents(
+            @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
-        return registryService.getPublishedDescriptions(sortBy, sortDirection);
+        return getItemsOfType(ItemType.COMPONENT, status, sortBy, sortDirection);
     }
 
-    @GetMapping(path = "/components/{componentId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(path = "/profiles",
+            produces = {
+                MediaType.APPLICATION_JSON_VALUE,
+                MediaType.APPLICATION_XML_VALUE})
+    public List<BaseDescription> getProfiles(
+            @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
+            @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
+    ) {
+        return getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection);
+    }
+
+    @GetMapping(path = "/components/{componentId}",
+            produces = {
+                MediaType.APPLICATION_JSON_VALUE,
+                MediaType.APPLICATION_XML_VALUE})
     public BaseDescription getComponentItem(
             @PathVariable("componentId") String componentId
     ) {
-        return registryService.getItemDescription(componentId);
+        return getItemDescriptionOfType(ItemType.COMPONENT, componentId);
     }
-    
-    
-    @GetMapping(path = "/profiles/{componentId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+
+    @GetMapping(path = "/profiles/{componentId}",
+            produces = {
+                MediaType.APPLICATION_JSON_VALUE,
+                MediaType.APPLICATION_XML_VALUE})
     public BaseDescription getProfileItem(
             @PathVariable("componentId") String componentId
     ) {
-        return registryService.getItemDescription(componentId);
+        return getItemDescriptionOfType(ItemType.PROFILE, componentId);
+    }
+
+    private List<BaseDescription> getItemsOfType(ItemType type, Optional<List<ComponentStatus>> status,
+            String sortBy, Sort.Direction sortDirection) {
+        return registryService.getPublishedDescriptions(
+                type,
+                status.orElse(DEFAULT_STATUS),
+                Optional.of(sortBy), Optional.of(sortDirection));
+    }
+
+    private BaseDescription getItemDescriptionOfType(ItemType type, String componentId) {
+        final BaseDescription item = registryService.getItemDescription(componentId);
+        if (item != null && registryService.itemIsOfType(item, type)) {
+            return item;
+        } else {
+            //TODO: 404
+            return null;
+        }
     }
 
 }

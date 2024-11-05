@@ -45,4 +45,6 @@ public interface ComponentRegistryService {
     List<BaseDescription> getPublishedDescriptions(ItemType type, Collection<ComponentStatus> status,
             Optional<String> sortBy, Optional<Sort.Direction> sortDirection);
 
+    public boolean itemIsOfType(BaseDescription item, ItemType type);
+
 }

@@ -108,4 +108,20 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
         return specRepository.getSpecByComponentId(componentId);
     }
 
+    @Override
+    public boolean itemIsOfType(BaseDescription item, ItemType type) {
+        final String id = item.getId();
+        if (id == null) {
+            // Type cannot be determined if id is null!
+            return false;
+        } else {
+            if (ItemType.PROFILE.equals(type)) {
+                return id.startsWith(PROFILE_ID_PREFIX);
+            } else {
+                return ItemType.COMPONENT.equals(type)
+                        && id.startsWith(COMPONENT_ID_PREFIX);
+            }
+        }
+    }
+
 }
