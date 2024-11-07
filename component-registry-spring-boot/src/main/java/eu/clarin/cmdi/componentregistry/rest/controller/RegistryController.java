@@ -17,20 +17,27 @@
 package eu.clarin.cmdi.componentregistry.rest.controller;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
+import eu.clarin.cmdi.componentregistry.rest.model.ProfileDescription;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
+import eu.clarin.cmdi.componentregistry.rest.service.ItemDescriptionConverter;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -45,46 +52,57 @@ public class RegistryController {
     @Autowired
     private ComponentRegistryService registryService;
 
+    @Autowired
+    private ItemDescriptionConverter itemConverter;
+
     @GetMapping(path = "/components",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public List<BaseDescription> getComponents(
+    public List<ComponentDescription> getComponents(
             @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
-        return getItemsOfType(ItemType.COMPONENT, status, sortBy, sortDirection);
+
+        return ImmutableList.copyOf(
+                Iterables.transform(
+                        getItemsOfType(ItemType.COMPONENT, status, sortBy, sortDirection),
+                        itemConverter::baseDescriptionAsComponent));
     }
 
     @GetMapping(path = "/profiles",
             produces = {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
-    public List<BaseDescription> getProfiles(
+    public List<ProfileDescription> getProfiles(
             @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
-        return getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection);
+        return ImmutableList.copyOf(
+                Iterables.transform(getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection),
+                        itemConverter::baseDescriptionAsProfile));
     }
 
-    @GetMapping(path = "/components/{componentId}",
+    @GetMapping(path = "/components/{componentId}/description",
             produces = {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
-    public BaseDescription getComponentItem(
+    public ComponentDescription getComponentItem(
             @PathVariable("componentId") String componentId
     ) {
-        return getItemDescriptionOfType(ItemType.COMPONENT, componentId);
+        return itemConverter.baseDescriptionAsComponent(
+                getItemDescriptionOfType(ItemType.COMPONENT, componentId));
     }
 
-    @GetMapping(path = "/profiles/{componentId}",
+    @GetMapping(path = "/profiles/{componentId}/description",
             produces = {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
-    public BaseDescription getProfileItem(
+    public ProfileDescription getProfileItem(
             @PathVariable("componentId") String componentId
     ) {
-        return getItemDescriptionOfType(ItemType.PROFILE, componentId);
+        return itemConverter.baseDescriptionAsProfile(
+                getItemDescriptionOfType(ItemType.PROFILE, componentId));
     }
 
     private List<BaseDescription> getItemsOfType(ItemType type, Optional<List<ComponentStatus>> status,
@@ -100,8 +118,8 @@ public class RegistryController {
         if (item != null && registryService.itemIsOfType(item, type)) {
             return item;
         } else {
-            //TODO: 404
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "There is no item of type " + type + " with id " + componentId);
         }
     }
 

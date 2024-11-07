@@ -17,6 +17,8 @@
 package eu.clarin.cmdi.componentregistry.rest.service;
 
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
+import static eu.clarin.cmdi.componentregistry.rest.ComponentRegistryConstants.COMPONENT_ID_PREFIX;
+import static eu.clarin.cmdi.componentregistry.rest.ComponentRegistryConstants.PROFILE_ID_PREFIX;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
@@ -42,10 +44,6 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     private final RegistryItemRepository itemRepository;
     private final SpecRepository specRepository;
     private final ComponentSpecMarshaller specMarshaller;
-
-    public static final String REGISTRY_ID_PREFIX = "clarin.eu:cr1:";
-    private final String COMPONENT_ID_PREFIX = REGISTRY_ID_PREFIX + "c_";
-    private final String PROFILE_ID_PREFIX = REGISTRY_ID_PREFIX + "p_";
 
     @Autowired
     public ComponentRegistryServiceImpl(
