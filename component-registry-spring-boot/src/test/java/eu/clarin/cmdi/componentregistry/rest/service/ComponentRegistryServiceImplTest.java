@@ -104,7 +104,7 @@ public class ComponentRegistryServiceImplTest {
 
         //get components
         {
-            final List<BaseDescription> result = instance.getPublishedDescriptions(
+            final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.COMPONENT,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
@@ -115,7 +115,7 @@ public class ComponentRegistryServiceImplTest {
         
         //get profiles
         {
-            final List<BaseDescription> result = instance.getPublishedDescriptions(
+            final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.PROFILE,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting

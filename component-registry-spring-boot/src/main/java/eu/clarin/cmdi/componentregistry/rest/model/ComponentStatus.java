@@ -2,6 +2,7 @@ package eu.clarin.cmdi.componentregistry.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.xml.bind.annotation.XmlEnumValue;
+import org.springframework.core.convert.converter.Converter;
 
 /**
  *
@@ -30,6 +31,20 @@ public enum ComponentStatus {
     @JsonValue
     public String toString() {
         return stringValue;
+    }
+
+    public static class StringToComponentStatusConverter implements Converter<String, ComponentStatus> {
+
+        @Override
+        public ComponentStatus convert(String source) {
+            if (source == null) {
+                return null;
+            } else try {
+                return ComponentStatus.valueOf(source.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
     }
 
 }

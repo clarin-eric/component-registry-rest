@@ -17,16 +17,30 @@
 package eu.clarin.cmdi.componentregistry.rest.model;
 
 import jakarta.xml.bind.annotation.XmlEnumValue;
+import org.springframework.core.convert.converter.Converter;
 
 /**
  *
  * @author twagoo
  */
 public enum ItemType {
-    
+
     @XmlEnumValue("component")
     COMPONENT,
-    
     @XmlEnumValue("profile")
-    PROFILE
+    PROFILE;
+
+    public static class StringToItemTypeConverter implements Converter<String, ItemType> {
+
+        @Override
+        public ItemType convert(String source) {
+            if (source == null) {
+                return null;
+            } else try {
+                return ItemType.valueOf(source.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
+    }
 }

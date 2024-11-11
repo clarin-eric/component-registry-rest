@@ -49,6 +49,14 @@ public interface RegistryItemRepository extends JpaRepository<BaseDescription, L
             Collection<ComponentStatus> status,
             Sort sort);
 
+    @Query("SELECT c FROM BaseDescription c"
+            + " WHERE c.ispublic = ?1"
+            + " AND status in ?2"
+            + " AND c.deleted = false")
+    List<BaseDescription> findItems(boolean isPublic,
+            Collection<ComponentStatus> status,
+            Sort sort);
+
     @Query("SELECT c FROM BaseDescription c WHERE c.ispublic = true AND c.deleted = false") //+ "ORDER BY c.recommended desc, upper(c.name), c.id")
     List<BaseDescription> findPublicItems(Sort sort);
 

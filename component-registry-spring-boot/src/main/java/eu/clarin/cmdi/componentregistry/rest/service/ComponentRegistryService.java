@@ -21,28 +21,34 @@ public interface ComponentRegistryService {
 
     String getItemSpecificationXml(String componentId);
 
-    /***
+    /**
+     * *
      * @return an unsorted list of all published items
      */
     List<BaseDescription> getPublishedDescriptions();
 
-    
-    /***
+    /**
+     * *
+     * @param status
      * @param sortBy field to sort by
      * @param sortDirection direction to sort in
      * @return a sorted list of all published items
      */
-    List<BaseDescription> getPublishedDescriptions(String sortBy, Sort.Direction sortDirection);
+    List<BaseDescription> getItemDescriptions(Collection<ComponentStatus> status, Optional<String> sortBy, Optional<Sort.Direction> sortDirection);
 
-    /***
+    /**
+     * *
      * Get all published items with the specified type and status
+     *
      * @param type
      * @param status
-     * @param sortBy field to sort by; provide an empty optional for unsorted result
-     * @param sortDirection sorting direction or provide an empty optional for default direction
-     * @return 
+     * @param sortBy field to sort by; provide an empty optional for unsorted
+     * result
+     * @param sortDirection sorting direction or provide an empty optional for
+     * default direction
+     * @return
      */
-    List<BaseDescription> getPublishedDescriptions(ItemType type, Collection<ComponentStatus> status,
+    List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
             Optional<String> sortBy, Optional<Sort.Direction> sortDirection);
 
     public boolean itemIsOfType(BaseDescription item, ItemType type);

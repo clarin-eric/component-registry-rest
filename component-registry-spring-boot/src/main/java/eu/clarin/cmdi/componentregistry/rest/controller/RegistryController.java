@@ -17,7 +17,6 @@
 package eu.clarin.cmdi.componentregistry.rest.controller;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
@@ -33,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +59,7 @@ public class RegistryController {
     @GetMapping(path = "/components",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ComponentsList getComponents(
-            @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
+            @RequestParam(value = "status") List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
@@ -72,7 +72,7 @@ public class RegistryController {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
     public ProfilesList getProfiles(
-            @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
+            @RequestParam(value = "status") List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
@@ -102,11 +102,11 @@ public class RegistryController {
                 getItemDescriptionOfType(ItemType.PROFILE, componentId));
     }
 
-    private List<BaseDescription> getItemsOfType(ItemType type, Optional<List<ComponentStatus>> status,
+    private List<BaseDescription> getItemsOfType(ItemType type, List<ComponentStatus> status,
             String sortBy, Sort.Direction sortDirection) {
-        return registryService.getPublishedDescriptions(
+        return registryService.getItemDescriptions(
                 type,
-                status.orElse(DEFAULT_STATUS),
+                CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
                 Optional.of(sortBy), Optional.of(sortDirection));
     }
 

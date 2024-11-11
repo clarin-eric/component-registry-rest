@@ -16,13 +16,18 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.controller;
 
+import com.google.common.collect.ImmutableList;
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,15 +42,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/registry/items")
 public class ItemsController {
 
+    final ImmutableList<ComponentStatus> DEFAULT_STATUS = ImmutableList.of(ComponentStatus.PRODUCTION);
+
     @Autowired
     private ComponentRegistryService registryService;
 
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
+            @RequestParam(value = "type") Optional<ItemType> itemType,
+            @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Direction sortDirection
     ) {
-        return registryService.getPublishedDescriptions(sortBy, sortDirection);
+        return itemType.map(
+                (type) -> registryService.getItemDescriptions(type,
+                        CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
+                        Optional.of(sortBy), Optional.of(sortDirection)))
+                .orElseGet(
+                        () -> registryService.getItemDescriptions(
+                                CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
+                                Optional.of(sortBy), Optional.of(sortDirection)));
     }
 
     @GetMapping(path = "/{componentId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

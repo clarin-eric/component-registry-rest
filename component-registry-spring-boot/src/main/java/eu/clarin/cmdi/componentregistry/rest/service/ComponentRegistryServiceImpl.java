@@ -61,12 +61,18 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     }
 
     @Override
-    public List<BaseDescription> getPublishedDescriptions(String sortBy, Direction sortDirection) {
-        return itemRepository.findPublicItems(Sort.by(sortDirection, sortBy));
+    public List<BaseDescription> getItemDescriptions(Collection<ComponentStatus> status, Optional<String> sortBy, Optional<Direction> sortDirection) {
+        return itemRepository.findItems(true,
+                status,
+                sortBy
+                        .map(property -> Sort.by(
+                        sortDirection.orElse(Direction.ASC),
+                        property))
+                        .orElseGet(Sort::unsorted));
     }
 
     @Override
-    public List<BaseDescription> getPublishedDescriptions(ItemType type, Collection<ComponentStatus> status,
+    public List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
             Optional<String> sortBy, Optional<Direction> sortDirection) {
         return itemRepository.findItems(prefixForType(type) + "%",
                 true,
