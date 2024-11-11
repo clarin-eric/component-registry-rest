@@ -1,8 +1,10 @@
 package eu.clarin.cmdi.componentregistry.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.clarin.cmdi.componentregistry.util.ComponentUtils;
 import eu.clarin.cmdi.componentregistry.util.XmlDateAdapter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -51,6 +53,7 @@ public class BaseDescription implements Serializable {
     @Id
     @Column(name = "id")
     @XmlTransient
+    @JsonIgnore
     private Long dbId;
 //
     @XmlElement(name = "id")
@@ -71,6 +74,7 @@ public class BaseDescription implements Serializable {
     private String creatorName;
 
     @XmlTransient
+    @JsonIgnore
     @Column(name = "user_id", columnDefinition = "integer")
     private long dbUserId;
 
@@ -101,6 +105,7 @@ public class BaseDescription implements Serializable {
 //
     @Column(name = "show_in_editor", nullable = false)
     @XmlTransient
+    @JsonIgnore
     @Builder.Default
     private boolean shownInEditor = true;
 //
@@ -110,6 +115,7 @@ public class BaseDescription implements Serializable {
     private boolean ispublic;
 //
     @XmlTransient
+    @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 //

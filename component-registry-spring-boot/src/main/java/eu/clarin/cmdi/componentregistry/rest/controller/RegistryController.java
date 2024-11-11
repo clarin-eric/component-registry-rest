@@ -18,12 +18,13 @@ package eu.clarin.cmdi.componentregistry.rest.controller;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentsList;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfileDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ProfilesList;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.rest.service.ItemDescriptionConverter;
 import java.util.List;
@@ -57,30 +58,26 @@ public class RegistryController {
 
     @GetMapping(path = "/components",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public List<ComponentDescription> getComponents(
+    public ComponentsList getComponents(
             @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
-
-        return ImmutableList.copyOf(
-                Iterables.transform(
-                        getItemsOfType(ItemType.COMPONENT, status, sortBy, sortDirection),
-                        itemConverter::baseDescriptionAsComponent));
+        final List<BaseDescription> items = getItemsOfType(ItemType.COMPONENT, status, sortBy, sortDirection);
+        return itemConverter.descriptionsAsComponentsList(items);
     }
 
     @GetMapping(path = "/profiles",
             produces = {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
-    public List<ProfileDescription> getProfiles(
+    public ProfilesList getProfiles(
             @RequestParam(value = "status") Optional<List<ComponentStatus>> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
     ) {
-        return ImmutableList.copyOf(
-                Iterables.transform(getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection),
-                        itemConverter::baseDescriptionAsProfile));
+        final List<BaseDescription> items = getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection);
+        return itemConverter.descriptionsAsProfilesList(items);
     }
 
     @GetMapping(path = "/components/{componentId}/description",

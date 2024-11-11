@@ -16,10 +16,13 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.service;
 
+import com.google.common.collect.Streams;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentDescription;
-import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.ComponentsList;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfileDescription;
+import eu.clarin.cmdi.componentregistry.rest.model.ProfilesList;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,7 +49,7 @@ public class ItemDescriptionConverter {
         target.setPublic(src.isPublic());
         target.setRecommended(src.isRecommended());
         target.setRegistrationDate(src.getRegistrationDate());
-        
+
         target.setShowInEditor(src.isShowInEditor());
         target.setStatus(src.getStatus());
         target.setSuccessor(src.getSuccessor());
@@ -79,6 +82,24 @@ public class ItemDescriptionConverter {
             target.setShowInEditor(pSrc.isShowInEditor());
         }
         return target;
+    }
+
+    public ComponentsList descriptionsAsComponentsList(Iterable<? extends BaseDescription> descriptions) {
+        final List<ComponentDescription> componentDescriptions
+                = Streams.stream(descriptions)
+                        .map(this::baseDescriptionAsComponent)
+                        .toList();
+
+        return new ComponentsList(componentDescriptions);
+    }
+
+    public ProfilesList descriptionsAsProfilesList(Iterable<? extends BaseDescription> descriptions) {
+        final List<ProfileDescription> profileDescriptions
+                = Streams.stream(descriptions)
+                        .map(this::baseDescriptionAsProfile)
+                        .toList();
+
+        return new ProfilesList(profileDescriptions);
     }
 
 }
