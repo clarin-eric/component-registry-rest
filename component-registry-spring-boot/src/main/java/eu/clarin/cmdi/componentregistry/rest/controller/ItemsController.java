@@ -22,14 +22,21 @@ import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,17 +78,58 @@ public class ItemsController {
         return registryService.getItemDescription(componentId);
     }
 
-    @GetMapping(path = "/{componentId}/spec", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ComponentSpec getItemSpec(
-            @PathVariable(value = "componentId") String componentId
+    @Operation(summary = "Get the specification for the profile or component")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", content = {
+            @Content(mediaType = MediaType.APPLICATION_XML_VALUE, schema = @Schema(implementation = ComponentSpec.class)),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ComponentSpec.class))
+        }),
+        @ApiResponse(responseCode = "404", description = "Item not found")})
+    @GetMapping(path = "/{componentId}/spec", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity getItemSpec(
+            @PathVariable(value = "componentId") String componentId,
+            @RequestHeader(value = "Accept", required = false) String acceptHeader
     ) {
-        return registryService.getItemSpecification(componentId);
+        /**
+         * Produce JSON or XML depending on Accept header
+         */
+        final List<MediaType> mediaTypes = MediaType.parseMediaTypes(acceptHeader);
+        if (!CollectionUtils.isEmpty(mediaTypes) && mediaTypes.contains(MediaType.APPLICATION_XML)) {
+            /**
+             * If XML is requested, we can return the original XML content from
+             * the database and avoid re-serialization
+             */
+            return getItemSpecXml(componentId);
+        } else {
+            /**
+             * Otherwise we return the object (which will be serialized to JSON
+             * by the framework)
+             */
+            return getSpecObject(componentId);
+        }
     }
 
-    @GetMapping(path = "/{componentId}/spec", produces = {MediaType.APPLICATION_XML_VALUE})
-    public String getItemSpecXml(
-            @PathVariable(value = "componentId") String componentId
-    ) {
-        return registryService.getItemSpecificationXml(componentId);
+    private ResponseEntity getItemSpecXml(String componentId) {
+        final String xml = registryService.getItemSpecificationXml(componentId);
+        if (xml == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_XML)
+                    .body(xml);
+        }
+    }
+
+    private ResponseEntity getSpecObject(String componentId) {
+        final ComponentSpec spec = registryService.getItemSpecification(componentId);
+        if (spec == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(spec);
+        }
     }
 }
