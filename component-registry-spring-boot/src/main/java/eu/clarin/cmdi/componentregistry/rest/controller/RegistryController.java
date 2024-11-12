@@ -26,6 +26,7 @@ import eu.clarin.cmdi.componentregistry.rest.model.ProfileDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfilesList;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.rest.service.ItemDescriptionConverter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import org.springframework.web.server.ResponseStatusException;
  * @author twagoo
  */
 @RestController
+@Tag(name = "Components and profiles", description = "Registry of components and profiles")
 @RequestMapping("/registry")
 public class RegistryController {
 

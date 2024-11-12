@@ -23,14 +23,17 @@ import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -40,12 +43,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
  * @author twagoo
  */
 @RestController
+@Tag(name = "Items", description = "Components and profiles as items (common data model)")
 @RequestMapping("/registry/items")
 public class ItemsController {
 
@@ -54,6 +59,18 @@ public class ItemsController {
     @Autowired
     private ComponentRegistryService registryService;
 
+    @Operation(summary = "Get a filtered list of descriptions of profiles and/or components")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                description = "A list of items that meet the filter criteria (if applicable)",
+                content = {
+                    @Content(
+                            mediaType = MediaType.APPLICATION_XML_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = BaseDescription.class))),
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(schema = @Schema(implementation = BaseDescription.class)))})})
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
             @RequestParam(value = "type") Optional<ItemType> itemType,
@@ -71,22 +88,56 @@ public class ItemsController {
                                 Optional.of(sortBy), Optional.of(sortDirection)));
     }
 
+    @Operation(summary = "Get the description of a profile or component")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                description = "A description of the identified item",
+                content = {
+                    @Content(
+                            mediaType = MediaType.APPLICATION_XML_VALUE,
+                            schema = @Schema(implementation = BaseDescription.class)),
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BaseDescription.class))}),
+        @ApiResponse(
+                responseCode = "404",
+                description = "Item not found",
+                content = @Content)})
     @GetMapping(path = "/{componentId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public BaseDescription getItem(
             @PathVariable("componentId") String componentId
     ) {
-        return registryService.getItemDescription(componentId);
+        final BaseDescription description = registryService.getItemDescription(componentId);
+        if (description == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        } else {
+            return description;
+        }
     }
 
     @Operation(summary = "Get the specification for the profile or component")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", content = {
-            @Content(mediaType = MediaType.APPLICATION_XML_VALUE, schema = @Schema(implementation = ComponentSpec.class)),
-            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ComponentSpec.class))
-        }),
-        @ApiResponse(responseCode = "404", description = "Item not found")})
+        @ApiResponse(
+                responseCode = "200",
+                description = """
+                              The component specification of the identified item. 
+                              The JSON representation is derived from the primary
+                              specification which is stored as XML.
+                              """,
+                content = {
+                    @Content(
+                            mediaType = MediaType.APPLICATION_XML_VALUE,
+                            schema = @Schema(implementation = ComponentSpec.class)),
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ComponentSpec.class))}),
+        @ApiResponse(
+                responseCode = "404",
+                description = "Item not found",
+                content = @Content)})
     @GetMapping(path = "/{componentId}/spec", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity getItemSpec(
+    public ResponseEntity<?> getItemSpec(
             @PathVariable(value = "componentId") String componentId,
             @RequestHeader(value = "Accept", required = false) String acceptHeader
     ) {
@@ -109,7 +160,7 @@ public class ItemsController {
         }
     }
 
-    private ResponseEntity getItemSpecXml(String componentId) {
+    private ResponseEntity<String> getItemSpecXml(String componentId) {
         final String xml = registryService.getItemSpecificationXml(componentId);
         if (xml == null) {
             return ResponseEntity.notFound().build();
@@ -121,7 +172,7 @@ public class ItemsController {
         }
     }
 
-    private ResponseEntity getSpecObject(String componentId) {
+    private ResponseEntity<ComponentSpec> getSpecObject(String componentId) {
         final ComponentSpec spec = registryService.getItemSpecification(componentId);
         if (spec == null) {
             return ResponseEntity.notFound().build();
