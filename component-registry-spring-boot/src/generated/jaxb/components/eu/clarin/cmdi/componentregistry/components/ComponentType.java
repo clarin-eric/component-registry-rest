@@ -82,8 +82,17 @@ public class ComponentType {
     @XmlAttribute(name = "CardinalityMax")
     protected List<String> cardinalityMax;
     /**
-     * See http://www.w3.org/TR/xmlbase/ for
-     *                      information about this attribute.
+     * <pre>
+     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;div xmlns="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;&lt;h3&gt;base (as an attribute name)&lt;/h3&gt;&lt;p&gt;
+     *        denotes an attribute whose value
+     *        provides a URI to be used as the base for interpreting any
+     *        relative URIs in the scope of the element on which it
+     *        appears; its value is inherited.  This name is reserved
+     *        by virtue of its definition in the XML Base specification.&lt;/p&gt;&lt;p&gt;
+     *       See &lt;a href="http://www.w3.org/TR/xmlbase/"&gt;http://www.w3.org/TR/xmlbase/&lt;/a&gt;
+     *       for information about this attribute.
+     *      &lt;/p&gt;&lt;/div&gt;
+     * </pre>
      * 
      */
     @XmlAttribute(name = "base", namespace = "http://www.w3.org/XML/1998/namespace")
@@ -351,8 +360,17 @@ public class ComponentType {
     }
 
     /**
-     * See http://www.w3.org/TR/xmlbase/ for
-     *                      information about this attribute.
+     * <pre>
+     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;div xmlns="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;&lt;h3&gt;base (as an attribute name)&lt;/h3&gt;&lt;p&gt;
+     *        denotes an attribute whose value
+     *        provides a URI to be used as the base for interpreting any
+     *        relative URIs in the scope of the element on which it
+     *        appears; its value is inherited.  This name is reserved
+     *        by virtue of its definition in the XML Base specification.&lt;/p&gt;&lt;p&gt;
+     *       See &lt;a href="http://www.w3.org/TR/xmlbase/"&gt;http://www.w3.org/TR/xmlbase/&lt;/a&gt;
+     *       for information about this attribute.
+     *      &lt;/p&gt;&lt;/div&gt;
+     * </pre>
      * 
      * @return
      *     possible object is

@@ -42,15 +42,31 @@ public class DocumentationType {
     @XmlValue
     protected String value;
     /**
-     * Attempting to install the relevant ISO 2- and 3-letter
-     *          codes as the enumerated possible values is probably never
-     *          going to be a realistic possibility.  See
-     *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-     *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-     *          further information.
+     * <pre>
+     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;div xmlns="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;&lt;h3&gt;lang (as an attribute name)&lt;/h3&gt;&lt;p&gt;
+     *        denotes an attribute whose value
+     *        is a language code for the natural language of the content of
+     *        any element; its value is inherited.  This name is reserved
+     *        by virtue of its definition in the XML specification.&lt;/p&gt;&lt;/div&gt;
+     * </pre>
      * 
-     *          The union allows for the 'un-declaration' of xml:lang with
-     *          the empty string.
+     * <pre>
+     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;div xmlns="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;&lt;h4&gt;Notes&lt;/h4&gt;&lt;p&gt;
+     *       Attempting to install the relevant ISO 2- and 3-letter
+     *       codes as the enumerated possible values is probably never
+     *       going to be a realistic possibility.  
+     *      &lt;/p&gt;&lt;p&gt;
+     *       See BCP 47 at &lt;a href="http://www.rfc-editor.org/rfc/bcp/bcp47.txt"&gt;
+     *        http://www.rfc-editor.org/rfc/bcp/bcp47.txt&lt;/a&gt;
+     *       and the IANA language subtag registry at
+     *       &lt;a href="http://www.iana.org/assignments/language-subtag-registry"&gt;
+     *        http://www.iana.org/assignments/language-subtag-registry&lt;/a&gt;
+     *       for further information.
+     *      &lt;/p&gt;&lt;p&gt;
+     *       The union allows for the 'un-declaration' of xml:lang with
+     *       the empty string.
+     *      &lt;/p&gt;&lt;/div&gt;
+     * </pre>
      * 
      */
     @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
@@ -81,15 +97,31 @@ public class DocumentationType {
     }
 
     /**
-     * Attempting to install the relevant ISO 2- and 3-letter
-     *          codes as the enumerated possible values is probably never
-     *          going to be a realistic possibility.  See
-     *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-     *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-     *          further information.
+     * <pre>
+     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;div xmlns="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;&lt;h3&gt;lang (as an attribute name)&lt;/h3&gt;&lt;p&gt;
+     *        denotes an attribute whose value
+     *        is a language code for the natural language of the content of
+     *        any element; its value is inherited.  This name is reserved
+     *        by virtue of its definition in the XML specification.&lt;/p&gt;&lt;/div&gt;
+     * </pre>
      * 
-     *          The union allows for the 'un-declaration' of xml:lang with
-     *          the empty string.
+     * <pre>
+     * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;div xmlns="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;&lt;h4&gt;Notes&lt;/h4&gt;&lt;p&gt;
+     *       Attempting to install the relevant ISO 2- and 3-letter
+     *       codes as the enumerated possible values is probably never
+     *       going to be a realistic possibility.  
+     *      &lt;/p&gt;&lt;p&gt;
+     *       See BCP 47 at &lt;a href="http://www.rfc-editor.org/rfc/bcp/bcp47.txt"&gt;
+     *        http://www.rfc-editor.org/rfc/bcp/bcp47.txt&lt;/a&gt;
+     *       and the IANA language subtag registry at
+     *       &lt;a href="http://www.iana.org/assignments/language-subtag-registry"&gt;
+     *        http://www.iana.org/assignments/language-subtag-registry&lt;/a&gt;
+     *       for further information.
+     *      &lt;/p&gt;&lt;p&gt;
+     *       The union allows for the 'un-declaration' of xml:lang with
+     *       the empty string.
+     *      &lt;/p&gt;&lt;/div&gt;
+     * </pre>
      * 
      * @return
      *     possible object is

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>3.3.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
@@ -202,8 +202,9 @@
                             
                             <generateDirectory>${basedir}/src/generated/jaxb/components</generateDirectory>
                             <generatePackage>eu.clarin.cmdi.componentregistry.components</generatePackage>
-                            <!--<catalog>src/main/resources/catalog.cat</catalog>-->
-                            <!--<catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>-->
+                            
+                            <catalog>src/main/resources/catalog.cat</catalog>
+                            <catalogResolver>org.jvnet.jaxb.maven.resolver.tools.ClasspathCatalogResolver</catalogResolver>
                             <strict>false</strict>
                         </configuration>
                     </execution>
