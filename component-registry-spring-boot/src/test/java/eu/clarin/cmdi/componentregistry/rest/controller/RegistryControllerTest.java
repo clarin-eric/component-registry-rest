@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.clarin.cmdi.componentregistry.rest.resource;
+package eu.clarin.cmdi.componentregistry.rest.controller;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.*;
  * @author twagoo
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-public class ComponentRegistryResourceTest {
+public class RegistryControllerTest {
 
     @LocalServerPort
     private Integer port;
