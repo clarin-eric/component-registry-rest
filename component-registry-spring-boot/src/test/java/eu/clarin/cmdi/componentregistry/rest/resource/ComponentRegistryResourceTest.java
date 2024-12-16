@@ -49,7 +49,7 @@ public class ComponentRegistryResourceTest {
         given().contentType(ContentType.JSON)
                 ///////                
                 .when()
-                .get("/rest/registry/items")
+                .get("/registry/items")
                 ///////
                 .then()
                 .statusCode(200)
