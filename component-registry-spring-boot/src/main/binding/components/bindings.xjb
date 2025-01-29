@@ -2,6 +2,7 @@
           xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
           xmlns:xs="http://www.w3.org/2001/XMLSchema"
           xmlns:annox="http://annox.dev.java.net" 
+          xmlns:cue="http://www.clarin.eu/cmd/cues/1"
           jaxb:extensionBindingPrefixes="annox"
           version="3.0"> 
     <bindings schemaLocation="toolkit/xsd/cmd-component.xsd"
