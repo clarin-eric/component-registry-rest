@@ -20,6 +20,12 @@
 
 ## Version specific update instructions
 
+### 2.5.3
+Maintenance release, no special actions required if upgrading from 2.5.x
+
+### 2.5.2
+Maintenance release, no special actions required if upgrading from 2.5.x
+
 ### 2.5.1
 Maintenance release, no special actions required if upgrading from 2.5.0
 

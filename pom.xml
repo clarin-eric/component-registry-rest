@@ -26,13 +26,7 @@
     <properties>
         <netbeans.hint.license>gpl30</netbeans.hint.license>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
-        <spring.version>5.3.33</spring.version>
     </properties>
-  
-    <prerequisites>
-        <maven>3.0</maven>
-    </prerequisites>
   
     <repositories>
         <repository>

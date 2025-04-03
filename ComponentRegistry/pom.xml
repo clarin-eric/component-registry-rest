@@ -44,12 +44,14 @@
         <skosmosVocabsIncludedVocabularies></skosmosVocabsIncludedVocabularies>
         <skosmosVocabsExcludedVocabularies>ccr</skosmosVocabsExcludedVocabularies>
 
+        <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
+        <spring.version>5.3.39</spring.version>
         <wicket.version>8.14.0</wicket.version>
         <jackson.version>2.17.0</jackson.version>
         <jackson-databind.version>${jackson.version}</jackson-databind.version>
         <jersey.version>1.19.4</jersey.version>
-        <slf4j.version>2.0.12</slf4j.version>
-        <log4j.version>2.23.1</log4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <log4j.version>2.24.3</log4j.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
 
         <logging.appender>FILE</logging.appender>
@@ -226,7 +228,7 @@
             <!-- replace excluded guava provided via swagger -->
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.2.1-jre</version>
+            <version>33.4.5-jre</version>
         </dependency>
         <dependency>
             <groupId>com.sun.grizzly</groupId>
@@ -402,13 +404,13 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.3</version>
+            <version>42.7.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.7.2</version>
+            <version>2.7.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -419,7 +421,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20240303</version>
+            <version>20250107</version>
         </dependency>
         <dependency>
             <groupId>eu.clarin.cmdi</groupId>
@@ -441,7 +443,7 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <version>3.1.8</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.jsonld-java</groupId>
@@ -598,7 +600,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.3.2</version>
                 <configuration>
                     <warName>${project.artifactId}</warName>
                     <webXml>${webXmlPath}</webXml>
@@ -614,6 +616,104 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- This puts the general component schema in place to be picked up by the JAXB plugin -->
+                        <id>unpack-general-component-schema</id>
+                        <phase>generate-sources</phase> <!-- Needs to run before maven-jaxb2-plugin -->
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>eu.clarin.cmdi</groupId>
+                                    <artifactId>cmd-toolkit</artifactId>
+                                    <version>${cmd-toolkit.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>src/main/binding/components</outputDirectory> <!-- TODO: extract elsewhere -->
+                                    <includes>toolkit/xsd/cmd-component.xsd</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- This makes the entire toolkit available, to be used as resources for tests -->
+                        <id>unpack-toolkit</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>eu.clarin.cmdi</groupId>
+                                    <artifactId>cmd-toolkit</artifactId>
+                                    <version>${cmd-toolkit.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/cmd-toolkit</outputDirectory>
+                                    <includes>toolkit/**/*</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.15.3</version>
+                <!--                <dependencies>
+                    <dependency>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                        <version>${jaxb-runtime.version}</version>
+                    </dependency>
+                </dependencies>-->
+                <executions>
+                    <execution>
+                        <id>jaxb-components</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/binding/components</schemaDirectory>
+                            <schemaIncludes>
+                                <include>toolkit/xsd/cmd-component.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/binding/components</bindingDirectory>
+                            <extension>true</extension>
+                            <generateDirectory>${basedir}/src/generated/jaxb/components</generateDirectory>
+                            <generatePackage>clarin.cmdi.componentregistry.components</generatePackage>
+                            <catalog>src/main/resources/catalog.cat</catalog>
+                            <catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>
+                            <strict>false</strict>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jaxb-rrs</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/binding/rss</schemaDirectory>
+                            <schemaIncludes>
+                                <include>rss-2_0.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/binding/rss</bindingDirectory>
+                            <extension>true</extension>
+                            <generateDirectory>${basedir}/src/generated/jaxb/rss</generateDirectory>
+                            <generatePackage>clarin.cmdi.componentregistry.rss</generatePackage>
+                            <catalog>src/main/resources/catalog.cat</catalog>
+                            <catalogResolver>org.jvnet.jaxb2.maven2.resolver.tools.ClasspathCatalogResolver</catalogResolver>
+                            <strict>false</strict>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
