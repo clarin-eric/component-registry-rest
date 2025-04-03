@@ -2,6 +2,9 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.5.3 (April 2025)
+- Dependency updates
+
 ## Release Component Registry 2.5.2 (March 2024)
 - Fixed: error response on getting item rights information while unauthenticated
 	<https://github.com/clarin-eric/component-registry-rest/issues/80>
