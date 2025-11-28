@@ -16,6 +16,8 @@
  */
 package clarin.cmdi.componentregistry.concepts.wikidata;
 
+import clarin.cmdi.componentregistry.model.Concept;
+import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,14 +28,15 @@ import static org.junit.Assert.*;
  * @author twagoo
  */
 public class WikiDataConceptsServiceTest {
-    
-    public WikiDataConceptsServiceTest() {
-    }
-    
+
+    private WikiDataConceptsService instance;
+
     @Before
     public void setUp() {
+        instance = new WikiDataConceptsService();
+        instance.init();
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -43,9 +46,10 @@ public class WikiDataConceptsServiceTest {
      */
     @Test
     public void testSearch() {
-        String query = "cat";
-        WikiDataConceptsService instance = new WikiDataConceptsService();
-        instance.search(query);
+        final String query = "cat";
+
+        final Stream<Concept> search = instance.search(query);
+        assertFalse(search.findAny().isEmpty());
     }
-    
+
 }
