@@ -23,6 +23,7 @@
         <Logger name="clarin.cmdi.componentregistry.impl.database" level="${logging.level}" />
         <Logger name="clarin.cmdi.componentregistry.rest" level="${logging.level}" />
         <Logger name="clarin.cmdi.componentregistry.servlet" level="${logging.level}" />
+        <Logger name="clarin.cmdi.componentregistry.concepts" level="${logging.level}" />
         <Logger name="com.sun.jersey" level="warn" />
         <Logger name="org.apache.wicket" level="warn" />
         <Root level="info">

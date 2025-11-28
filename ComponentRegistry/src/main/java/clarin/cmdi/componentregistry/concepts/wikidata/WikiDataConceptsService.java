@@ -38,7 +38,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 public class WikiDataConceptsService {
 
     private final Logger log = LoggerFactory.getLogger(WikiDataConceptsService.class);
-    public static final Long RESULTS_LIMIT = 200L;
+    public static final Long RESULTS_LIMIT = 50L;
 
     private WikibaseDataFetcher wbdf;
 
@@ -51,18 +51,18 @@ public class WikiDataConceptsService {
 
     public Stream<Concept> search(String query) {
         try {
-            final List<WbSearchEntitiesResult> results
-                    = wbdf.searchEntities(query, "en", RESULTS_LIMIT);
+            final List<WbSearchEntitiesResult> results = wbdf.searchEntities(query, "en", RESULTS_LIMIT);
+            log.debug("Result for query '{}': {} entities", query, results.size());
 
+            final Stream<WbSearchEntitiesResult> resultStream;
             if (log.isDebugEnabled()) {
-                log.debug("Results for query '{}':", query);
-                results.forEach(entity -> {
-                    log.debug("{}: {}", entity.getConceptUri(), entity.getLabel());
-                });
+                //log the items
+                resultStream = results.stream().peek(entity -> log.debug("{}: {}", entity.getConceptUri(), entity.getLabel()));
+            } else {
+                resultStream = results.stream();
             }
-
-            return results.stream()
-                    .map(WikiDataConceptsService::wikiDataEntityToConcept);
+            
+            return resultStream.map(WikiDataConceptsService::wikiDataEntityToConcept);
         } catch (IOException | MediaWikiApiErrorException ex) {
             throw new RuntimeException("Failed to query Wikidata", ex);
         }
@@ -73,6 +73,7 @@ public class WikiDataConceptsService {
         concept.setId(entity.getEntityId());
         concept.setUri(entity.getConceptUri());
         concept.setLabel(entity.getLabel());
+        concept.setDescription(entity.getDescription());
         return concept;
     }
 }
