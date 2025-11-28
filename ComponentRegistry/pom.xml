@@ -54,6 +54,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.2</log4j.version>
         <jaxb-runtime.version>2.4.0-b180830.0438</jaxb-runtime.version>
+        <wikidataToolkitVersion>0.17.0</wikidataToolkitVersion>
 
         <logging.appender>FILE</logging.appender>
         <logging.level>warn</logging.level>
@@ -465,6 +466,17 @@
             <groupId>com.github.jsonld-java</groupId>
             <artifactId>jsonld-java</artifactId>
             <version>0.13.6</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.wikidata.wdtk</groupId>
+            <artifactId>wdtk-datamodel</artifactId>
+            <version>${wikidataToolkitVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wikidata.wdtk</groupId>
+            <artifactId>wdtk-wikibaseapi</artifactId>
+            <version>${wikidataToolkitVersion}</version>
         </dependency>
     </dependencies>
 
