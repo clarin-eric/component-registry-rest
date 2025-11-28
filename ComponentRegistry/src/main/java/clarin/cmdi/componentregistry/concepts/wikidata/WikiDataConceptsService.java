@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+import org.wikidata.wdtk.wikibaseapi.WbGetEntitiesSearchData;
 import org.wikidata.wdtk.wikibaseapi.WbSearchEntitiesResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
@@ -40,6 +41,9 @@ public class WikiDataConceptsService {
     private final Logger log = LoggerFactory.getLogger(WikiDataConceptsService.class);
     public static final Long RESULTS_LIMIT = 50L;
 
+    public static final String ITEM_TYPE = "item";
+    public static final String PROPERTY_TYPE = "property";
+
     private WikibaseDataFetcher wbdf;
 
     @PostConstruct
@@ -50,8 +54,22 @@ public class WikiDataConceptsService {
     }
 
     public Stream<Concept> search(String query) {
+        return search(query, ITEM_TYPE);
+    }
+
+    public Stream<Concept> search(String query, String... types) {
+        return Stream.of(types)
+                .flatMap(type -> this.search(query, type));
+    }
+
+    public Stream<Concept> search(String query, String type) {
         try {
-            final List<WbSearchEntitiesResult> results = wbdf.searchEntities(query, "en", RESULTS_LIMIT);
+            WbGetEntitiesSearchData properties = new WbGetEntitiesSearchData();
+            properties.search = query;
+            properties.type = type;
+            properties.language = "en";
+
+            final List<WbSearchEntitiesResult> results = wbdf.searchEntities(properties);
             log.debug("Result for query '{}': {} entities", query, results.size());
 
             final Stream<WbSearchEntitiesResult> resultStream;
@@ -61,7 +79,7 @@ public class WikiDataConceptsService {
             } else {
                 resultStream = results.stream();
             }
-            
+
             return resultStream.map(WikiDataConceptsService::wikiDataEntityToConcept);
         } catch (IOException | MediaWikiApiErrorException ex) {
             throw new RuntimeException("Failed to query Wikidata", ex);

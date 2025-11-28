@@ -18,11 +18,13 @@ package clarin.cmdi.componentregistry.rest;
 
 import clarin.cmdi.componentregistry.concepts.wikidata.WikiDataConceptsService;
 import clarin.cmdi.componentregistry.model.Concept;
+import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.resource.Singleton;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -39,7 +41,7 @@ import org.springframework.stereotype.Service;
 @Singleton
 @Api(value = "/concepts", produces = MediaType.APPLICATION_JSON)
 public class ConceptsRestService {
-    
+
     @InjectParam
     private WikiDataConceptsService wdService;
 
@@ -47,8 +49,21 @@ public class ConceptsRestService {
     @Path("/search")
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Returns a listing of groups to which an item belongs")
-    public List<Concept> getGroupsTheItemIsAMemberOf(@QueryParam("q") String query) {
-        return wdService.search(query).toList();
+    public List<Concept> getGroupsTheItemIsAMemberOf(@QueryParam("q") String query, @QueryParam("type") @DefaultValue("all") List<String> type) {
+        return wdService.search(query, toWikidataTypes(type)).toList();
+    }
+
+    public String[] toWikidataTypes(List<String> type) {
+        final ImmutableList.Builder<String> types = ImmutableList.<String>builder();
+        //include items?
+        if (type.contains("all") || type.contains(WikiDataConceptsService.ITEM_TYPE)) {
+            types.add(WikiDataConceptsService.ITEM_TYPE);
+        }
+        //include properties?
+        if (type.contains("all") || type.contains(WikiDataConceptsService.PROPERTY_TYPE)) {
+            types.add(WikiDataConceptsService.PROPERTY_TYPE);
+        }
+        return types.build().toArray(String[]::new);
     }
 
 }
