@@ -7,6 +7,7 @@ on:
 jobs:
   docker-build-and-deploy:
     runs-on: ubuntu-latest
+# SETUP
     steps:
       - name: Check out the repository to the runner
         uses: actions/checkout@v5
@@ -16,14 +17,26 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
           architecture: x64
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+# VERSION NUMBER
       - name: Set tag name in env
         run: echo "GITHUB_TAG=$(echo "${GITHUB_REF##*/}")" >> $GITHUB_ENV
       - name: Set version number
         run: mvn --batch-mode versions:set -DnewVersion=${GITHUB_TAG} versions:commit
+# TESTS
       - name: Run tests
         run: mvn install test --batch-mode --no-transfer-progress
+# BUILD
       - name: Build for docker
         run: mvn clean install -DskipTests=true -Pdocker --batch-mode
+# DEPLOY ARTIFACT
+# TODO: deploy to release, not just as an action artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -31,19 +44,3 @@ jobs:
           path: ComponentRegistry/target/component-registry-rest-*-docker.tar.gz
           compression-level: 1
           if-no-files-found: error
-
-### TRAVIS
-# before_deploy:
-#   - yes | gem update --system --force
-#   - gem install bundler
-#   - gem install faraday-net_http -v '3.3.0' # Fix faraday version
-#   - gem install uri
-#   - gem install logger
-# deploy:
-#   provider: releases
-#   prerelease: true
-#   token: "${GITHUB_DEPLOY_TOKEN}"
-#   file: "ComponentRegistry/target/component-registry-rest-${TRAVIS_TAG}-docker.tar.gz"
-#   skip_cleanup: true
-#   on:
-#     tags: true

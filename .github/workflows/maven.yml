@@ -6,6 +6,7 @@ on:
 jobs:
   maven-build-test:
     runs-on: ubuntu-latest
+# SETUP
     steps:
       - name: Check out the repository to the runner
         uses: actions/checkout@v5
@@ -15,11 +16,21 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
           architecture: x64
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+# BUILD
       - name: Download dependencies
         run: mvn dependency:go-offline --show-version --batch-mode --no-transfer-progress
       - name: Build
         run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode
+# TEST
       - name: Run tests
         run: mvn test --batch-mode
+# DOCKER BUILD
       - name: Build for docker
         run: mvn clean install -DskipTests=true -Pdocker --batch-mode
