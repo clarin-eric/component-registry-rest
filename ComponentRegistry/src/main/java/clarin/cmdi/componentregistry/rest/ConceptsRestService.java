@@ -42,6 +42,8 @@ import org.springframework.stereotype.Service;
 @Api(value = "/concepts", produces = MediaType.APPLICATION_JSON)
 public class ConceptsRestService {
 
+    public static final String ALL_TYPES = "all";
+
     @InjectParam
     private WikiDataConceptsService wdService;
 
@@ -49,21 +51,28 @@ public class ConceptsRestService {
     @Path("/search")
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Returns a listing of groups to which an item belongs")
-    public List<Concept> getGroupsTheItemIsAMemberOf(@QueryParam("q") String query, @QueryParam("type") @DefaultValue("all") List<String> type) {
+    public List<Concept> getGroupsTheItemIsAMemberOf(@QueryParam("q") String query, @QueryParam("type") @DefaultValue(ALL_TYPES) List<String> type) {
         return wdService.search(query, toWikidataTypes(type)).toList();
     }
 
-    public String[] toWikidataTypes(List<String> type) {
-        final ImmutableList.Builder<String> types = ImmutableList.<String>builder();
-        //include items?
-        if (type.contains("all") || type.contains(WikiDataConceptsService.ITEM_TYPE)) {
-            types.add(WikiDataConceptsService.ITEM_TYPE);
+    public String[] toWikidataTypes(List<String> types) {
+        final ImmutableList.Builder<String> builder = ImmutableList.<String>builder();
+
+        if (types != null) {
+            //sanitise
+            for (String type : types) {
+                switch (type) {
+                    case WikiDataConceptsService.ITEM_TYPE, WikiDataConceptsService.PROPERTY_TYPE ->
+                        builder.add(type);
+                    case ALL_TYPES -> {
+                        builder.add(WikiDataConceptsService.ITEM_TYPE);
+                        builder.add(WikiDataConceptsService.PROPERTY_TYPE);
+                    }
+
+                }
+            }
         }
-        //include properties?
-        if (type.contains("all") || type.contains(WikiDataConceptsService.PROPERTY_TYPE)) {
-            types.add(WikiDataConceptsService.PROPERTY_TYPE);
-        }
-        return types.build().toArray(String[]::new);
+        return builder.build().toArray(String[]::new);
     }
 
 }
