@@ -26,6 +26,9 @@ public class Configuration {
     private String generalComponentSchema = "https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd";
     private String ccrRestUrl = "https://openskos.meertens.knaw.nl/ccr/api/";
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
+    private String conceptUriRulesUrl = "";
+    private String conceptUriFallbackResource = "/conceptUriRules.json";
+    
     private Collection<String> adminUsers = new HashSet<>();
     private List<String> displayNameShibbolethKeys = new ArrayList<>();
 
@@ -189,6 +192,22 @@ public class Configuration {
 
     public void setExcludedVocabsForVocabularies(String excludedVocabs) {
         excludedVocabsForVocabularies = stringPropertyToSet(excludedVocabs);
+    }
+
+    public String getConceptUriRulesUrl() {
+        return conceptUriRulesUrl;
+    }
+
+    public void setConceptUriRulesUrl(String conceptUriRulesUrl) {
+        this.conceptUriRulesUrl = conceptUriRulesUrl;
+    }
+
+    public String getConceptUriFallbackResource() {
+        return conceptUriFallbackResource;
+    }
+
+    public void setConceptUriFallbackResource(String conceptUriFallbackResource) {
+        this.conceptUriFallbackResource = conceptUriFallbackResource;
     }
 
     private Set<String> stringPropertyToSet(String value) {

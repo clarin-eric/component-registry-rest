@@ -16,6 +16,7 @@
  */
 package clarin.cmdi.componentregistry.rest;
 
+import clarin.cmdi.componentregistry.Configuration;
 import clarin.cmdi.componentregistry.concepts.wikidata.WikiDataConceptsService;
 import clarin.cmdi.componentregistry.model.Concept;
 import com.google.common.collect.ImmutableList;
@@ -23,7 +24,12 @@ import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.resource.Singleton;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -46,6 +52,27 @@ public class ConceptsRestService {
 
     @InjectParam
     private WikiDataConceptsService wdService;
+    private String conceptUriFallbackResource;
+    private String conceptUriRulesUrl;
+
+    public ConceptsRestService() {
+    }
+
+    public ConceptsRestService(String conceptUriFallbackResource, String conceptUriRulesUrl) {
+        this.conceptUriFallbackResource = conceptUriFallbackResource;
+        this.conceptUriRulesUrl = conceptUriRulesUrl;
+    }
+
+    @PostConstruct
+    public void init() {
+        if (conceptUriFallbackResource == null) {
+            conceptUriFallbackResource = Configuration.getInstance().getConceptUriFallbackResource();
+        }
+        if (conceptUriRulesUrl == null) {
+            conceptUriRulesUrl = Configuration.getInstance().getConceptUriRulesUrl();
+        }
+
+    }
 
     @GET
     @Path("/search")
@@ -79,76 +106,17 @@ public class ConceptsRestService {
     @Path("/rules")
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Returns structured rules for the evaluation of concept links")
-    public String getRules() {
-        return rules;
+    public String getRules() throws IOException {
+        //TODO: cache
+        //TODO: read from URI first
+        try (InputStream is = getClass().getResourceAsStream(conceptUriFallbackResource)) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                StringBuilder sb = new StringBuilder();
+                reader.lines().forEach(line -> sb.append(line).append("\n"));
+                return sb.toString();
+            }
+        }
+
     }
-    
-    //TODO: read this from config    
-    private final String rules = """
-                {  
-                 "ruleSets": [
-                   {
-                     "types": ["*"],
-                     "rules": [{
-                       "reason": "ISOCat has been deprecated",
-                       "warning": {
-                         "regex": [
-                           "^http(s?):\\\\/\\\\/www\\\\.isocat\\\\.org"
-                         ]
-                       }
-                     }]
-                   }, {
-                     "types": ["*"],
-                     "rules": [{
-                       "reason": "The CLARIN Concept Registry has been deprecated",
-                       "warning": {
-                         "regex": [
-                           "^http(s?):\\\\/\\\\/hdl\\\\.handle\\\\.net\\\\/11459\\\\/CCR"
-                         ]
-                       }
-                     }]
-                   }, {
-                     "types": ["element", "attribute"],
-                     "rules": [{
-                       "reason": "Wikidata properties are recommended for elements and attributes",
-                       "warning": {
-                         "regex": [
-                           "^http(s?)://.*wikidata\\\\.org/entity/Q"
-                         ]
-                       }
-                     }, {
-                       "reason": "Classes are not recommended for elements and attributes",
-                       "caseSensitive": true,
-                       "warning": {
-                         "regex": [
-                           "^http(s?):\\\\/\\\\/schema\\\\.org\\\\/[A-Z]"
-                         ]
-                       }
-                     }
-                     ]
-                   }, {
-                     "types": ["vocabulary"],
-                     "rules": [{
-                       "reason": "Wikidata items are recommended for vocabulary items",
-                       "warning": {
-                         "regex": [
-                           "^http(s?):\\\\/\\\\/.*wikidata.org\\\\/entity\\\\/P"
-                         ]
-                       }
-                     }]
-                   }, {
-                     "types": ["profile"],
-                     "rules": [{
-                       "reason": "Wikidata items are recommended at the profile level",
-                       "warning": {
-                         "regex": [
-                           "^http(s?):\\\\/\\\\/.*wikidata.org\\\\/entity\\\\/P"
-                         ]
-                       }
-                     }]
-                   }
-                 ]
-               }
-               """;
 
 }
