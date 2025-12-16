@@ -108,11 +108,11 @@ public class RemoteResourceCache {
         try {
             return getContentFromURL();
         } catch (URISyntaxException | IOException ex1) {
-            logger.debug("Failure while getting resource from URL", ex1);
+            logger.warn("Failure while getting resource from URL", ex1);
             try {
                 return getContentFromLocalResource();
             } catch (IOException ex2) {
-                logger.warn("Failure while getting content from local resource", ex2);
+                logger.error("Failure while getting content from local resource", ex2);
                 return null;
             }
         }
