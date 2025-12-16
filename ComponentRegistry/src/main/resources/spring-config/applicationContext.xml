@@ -58,8 +58,6 @@
                   value="${eu.clarin.cmdi.componentregistry.adminUsers}" />
         <property name="generalComponentSchema"
                   value="${eu.clarin.cmdi.componentregistry.generalComponentSchemaUrl}" />
-        <property name="ccrRestUrl"
-                  value="${eu.clarin.cmdi.componentregistry.ccrRestUrl}" />
         <property name="clavasRestUrl"
                   value="${eu.clarin.cmdi.componentregistry.clavasRestUrl}" />
         <property name="toolkitLocation"

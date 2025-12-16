@@ -24,7 +24,6 @@ public class Configuration {
     //NOTE: Default values, can be overwritten in applicationContext.xml
     private String toolkitLocation = "https://infra.clarin.eu/CMDI/1.x";
     private String generalComponentSchema = "https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd";
-    private String ccrRestUrl = "https://openskos.meertens.knaw.nl/ccr/api/";
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
     private String conceptUriRulesUrl = "";
     private String conceptUriFallbackResource = "/conceptUriRules.json";
@@ -61,10 +60,6 @@ public class Configuration {
 
     public String getGeneralComponentSchema() {
         return generalComponentSchema;
-    }
-
-    public String getCcrRestUrl() {
-        return ccrRestUrl;
     }
 
     public String getClavasRestUrl() {
@@ -124,11 +119,6 @@ public class Configuration {
     public void setGeneralComponentSchema(String generalComponentSchema) {
         LOG.info("Setting generalComponentSchema to {}", generalComponentSchema);
         this.generalComponentSchema = generalComponentSchema;
-    }
-
-    public void setCcrRestUrl(String ccrRestUrl) {
-        LOG.info("Setting ccrRestUrl to {}", ccrRestUrl);
-        this.ccrRestUrl = ccrRestUrl;
     }
 
     public void setClavasRestUrl(String clavasRestUrl) {
