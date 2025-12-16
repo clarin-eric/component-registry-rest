@@ -6,7 +6,7 @@
                     "reason": "ISOCat has been deprecated",
                     "warning": {
                         "regex": [
-                            "^http(s?):\\\\/\\\\/www\\\\.isocat\\\\.org"
+                            "^http(s?):\\/\\/www\\.isocat\\.org"
                         ]
                     }
                 }]
@@ -16,7 +16,7 @@
                     "reason": "The CLARIN Concept Registry has been deprecated",
                     "warning": {
                         "regex": [
-                            "^http(s?):\\\\/\\\\/hdl\\\\.handle\\\\.net\\\\/11459\\\\/CCR"
+                            "^http(s?):\\/\\/hdl\\.handle\\.net\\/11459\\/CCR"
                         ]
                     }
                 }]
@@ -26,7 +26,7 @@
                     "reason": "Wikidata properties are recommended for elements and attributes",
                     "warning": {
                         "regex": [
-                            "^http(s?)://.*wikidata\\\\.org/entity/Q"
+                            "^http(s?)://.*wikidata\\.org/entity/Q"
                         ]
                     }
                 }, {
@@ -34,7 +34,7 @@
                     "caseSensitive": true,
                     "warning": {
                         "regex": [
-                            "^http(s?):\\\\/\\\\/schema\\\\.org\\\\/[A-Z]"
+                            "^http(s?):\\/\\/schema\\.org\\/[A-Z]"
                         ]
                     }
                 }
@@ -45,7 +45,7 @@
                     "reason": "Wikidata items are recommended for vocabulary items",
                     "warning": {
                         "regex": [
-                            "^http(s?):\\\\/\\\\/.*wikidata.org\\\\/entity\\\\/P"
+                            "^http(s?):\\/\\/.*wikidata.org\\/entity\\/P"
                         ]
                     }
                 }]
@@ -55,7 +55,7 @@
                     "reason": "Wikidata items are recommended at the profile level",
                     "warning": {
                         "regex": [
-                            "^http(s?):\\\\/\\\\/.*wikidata.org\\\\/entity\\\\/P"
+                            "^http(s?):\\/\\/.*wikidata.org\\/entity\\/P"
                         ]
                     }
                 }]
