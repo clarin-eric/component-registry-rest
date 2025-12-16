@@ -19,25 +19,14 @@ package clarin.cmdi.componentregistry.rest;
 import clarin.cmdi.componentregistry.Configuration;
 import clarin.cmdi.componentregistry.concepts.wikidata.WikiDataConceptsService;
 import clarin.cmdi.componentregistry.model.Concept;
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import clarin.cmdi.componentregistry.util.RemoteResourceCache;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.resource.Singleton;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -60,19 +49,13 @@ import org.springframework.stereotype.Service;
 public class ConceptsRestService {
 
     private final static Logger logger = LoggerFactory.getLogger(ConceptsRestService.class);
-    private final static String RULES_CACHE_KEY = "CONCEPTS_REST_SERVICE_CACHE_KEY";
-    private static final Duration RULES_CACHE_EXPIRY_DURATION = Duration.ofMinutes(10);
-
     public static final String ALL_TYPES = "all";
 
     @InjectParam
     private WikiDataConceptsService wdService;
-
-    // Rules cache
-    private final AsyncLoadingCache<Object, String> rulesCache;
     private String conceptUriFallbackResource;
     private String conceptUriRulesUrl;
-    private String rulesFromResource = null;
+    private RemoteResourceCache conceptRulesCache = null;
 
     public ConceptsRestService() {
         this(null, null);
@@ -81,12 +64,6 @@ public class ConceptsRestService {
     public ConceptsRestService(String conceptUriFallbackResource, String conceptUriRulesUrl) {
         this.conceptUriFallbackResource = conceptUriFallbackResource;
         this.conceptUriRulesUrl = conceptUriRulesUrl;
-
-        //init cache
-        rulesCache = Caffeine.newBuilder()
-                .initialCapacity(1)
-                .expireAfterWrite(RULES_CACHE_EXPIRY_DURATION)
-                .<Object, String>buildAsync(this::getFromUrlOrResource);
     }
 
     @PostConstruct
@@ -100,15 +77,10 @@ public class ConceptsRestService {
             logger.debug("Setting conceptUriRulesUrl from config:", conceptUriRulesUrl);
         }
 
-        //init rules definition
-        if (conceptUriFallbackResource != null) {
-            try {
-                rulesFromResource = getRulesFromResource();
-            } catch (IOException ex) {
-                logger.error("Failed to read concept URI rules from resource at", conceptUriFallbackResource);
-            }
-        }
-
+        conceptRulesCache = new RemoteResourceCache(conceptUriRulesUrl, conceptUriFallbackResource);
+        conceptRulesCache.setCacheExpiryTime(Duration.ofMinutes(30));
+        conceptRulesCache.setRetrievalTimeout(Duration.ofSeconds(5));
+        conceptRulesCache.init();
     }
 
     @GET
@@ -144,54 +116,7 @@ public class ConceptsRestService {
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Returns structured rules for the evaluation of concept links")
     public String getRules() {
+        return conceptRulesCache.getContent();
 
-        try {
-            // Request the rules from the cache (give it some time to retrieve if necessary)
-            return rulesCache
-                    .get(RULES_CACHE_KEY)
-                    .get(2, TimeUnit.SECONDS);
-        } catch (ExecutionException | InterruptedException | TimeoutException ex) {
-            logger.debug("Exception while getting rules:", ex);
-
-            //Timeout, retrieval of rules from remote location took a longish, 
-            // so returning the bundled rules instead to not leave the client waiting
-            return rulesFromResource;
-        }
     }
-
-    private String getRulesFromResource() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(conceptUriFallbackResource)) {
-            return readFromInputStream(is);
-        }
-    }
-
-    private String getRulesFromURL() throws IOException, URISyntaxException {
-        logger.info("Retrieving concept URI rules from URL: {}", conceptUriRulesUrl);
-        try (InputStream is = new URI(conceptUriRulesUrl).toURL().openStream()) {
-            return readFromInputStream(is);
-        }
-    }
-
-    private String readFromInputStream(final InputStream is) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-            StringBuilder sb = new StringBuilder();
-            reader.lines().forEach(line -> sb.append(line).append("\n"));
-            return sb.toString();
-        }
-    }
-
-    private String getFromUrlOrResource(Object key) {
-        try {
-            return getRulesFromURL();
-        } catch (URISyntaxException | IOException ex1) {
-            logger.debug("Failure while getting concept URI rules from URL", ex1);
-            try {
-                return getRulesFromResource();
-            } catch (IOException ex2) {
-                logger.warn("Failure while getting concept URI rules", ex2);
-                return null;
-            }
-        }
-    }
-
 }
