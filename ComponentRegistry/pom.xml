@@ -43,7 +43,7 @@
         <skosmosVocabsIncludedVocabularies></skosmosVocabsIncludedVocabularies>
         <skosmosVocabsExcludedVocabularies>ccr</skosmosVocabsExcludedVocabularies>
 
-        <conceptUriRulesUrl>https://raw.githubusercontent.com/clarin-eric/component-registry-rest/refs/heads/issue82/ComponentRegistry/src/main/resources/conceptUriRules.json</conceptUriRulesUrl>
+        <conceptUriRulesUrl>https://raw.githubusercontent.com/clarin-eric/component-registry-rest/refs/heads/master/ComponentRegistry/src/main/resources/conceptUriRules.json</conceptUriRulesUrl>
         <conceptUriFallbackResource>/conceptUriRules.json</conceptUriFallbackResource>
 
         <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
