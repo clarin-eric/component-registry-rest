@@ -33,7 +33,6 @@
         <generalComponentSchemaUrl>https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd</generalComponentSchemaUrl>
         <component2SchemaXslUrl>https://infra.clarin.eu/CMDI/1.x/xslt/comp2schema.xsl</component2SchemaXslUrl>
         <component2SchemaXslUrlCmdi11>https://infra.clarin.eu/CMDI/1.1/xslt/comp2schema-v2/comp2schema.xsl</component2SchemaXslUrlCmdi11>
-        <ccrRestUrl>https://openskos.meertens.knaw.nl/ccr/api/</ccrRestUrl>
         <clavasRestUrl>https://vocabularies.clarin.eu/clavas/public/api/</clavasRestUrl>
         
         <skosmosCacheRefreshRate>3600</skosmosCacheRefreshRate> <!-- Skosmos cache refresh interval in seconds -->
@@ -43,6 +42,9 @@
         <skosmosVocabsExcludedSchemes></skosmosVocabsExcludedSchemes>
         <skosmosVocabsIncludedVocabularies></skosmosVocabsIncludedVocabularies>
         <skosmosVocabsExcludedVocabularies>ccr</skosmosVocabsExcludedVocabularies>
+
+        <conceptUriRulesUrl>https://raw.githubusercontent.com/clarin-eric/component-registry-rest/refs/heads/issue82/ComponentRegistry/src/main/resources/conceptUriRules.json</conceptUriRulesUrl>
+        <conceptUriFallbackResource>/conceptUriRules.json</conceptUriFallbackResource>
 
         <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
         <spring.version>5.3.39</spring.version>
@@ -556,6 +558,10 @@
                 <skosmosVocabsExcludedSchemes>{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_SCHEMES}}</skosmosVocabsExcludedSchemes>
                 <skosmosVocabsIncludedVocabularies>{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_VOCABS}}</skosmosVocabsIncludedVocabularies>
                 <skosmosVocabsExcludedVocabularies>{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_VOCABS}}</skosmosVocabsExcludedVocabularies>
+                
+
+                <conceptUriRulesUrl>{{DOCKER_COMPREG_CONCEPT_URI_RULES_URL}}</conceptUriRulesUrl>
+                <!--<conceptUriFallbackResource>/conceptUriRules.json</conceptUriFallbackResource>-->                
 
                 <!-- Shibboleth login URI for SHHAA -->
                 <shibLI>{{DOCKER_COMPREG_SHIB_LI}}</shibLI>

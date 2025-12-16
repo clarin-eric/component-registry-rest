@@ -36,6 +36,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -47,6 +49,7 @@ import org.springframework.stereotype.Service;
 @Singleton
 @Api(value = "/concepts", produces = MediaType.APPLICATION_JSON)
 public class ConceptsRestService {
+    private final static Logger logger = LoggerFactory.getLogger(ConceptsRestService.class);
 
     public static final String ALL_TYPES = "all";
 
@@ -67,9 +70,11 @@ public class ConceptsRestService {
     public void init() {
         if (conceptUriFallbackResource == null) {
             conceptUriFallbackResource = Configuration.getInstance().getConceptUriFallbackResource();
+            logger.debug("Setting conceptUriFallbackResource from config:", conceptUriFallbackResource);
         }
         if (conceptUriRulesUrl == null) {
             conceptUriRulesUrl = Configuration.getInstance().getConceptUriRulesUrl();
+            logger.debug("Setting conceptUriRulesUrl from config:", conceptUriRulesUrl);
         }
 
     }

@@ -79,6 +79,12 @@
                   value="${eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedVocabularies:}" />
         <property name="excludedVocabsForVocabularies" 
                   value="${eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedVocabularies:}" />
+        <property name="conceptUriRulesUrl" 
+                  value="${eu.clarin.cmdi.componentregistry.concepts.conceptUriRulesUrl:}" />
+        <property name="conceptUriFallbackResource" 
+                  value="${eu.clarin.cmdi.componentregistry.concepts.conceptUriFallbackResource:}" />
+        
+        
         
         <!-- Extra attribute keys that are passed in a shibboleth authenticated 
         request principal. You need to configure the shhaa.xml file to enable the 

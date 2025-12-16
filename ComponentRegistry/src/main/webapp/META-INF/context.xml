@@ -40,9 +40,9 @@
     for login/logout are set correctly in WEB-INF/shhaa.xml. 
 -->
 <Context path="/ds/ComponentRegistry">
-  <!-- 
-	Passed to the Flex via compRegConfig.jsp so that it can locate the 
-	ComponentRegistry REST service. Just supply the PUBLIC application root 
+    <!-- 
+        Passed to the Flex via compRegConfig.jsp so that it can locate the 
+        ComponentRegistry REST service. Just supply the PUBLIC application root 
         in the path; the '/rest/registry' part will be added by the application.
         
         "serviceUrlPath" is MANDATORY in all cases and should contain the path 
@@ -54,69 +54,73 @@
         "serviceUrlProtocolHeader" and "serviceUrlHostHeader" need to be 
         defined.
     -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.serviceUrlBase" value="${serviceUrlBase}"/>
-  <Parameter name="eu.clarin.cmdi.componentregistry.serviceUrlPath" value="${serviceUrlPath}"/>
-  <!--
+    <Parameter name="eu.clarin.cmdi.componentregistry.serviceUrlBase" value="${serviceUrlBase}"/>
+    <Parameter name="eu.clarin.cmdi.componentregistry.serviceUrlPath" value="${serviceUrlPath}"/>
+    <!--
      Uncomment two lines below iff you would like to use the protocol and host
      provided in the request headers.
     -->
-  <!--
+    <!--
     <Parameter name="eu.clarin.cmdi.componentregistry.serviceUrlProtocolHeader" value="X-FORWARDED-PROTO"/>
     <Parameter name="eu.clarin.cmdi.componentregistry.serviceUrlHostHeader" value="X-FORWARDED-HOST"/>
     -->
-  <!--
+    <!--
         Location that gets redirected to from /documentation.jsp, which in turn is linked to
         from the Flex application through the 'Help' link button.
     -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.documentationUrl" value="${documentationUrl}"/>
-  <!--
+    <Parameter name="eu.clarin.cmdi.componentregistry.documentationUrl" value="${documentationUrl}"/>
+    <!--
         Space-separated list of users (getRemoteUser()) that should have access to the admin area of the ComponentRegistry
     -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.adminUsers" value="${adminUsers}"/>
-  <!--
+    <Parameter name="eu.clarin.cmdi.componentregistry.adminUsers" value="${adminUsers}"/>
+    <!--
         Base location of the CMDI toolkit
     -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.toolkitLocation" value="${toolkitLocation}"/>
-  <!--
+    <Parameter name="eu.clarin.cmdi.componentregistry.toolkitLocation" value="${toolkitLocation}"/>
+    <!--
         Location of the CMDI general component schema that validates component specifications
     -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.generalComponentSchemaUrl" value="${generalComponentSchemaUrl}"/>
-  <!--
+    <Parameter name="eu.clarin.cmdi.componentregistry.generalComponentSchemaUrl" value="${generalComponentSchemaUrl}"/>
+    <!--
         Location of the stylesheet that transforms component specifications into XML schema documents
     -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.component2SchemaXslUrl" value="${component2SchemaXslUrl}"/>
-  <Parameter name="eu.clarin.cmdi.componentregistry.component2SchemaXslUrl.cmdi_1_1" value="${component2SchemaXslUrlCmdi11}"/>
-  <!--
-        Base location of the Concept Registry service
-    -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.ccrRestUrl" value="${ccrRestUrl}"/>
-  <!-- 
+    <Parameter name="eu.clarin.cmdi.componentregistry.component2SchemaXslUrl" value="${component2SchemaXslUrl}"/>
+    <Parameter name="eu.clarin.cmdi.componentregistry.component2SchemaXslUrl.cmdi_1_1" value="${component2SchemaXslUrlCmdi11}"/>
+
+    <!-- 
         Base location of the CLAVAS vocabulary service 
     -->
-  <!-- Test instance (OpenSKOS 2) -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="${clavasRestUrl}"/>
-  <!-- Production instance -->
-  <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://openskos.meertens.knaw.nl/clavas/api/"/>-->  
-  <!-- Skosmos CCR test instance -->
-  <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://clarin-skosmos.sd.di.huc.knaw.nl"/>-->
+    <!-- Test instance (OpenSKOS 2) -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="${clavasRestUrl}"/>
+    <!-- Production instance -->
+    <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://openskos.meertens.knaw.nl/clavas/api/"/>-->  
+    <!-- Skosmos CCR test instance -->
+    <!--<Parameter name="eu.clarin.cmdi.componentregistry.clavasRestUrl" value="https://clarin-skosmos.sd.di.huc.knaw.nl"/>-->
   
-  <!-- Skosmos cache refresh interval in seconds -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds" value="${skosmosCacheRefreshRate}"/>
+    <!-- Skosmos cache refresh interval in seconds -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds" value="${skosmosCacheRefreshRate}"/>
   
-  <!-- CCR filters -->
-  <!--    * Included Skosmos vocabularies for concepts -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedVocabularies" value="${skosmosCcrIncludedVocabs}" />
-  <!--    * Included Skosmos schemes for concepts -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedSchemes" value="${skosmosCcrIncludedSchemes}" />
+    <!-- CCR filters -->
+    <!--    * Included Skosmos vocabularies for concepts -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedVocabularies" value="${skosmosCcrIncludedVocabs}" />
+    <!--    * Included Skosmos schemes for concepts -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.ccr.includedSchemes" value="${skosmosCcrIncludedSchemes}" />
 
-  <!-- CLAVAS filters -->
-  <!--    * Included Skosmos vocabularies for concepts -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedVocabularies" value="${skosmosVocabsIncludedVocabularies}" />
-  <!--    * Excluded Skosmos vocabularies for concepts -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedVocabularies" value="${skosmosVocabsExcludedVocabularies}" />
-  <!--    * Included Skosmos schemes for concepts -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedSchemes" value="${skosmosVocabsIncludedSchemes}" />
-  <!--    * Excluded Skosmos schemes for concepts -->
-  <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedSchemes" value="${skosmosVocabsExcludedSchemes}" />
+    <!-- CLAVAS filters -->
+    <!--    * Included Skosmos vocabularies for concepts -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedVocabularies" value="${skosmosVocabsIncludedVocabularies}" />
+    <!--    * Excluded Skosmos vocabularies for concepts -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedVocabularies" value="${skosmosVocabsExcludedVocabularies}" />
+    <!--    * Included Skosmos schemes for concepts -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedSchemes" value="${skosmosVocabsIncludedSchemes}" />
+    <!--    * Excluded Skosmos schemes for concepts -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedSchemes" value="${skosmosVocabsExcludedSchemes}" />
+  
+
+    <!-- URI from which to retrieve the concept URI rules set -->
+    <Parameter name="eu.clarin.cmdi.componentregistry.concepts.conceptUriRulesUrl" value="${conceptUriRulesUrl}" />
+    <!-- Fallback resource for the concept URI rules set -->    
+    <Parameter name="eu.clarin.cmdi.componentregistry.concepts.conceptUriFallbackResource" value="${conceptUriFallbackResource}" />
+  
   
 </Context>
