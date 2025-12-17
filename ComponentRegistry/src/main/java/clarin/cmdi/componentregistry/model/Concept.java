@@ -16,10 +16,13 @@
  */
 package clarin.cmdi.componentregistry.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author twagoo
  */
+@XmlRootElement(name = "Concept")
 public class Concept {
 
     private String id;
