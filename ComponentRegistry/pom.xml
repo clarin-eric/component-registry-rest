@@ -641,7 +641,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.5.0</version>
                 <configuration>
                     <warName>${project.artifactId}</warName>
                     <webXml>${webXmlPath}</webXml>
@@ -649,6 +649,9 @@
                         <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
+                            <excludes>
+                                <exclude>api-docs/**</exclude>
+                            </excludes>
                         </resource>
                     </webResources>
                     <archive>
