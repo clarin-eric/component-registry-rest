@@ -548,7 +548,6 @@
                 <generalComponentSchemaUrl>{{DOCKER_COMPREG_GENERAL_COMPONENT_SCHEMA}}</generalComponentSchemaUrl>
                 <component2SchemaXslUrl>{{DOCKER_COMPREG_COMPONENT_TO_SCHEMA_XSL}}</component2SchemaXslUrl>
                 <component2SchemaXslUrlCmdi11>{{DOCKER_COMPREG_COMPONENT_TO_SCHEMA_XSL_CMDI11}}</component2SchemaXslUrlCmdi11>
-                <ccrRestUrl>{{DOCKER_COMPREG_CCR_REST_SERVICE}}</ccrRestUrl>
                 <clavasRestUrl>{{DOCKER_COMPREG_CLAVAS_REST_SERVICE}}</clavasRestUrl>
 
                 <skosmosCacheRefreshRate>{{DOCKER_COMPREG_SKOSMOS_CACHE_REFRESH_RATE}}</skosmosCacheRefreshRate> <!-- Skosmos cache refresh interval in seconds -->
