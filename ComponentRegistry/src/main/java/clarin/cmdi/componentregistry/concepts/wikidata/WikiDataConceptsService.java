@@ -32,6 +32,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 /**
+ * Provides access to the WikiData entities search service
  *
  * @author twagoo
  */
@@ -53,15 +54,35 @@ public class WikiDataConceptsService {
                 Datamodel.SITE_WIKIDATA);
     }
 
+    /**
+     * Search for items
+     *
+     * @param query
+     * @return
+     */
     public Stream<Concept> search(String query) {
         return search(query, ITEM_TYPE);
     }
 
+    /**
+     * Search for entities of the specified types
+     *
+     * @param query
+     * @param types
+     * @return
+     */
     public Stream<Concept> search(String query, String... types) {
         return Stream.of(types)
                 .flatMap(type -> this.search(query, type));
     }
 
+    /**
+     * Search for entities of a specified type
+     *
+     * @param query
+     * @param type
+     * @return
+     */
     public Stream<Concept> search(String query, String type) {
         try {
             WbGetEntitiesSearchData properties = new WbGetEntitiesSearchData();

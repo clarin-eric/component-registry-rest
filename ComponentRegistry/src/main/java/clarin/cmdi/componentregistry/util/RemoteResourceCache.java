@@ -52,6 +52,11 @@ public class RemoteResourceCache {
     private Duration cacheExpiryTime = Duration.ofMinutes(10);
     private Duration retrievalTimeout = Duration.ofSeconds(2);
 
+    /**
+     * 
+     * @param resourceUrl URL of the resource to fetch and cache
+     * @param fallbackResource a bundled fallback resource
+     */
     public RemoteResourceCache(String resourceUrl, String fallbackResource) {
         this.resourceUrl = resourceUrl;
         this.fallbackResource = fallbackResource;

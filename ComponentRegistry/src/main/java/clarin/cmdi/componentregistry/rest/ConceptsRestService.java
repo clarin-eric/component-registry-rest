@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
+ * REST service that offers search to concepts (Wikidata, ...) and rules for
+ * usage inside component specifications
  *
  * @author twagoo
  */
@@ -77,6 +79,7 @@ public class ConceptsRestService {
             logger.debug("Setting conceptUriRulesUrl from config:", conceptUriRulesUrl);
         }
 
+        // caching
         conceptRulesCache = new RemoteResourceCache(conceptUriRulesUrl, conceptUriFallbackResource);
         conceptRulesCache.setCacheExpiryTime(Duration.ofMinutes(30));
         conceptRulesCache.setRetrievalTimeout(Duration.ofSeconds(5));
@@ -87,7 +90,7 @@ public class ConceptsRestService {
     @Path("/search")
     @Produces({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Returns a listing of groups to which an item belongs")
-    public List<Concept> getGroupsTheItemIsAMemberOf(@QueryParam("q") String query, @QueryParam("type") @DefaultValue(ALL_TYPES) List<String> type) {
+    public List<Concept> search(@QueryParam("q") String query, @QueryParam("type") @DefaultValue(ALL_TYPES) List<String> type) {
         return wdService.search(query, toWikidataTypes(type)).toList();
     }
 
@@ -114,7 +117,7 @@ public class ConceptsRestService {
     @GET
     @Path("/rules")
     @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Returns structured rules for the evaluation of concept links")
+    @ApiOperation(value = "Returns structured rules for the evaluation of concept links (static content)")
     public String getRules() {
         return conceptRulesCache.getContent();
 
