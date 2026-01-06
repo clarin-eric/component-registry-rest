@@ -67,10 +67,6 @@
         <property name="skosmosCacheRefreshRateSeconds"
                   value="${eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds}" />
         
-        <property name="includedSchemesForConcepts" 
-                  value="${eu.clarin.cmdi.componentregistry.skosmos.ccr.includedSchemes:}" />
-        <property name="includedVocabsForConcepts" 
-                  value="${eu.clarin.cmdi.componentregistry.skosmos.ccr.includedVocabularies:}" />
         <property name="includedSchemesForVocabularies" 
                   value="${eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedSchemes:}" />
         <property name="excludedSchemesForVocabularies" 
