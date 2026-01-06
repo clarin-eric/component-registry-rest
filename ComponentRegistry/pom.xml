@@ -559,8 +559,6 @@
                 <clavasRestUrl>{{DOCKER_COMPREG_CLAVAS_REST_SERVICE}}</clavasRestUrl>
 
                 <skosmosCacheRefreshRate>{{DOCKER_COMPREG_SKOSMOS_CACHE_REFRESH_RATE}}</skosmosCacheRefreshRate> <!-- Skosmos cache refresh interval in seconds -->
-                <skosmosCcrIncludedVocabs>{{DOCKER_COMPREG_SKOSMOS_CCR_INCLUDED_VOCABS}}</skosmosCcrIncludedVocabs>
-                <skosmosCcrIncludedSchemes>{{DOCKER_COMPREG_SKOSMOS_CCR_INCLUDED_SCHEMES}}</skosmosCcrIncludedSchemes>
                 <skosmosVocabsIncludedSchemes>{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_SCHEMES}}</skosmosVocabsIncludedSchemes>
                 <skosmosVocabsExcludedSchemes>{{DOCKER_COMPREG_SKOSMOS_VOCABS_EXCLUDED_SCHEMES}}</skosmosVocabsExcludedSchemes>
                 <skosmosVocabsIncludedVocabularies>{{DOCKER_COMPREG_SKOSMOS_VOCABS_INCLUDED_VOCABS}}</skosmosVocabsIncludedVocabularies>

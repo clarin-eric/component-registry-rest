@@ -31,9 +31,6 @@ public class Configuration {
     private Collection<String> adminUsers = new HashSet<>();
     private List<String> displayNameShibbolethKeys = new ArrayList<>();
 
-    private Set<String> includedSchemesForConcepts = Collections.emptySet();
-    private Set<String> includedVocabsForConcepts = Collections.emptySet();
-
     private Set<String> includedSchemesForVocabularies = Collections.emptySet();
     private Set<String> excludedSchemesForVocabularies = Collections.emptySet();
     private Set<String> includedVocabsForVocabularies = Collections.emptySet();
@@ -136,14 +133,6 @@ public class Configuration {
         this.skosmosCacheRefreshRateSeconds = skosmosCacheRefreshRateSeconds;
     }
 
-    public Set<String> getIncludedSchemesForConcepts() {
-        return includedSchemesForConcepts;
-    }
-
-    public Set<String> getIncludedVocabsForConcepts() {
-        return includedVocabsForConcepts;
-    }
-
     public Set<String> getIncludedSchemesForVocabularies() {
         return includedSchemesForVocabularies;
     }
@@ -158,14 +147,6 @@ public class Configuration {
 
     public Set<String> getExcludedVocabsForVocabularies() {
         return excludedVocabsForVocabularies;
-    }
-
-    public void setIncludedVocabsForConcepts(String includedVocabs) {
-        includedVocabsForConcepts = stringPropertyToSet(includedVocabs);
-    }
-
-    public void setIncludedSchemesForConcepts(String includedSchemes) {
-        includedSchemesForConcepts = stringPropertyToSet(includedSchemes);
     }
 
     public void setExcludedSchemesForVocabularies(String excludedSchemes) {
