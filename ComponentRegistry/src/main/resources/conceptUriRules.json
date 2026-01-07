@@ -3,7 +3,7 @@
         {
             "types": ["*"],
             "rules": [{
-                    "reason": "ISOCat has been deprecated",
+                    "reason": "ISOCat has been deprecated. Please read the recommendations!",
                     "warning": {
                         "regex": [
                             "^http(s?):\\/\\/www\\.isocat\\.org"
@@ -13,7 +13,7 @@
         }, {
             "types": ["*"],
             "rules": [{
-                    "reason": "The CLARIN Concept Registry has been deprecated",
+                    "reason": "CLARIN Concept Registry is deprecated. Please read the recommendations!",
                     "warning": {
                         "regex": [
                             "^http(s?):\\/\\/hdl\\.handle\\.net\\/11459\\/CCR"
