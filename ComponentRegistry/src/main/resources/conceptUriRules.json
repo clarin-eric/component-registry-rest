@@ -59,6 +59,26 @@
                         ]
                     }
                 }]
+        }, {
+            "types": ["*"],
+            "rules": [{
+                    "reason": "Not a valid Wikidata entity URI (check documentation)",
+                    "warning": {
+                        "regex": [
+                            "^http(s?):\\/\\/.*wikidata.org\\/([^e]|e[^n]|en[^t]|ent[^i]|enti[^t]|entit[^y]|entity[^\\/])"
+                        ]
+                    }
+                }]
+        }, {
+            "types": ["*"],
+            "rules": [{
+                    "reason": "Wikidata entity URIs start with http: (check documentation)",
+                    "warning": {
+                        "regex": [
+                            "^https:\\/\\/.*wikidata.org\\/entity"
+                        ]
+                    }
+                }]
         }
     ]
 }
