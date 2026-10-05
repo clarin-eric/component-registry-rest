@@ -47,7 +47,6 @@
         <conceptUriFallbackResource>/conceptUriRules.json</conceptUriFallbackResource>
 
         <cmd-toolkit.version>1.2.5</cmd-toolkit.version>
-        <spring.version>5.3.39</spring.version>
         <wicket.version>8.14.0</wicket.version>
         
         <jersey.version>1.19.4</jersey.version>
