@@ -24,13 +24,12 @@ public class Configuration {
     //NOTE: Default values, can be overwritten in applicationContext.xml
     private String toolkitLocation = "https://infra.clarin.eu/CMDI/1.x";
     private String generalComponentSchema = "https://infra.clarin.eu/CMDI/1.x/xsd/cmd-component.xsd";
-    private String ccrRestUrl = "https://openskos.meertens.knaw.nl/ccr/api/";
     private String clavasRestUrl = "https://openskos.meertens.knaw.nl/clavas/api/";
+    private String conceptUriRulesUrl = "";
+    private String conceptUriFallbackResource = "/conceptUriRules.json";
+    
     private Collection<String> adminUsers = new HashSet<>();
     private List<String> displayNameShibbolethKeys = new ArrayList<>();
-
-    private Set<String> includedSchemesForConcepts = Collections.emptySet();
-    private Set<String> includedVocabsForConcepts = Collections.emptySet();
 
     private Set<String> includedSchemesForVocabularies = Collections.emptySet();
     private Set<String> excludedSchemesForVocabularies = Collections.emptySet();
@@ -58,10 +57,6 @@ public class Configuration {
 
     public String getGeneralComponentSchema() {
         return generalComponentSchema;
-    }
-
-    public String getCcrRestUrl() {
-        return ccrRestUrl;
     }
 
     public String getClavasRestUrl() {
@@ -123,11 +118,6 @@ public class Configuration {
         this.generalComponentSchema = generalComponentSchema;
     }
 
-    public void setCcrRestUrl(String ccrRestUrl) {
-        LOG.info("Setting ccrRestUrl to {}", ccrRestUrl);
-        this.ccrRestUrl = ccrRestUrl;
-    }
-
     public void setClavasRestUrl(String clavasRestUrl) {
         LOG.info("Setting clavasRestUrl to {}", clavasRestUrl);
         this.clavasRestUrl = clavasRestUrl;
@@ -141,14 +131,6 @@ public class Configuration {
     public void setSkosmosCacheRefreshRateSeconds(long skosmosCacheRefreshRateSeconds) {
         LOG.info("Setting skosmosCacheRefreshRateSeconds to {}", skosmosCacheRefreshRateSeconds);
         this.skosmosCacheRefreshRateSeconds = skosmosCacheRefreshRateSeconds;
-    }
-
-    public Set<String> getIncludedSchemesForConcepts() {
-        return includedSchemesForConcepts;
-    }
-
-    public Set<String> getIncludedVocabsForConcepts() {
-        return includedVocabsForConcepts;
     }
 
     public Set<String> getIncludedSchemesForVocabularies() {
@@ -167,14 +149,6 @@ public class Configuration {
         return excludedVocabsForVocabularies;
     }
 
-    public void setIncludedVocabsForConcepts(String includedVocabs) {
-        includedVocabsForConcepts = stringPropertyToSet(includedVocabs);
-    }
-
-    public void setIncludedSchemesForConcepts(String includedSchemes) {
-        includedSchemesForConcepts = stringPropertyToSet(includedSchemes);
-    }
-
     public void setExcludedSchemesForVocabularies(String excludedSchemes) {
         excludedSchemesForVocabularies = stringPropertyToSet(excludedSchemes);
     }
@@ -189,6 +163,22 @@ public class Configuration {
 
     public void setExcludedVocabsForVocabularies(String excludedVocabs) {
         excludedVocabsForVocabularies = stringPropertyToSet(excludedVocabs);
+    }
+
+    public String getConceptUriRulesUrl() {
+        return conceptUriRulesUrl;
+    }
+
+    public void setConceptUriRulesUrl(String conceptUriRulesUrl) {
+        this.conceptUriRulesUrl = conceptUriRulesUrl;
+    }
+
+    public String getConceptUriFallbackResource() {
+        return conceptUriFallbackResource;
+    }
+
+    public void setConceptUriFallbackResource(String conceptUriFallbackResource) {
+        this.conceptUriFallbackResource = conceptUriFallbackResource;
     }
 
     private Set<String> stringPropertyToSet(String value) {

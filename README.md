@@ -27,8 +27,7 @@ profiles can be used for local testing. Use the `docker` profile to build for th
 Docker image (see below).
 
 Pushing to this repository will trigger a build in 
-[Travis CI](https://travis-ci.org/clarin-eric/component-registry-rest/). For tags, 
-this build will automatically deploy a deployment package (.tar.gz) to the GitHub release.
+[GitHub actions](https://github.com/clarin-eric/component-registry-rest/actions).
 
 The 
 [docker-component-registry-rest](https://gitlab.com/CLARIN-ERIC/docker-component-registry-rest)
@@ -49,7 +48,6 @@ version specific upgrade instructions.
 
 ## Links
 
-- [CLARIN Trac pages for the Component Registry](https://trac.clarin.eu/wiki/ComponentRegistryAndEditor)
 - Front end project:
 [component-registry-front-end](https://github.com/clarin-eric/component-registry-front-end)
 - Docker image project for this back end application:
@@ -59,7 +57,7 @@ version specific upgrade instructions.
 
 ## Licence
 
-Copyright (C) 2019  CLARIN ERIC
+Copyright (C) 2026  CLARIN ERIC
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

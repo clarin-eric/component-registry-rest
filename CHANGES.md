@@ -2,6 +2,13 @@
 
 For upgrade instructions, see [UPGRADE.md](UPGRADE.md)
 
+## Release Component Registry 2.6.0 (January 2026)
+- Dependency updates
+- Feature: replaced CCR search with Wikidata search
+	<https://github.com/clarin-eric/component-registry-rest/issues/82>
+- Added (cached) serving concept link validation rules
+- Added GitHub workflows for CI
+
 ## Release Component Registry 2.5.3 (April 2025)
 - Dependency updates
 

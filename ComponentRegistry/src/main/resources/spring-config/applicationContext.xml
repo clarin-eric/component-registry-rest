@@ -58,8 +58,6 @@
                   value="${eu.clarin.cmdi.componentregistry.adminUsers}" />
         <property name="generalComponentSchema"
                   value="${eu.clarin.cmdi.componentregistry.generalComponentSchemaUrl}" />
-        <property name="ccrRestUrl"
-                  value="${eu.clarin.cmdi.componentregistry.ccrRestUrl}" />
         <property name="clavasRestUrl"
                   value="${eu.clarin.cmdi.componentregistry.clavasRestUrl}" />
         <property name="toolkitLocation"
@@ -69,10 +67,6 @@
         <property name="skosmosCacheRefreshRateSeconds"
                   value="${eu.clarin.cmdi.componentregistry.skosmos.cacheRefreshRateSeconds}" />
         
-        <property name="includedSchemesForConcepts" 
-                  value="${eu.clarin.cmdi.componentregistry.skosmos.ccr.includedSchemes:}" />
-        <property name="includedVocabsForConcepts" 
-                  value="${eu.clarin.cmdi.componentregistry.skosmos.ccr.includedVocabularies:}" />
         <property name="includedSchemesForVocabularies" 
                   value="${eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedSchemes:}" />
         <property name="excludedSchemesForVocabularies" 
@@ -81,6 +75,12 @@
                   value="${eu.clarin.cmdi.componentregistry.skosmos.vocabs.includedVocabularies:}" />
         <property name="excludedVocabsForVocabularies" 
                   value="${eu.clarin.cmdi.componentregistry.skosmos.vocabs.excludedVocabularies:}" />
+        <property name="conceptUriRulesUrl" 
+                  value="${eu.clarin.cmdi.componentregistry.concepts.conceptUriRulesUrl:}" />
+        <property name="conceptUriFallbackResource" 
+                  value="${eu.clarin.cmdi.componentregistry.concepts.conceptUriFallbackResource:}" />
+        
+        
         
         <!-- Extra attribute keys that are passed in a shibboleth authenticated 
         request principal. You need to configure the shhaa.xml file to enable the 

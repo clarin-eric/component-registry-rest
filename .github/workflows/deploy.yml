@@ -1,0 +1,46 @@
+name: Deploy release artifact
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  docker-build-and-deploy:
+    runs-on: ubuntu-latest
+# SETUP
+    steps:
+      - name: Check out the repository to the runner
+        uses: actions/checkout@v5
+      - name: Set up JDK 21 for x64
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+          architecture: x64
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+# VERSION NUMBER
+      - name: Set tag name in env
+        run: echo "GITHUB_TAG=$(echo "${GITHUB_REF##*/}")" >> $GITHUB_ENV
+      - name: Set version number
+        run: mvn --batch-mode versions:set -DnewVersion=${GITHUB_TAG} versions:commit
+# TESTS
+      - name: Run tests
+        run: mvn install test --batch-mode --no-transfer-progress
+# BUILD
+      - name: Build for docker
+        run: mvn clean install -DskipTests=true -Pdocker --batch-mode
+# DEPLOY ARTIFACT
+# TODO: deploy to release, not just as an action artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Docker ready deployment package
+          path: ComponentRegistry/target/component-registry-rest-*-docker.tar.gz
+          compression-level: 1
+          if-no-files-found: error
