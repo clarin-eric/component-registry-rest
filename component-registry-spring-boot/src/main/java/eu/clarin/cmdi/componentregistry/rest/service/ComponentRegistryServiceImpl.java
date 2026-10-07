@@ -73,15 +73,18 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
 
     @Override
     public List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Direction> sortDirection) {
-        return itemRepository.findItems(prefixForType(type) + "%",
-                true,
-                status,
-                sortBy
-                        .map(property -> Sort.by(
-                        sortDirection.orElse(Direction.ASC),
-                        property))
-                        .orElseGet(Sort::unsorted));
+            Optional<String> sortBy, Optional<Direction> sortDirection, Optional<Integer> groupId) {
+        final String prefix = prefixForType(type) + "%";
+        final Sort sorting = sortBy
+                .map(property -> Sort.by(sortDirection.orElse(Direction.ASC), property))
+                .orElseGet(Sort::unsorted);
+
+        if (groupId.isPresent()) {
+            //TODO: check authorization
+            return itemRepository.findItemsInTeam(prefix, groupId.get(), status, sorting);
+        } else {
+            return itemRepository.findItems(prefix, true, status, sorting);
+        }
     }
 
     private String prefixForType(ItemType type) {

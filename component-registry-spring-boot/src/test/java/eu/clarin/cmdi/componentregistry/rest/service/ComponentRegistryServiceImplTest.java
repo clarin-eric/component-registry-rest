@@ -108,18 +108,22 @@ public class ComponentRegistryServiceImplTest {
                     ItemType.COMPONENT,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
-                    Optional.empty(), Optional.empty());
+                    Optional.empty(), Optional.empty(),
+                    // no group
+                    Optional.empty());
             assertThat(result).isNotNull();
             assertThat(result).hasSize(7);
         }
-        
+
         //get profiles
         {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.PROFILE,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
-                    Optional.empty(), Optional.empty());
+                    Optional.empty(), Optional.empty(),
+                    // no group
+                    Optional.empty());
             assertThat(result).isNotNull();
             assertThat(result).hasSize(3);
         }

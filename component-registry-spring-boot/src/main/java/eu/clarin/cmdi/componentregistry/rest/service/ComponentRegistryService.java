@@ -38,7 +38,8 @@ public interface ComponentRegistryService {
 
     /**
      * *
-     * Get all published items with the specified type and status
+     * Get all published items with the specified type and status. 
+     * Checks authorization if needed (when requesting items from a private or team space)
      *
      * @param type
      * @param status
@@ -46,10 +47,11 @@ public interface ComponentRegistryService {
      * result
      * @param sortDirection sorting direction or provide an empty optional for
      * default direction
+     * @param groupId user group (aka team) id
      * @return
      */
     List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Sort.Direction> sortDirection);
+            Optional<String> sortBy, Optional<Sort.Direction> sortDirection, Optional<Integer> groupId);
 
     public boolean itemIsOfType(BaseDescription item, ItemType type);
 
