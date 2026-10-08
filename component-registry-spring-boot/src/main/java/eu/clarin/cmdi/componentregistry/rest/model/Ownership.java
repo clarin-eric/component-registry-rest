@@ -3,7 +3,10 @@ package eu.clarin.cmdi.componentregistry.rest.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -29,6 +32,8 @@ import java.io.Serializable;
 public class Ownership implements Serializable {
 
     @Id
+    @SequenceGenerator(name = "ownership_id_seq", sequenceName = "ownership_id_seq", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ownership_id_seq")
     @Column(name = "id")
     @XmlTransient
     @JsonIgnore

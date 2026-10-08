@@ -24,5 +24,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author twagoo
  */
 public interface UserRepository extends JpaRepository<RegistryUser, Long> {
-
 }
