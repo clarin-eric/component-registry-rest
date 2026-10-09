@@ -68,15 +68,23 @@ public class UserController {
                 responseCode = "200",
                 description = "User info")})
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public RegistryUser getInfo(@RequestParam(required = false) Optional<Long> userId) {
+    public RegistryUser getInfo(@RequestParam(required = false) Optional<Long> userId,
+            @RequestParam(required = false) Optional<String> principalName
+    ) {
         userId.ifPresent((id) -> {
+            //TODO: check if user is allowed to request info for user
+        });
+
+        principalName.ifPresent((id) -> {
             //TODO: check if user is allowed to request info for user
         });
 
         //Produce user info
         return userId.map(id -> repository.findById(id))
                 //if userId not provided
-                .orElseGet(() -> repository.findById(getCurrentUser()))
+                .orElseGet(() -> principalName.map(repository::findByPrincipalName)
+                //if principal name also not provided
+                .orElseGet(() -> repository.findById(getCurrentUser())))
                 //if user not found
                 .orElseThrow(() -> new UserNotFoundException("User not found or not allowed to find it"));
     }

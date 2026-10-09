@@ -17,6 +17,7 @@
 package eu.clarin.cmdi.componentregistry.rest.persistence;
 
 import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -24,4 +25,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author twagoo
  */
 public interface UserRepository extends JpaRepository<RegistryUser, Long> {
+
+    public Optional<RegistryUser> findByPrincipalName(String principalName);
 }
