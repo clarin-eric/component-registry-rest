@@ -74,7 +74,7 @@ public class ItemsController {
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
             @RequestParam(value = "type") Optional<ItemType> itemType,
-            @RequestParam(value = "type") Optional<Integer> groupId,
+            @RequestParam(value = "type") Optional<Long> groupId,
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Direction sortDirection

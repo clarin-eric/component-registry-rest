@@ -57,7 +57,7 @@ public interface RegistryItemRepository extends JpaRepository<BaseDescription, L
             + " AND c.deleted = false")
     List<BaseDescription> findItemsInTeam(
             String idPrefix,
-            Integer groupId,
+            Long groupId,
             Collection<ComponentStatus> status,
             Sort sort);
 

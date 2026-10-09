@@ -65,7 +65,7 @@ public class RegistryController {
             @RequestParam(value = "status") List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
-            @RequestParam(value = "groupId", required = false) Integer groupId
+            @RequestParam(value = "groupId", required = false) Long groupId
     ) {
         return itemConverter.descriptionsAsComponentsList(
                 getItems(ItemType.COMPONENT, registrySpace, status, sortBy, sortDirection, groupId)
@@ -81,14 +81,14 @@ public class RegistryController {
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
-            @RequestParam(value = "groupId", required = false) Integer groupId
+            @RequestParam(value = "groupId", required = false) Long groupId
     ) {
         return itemConverter.descriptionsAsProfilesList(
                 getItems(ItemType.PROFILE, registrySpace, status, sortBy, sortDirection, groupId)
         );
     }
 
-    private List<BaseDescription> getItems(ItemType itemType, String registrySpace, List<ComponentStatus> status, String sortBy, Sort.Direction sortDirection, Integer groupId) throws UnsupportedOperationException, IllegalArgumentException {
+    private List<BaseDescription> getItems(ItemType itemType, String registrySpace, List<ComponentStatus> status, String sortBy, Sort.Direction sortDirection, Long groupId) throws UnsupportedOperationException, IllegalArgumentException {
         final List<BaseDescription> items = switch (registrySpace) {
             case "published" -> {
                 yield getItemsOfType(itemType, status, sortBy, sortDirection, null);
@@ -129,7 +129,7 @@ public class RegistryController {
     }
 
     private List<BaseDescription> getItemsOfType(ItemType type, List<ComponentStatus> status,
-            String sortBy, Sort.Direction sortDirection, Integer groupId) {
+            String sortBy, Sort.Direction sortDirection, Long groupId) {
         return registryService.getItemDescriptions(
                 type,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
