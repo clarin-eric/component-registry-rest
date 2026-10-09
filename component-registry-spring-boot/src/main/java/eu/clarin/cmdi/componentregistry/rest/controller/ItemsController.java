@@ -74,6 +74,7 @@ public class ItemsController {
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
             @RequestParam(value = "type") Optional<ItemType> itemType,
+            @RequestParam(value = "type") Optional<Long> groupId,
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Direction sortDirection
@@ -81,7 +82,7 @@ public class ItemsController {
         return itemType.map(
                 (type) -> registryService.getItemDescriptions(type,
                         CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                        Optional.of(sortBy), Optional.of(sortDirection)))
+                        Optional.of(sortBy), Optional.of(sortDirection), groupId))
                 .orElseGet(
                         () -> registryService.getItemDescriptions(
                                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,

@@ -61,12 +61,15 @@ public class RegistryController {
     @GetMapping(path = "/components",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ComponentsList getComponents(
+            @RequestParam(value = "registrySpace", defaultValue = "published") String registrySpace,
             @RequestParam(value = "status") List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
-            @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
+            @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
+            @RequestParam(value = "groupId", required = false) Long groupId
     ) {
-        final List<BaseDescription> items = getItemsOfType(ItemType.COMPONENT, status, sortBy, sortDirection);
-        return itemConverter.descriptionsAsComponentsList(items);
+        return itemConverter.descriptionsAsComponentsList(
+                getItems(ItemType.COMPONENT, registrySpace, status, sortBy, sortDirection, groupId)
+        );
     }
 
     @GetMapping(path = "/profiles",
@@ -74,12 +77,33 @@ public class RegistryController {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
     public ProfilesList getProfiles(
-            @RequestParam(value = "status") List<ComponentStatus> status,
+            @RequestParam(value = "registrySpace", defaultValue = "published") String registrySpace,
+            @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
-            @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection
+            @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
+            @RequestParam(value = "groupId", required = false) Long groupId
     ) {
-        final List<BaseDescription> items = getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection);
-        return itemConverter.descriptionsAsProfilesList(items);
+        return itemConverter.descriptionsAsProfilesList(
+                getItems(ItemType.PROFILE, registrySpace, status, sortBy, sortDirection, groupId)
+        );
+    }
+
+    private List<BaseDescription> getItems(ItemType itemType, String registrySpace, List<ComponentStatus> status, String sortBy, Sort.Direction sortDirection, Long groupId) throws UnsupportedOperationException, IllegalArgumentException {
+        final List<BaseDescription> items = switch (registrySpace) {
+            case "published" -> {
+                yield getItemsOfType(itemType, status, sortBy, sortDirection, null);
+            }
+            case "private" -> {
+                throw new UnsupportedOperationException("Private registry space not yet implemented");
+            }
+            case "group" -> {
+                yield getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection, groupId);
+            }
+            default -> {
+                throw new IllegalArgumentException("No such registry space: " + registrySpace);
+            }
+        };
+        return items;
     }
 
     @GetMapping(path = "/components/{componentId}/description",
@@ -105,11 +129,11 @@ public class RegistryController {
     }
 
     private List<BaseDescription> getItemsOfType(ItemType type, List<ComponentStatus> status,
-            String sortBy, Sort.Direction sortDirection) {
+            String sortBy, Sort.Direction sortDirection, Long groupId) {
         return registryService.getItemDescriptions(
                 type,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                Optional.of(sortBy), Optional.of(sortDirection));
+                Optional.of(sortBy), Optional.of(sortDirection), Optional.ofNullable(groupId));
     }
 
     private BaseDescription getItemDescriptionOfType(ItemType type, String componentId) {

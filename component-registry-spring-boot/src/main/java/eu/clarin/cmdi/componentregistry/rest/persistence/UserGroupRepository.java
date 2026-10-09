@@ -16,12 +16,12 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.persistence;
 
-import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import eu.clarin.cmdi.componentregistry.rest.model.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author twagoo
  */
-public interface UserRepository extends JpaRepository<RegistryUser, Long> {
+public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 }
