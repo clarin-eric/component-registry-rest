@@ -157,16 +157,13 @@ public class ComponentRegistryServiceImplTest {
         assertThat(spec).hasFieldOrPropertyWithValue("isProfile", true);
     }
 
-    private final static AtomicInteger userIdGenerator = new AtomicInteger(100);
-
     private long insertUser(String name) {
-        final long userId = userIdGenerator.getAndIncrement();
-        RegistryUser user = RegistryUser.builder()
-                .id(userId)
-                .name(name)
-                .principalName(name)
-                .build();
-        return userRepository.saveAndFlush(user).getId();
+        return userRepository.saveAndFlush(
+                RegistryUser.builder()
+                        .name(name)
+                        .principalName(name)
+                        .build())
+                .getId();
     }
 
     private Iterable<Long> insertDescriptions(String idPrefix, long startId, long number, Long userId) {
@@ -177,7 +174,6 @@ public class ComponentRegistryServiceImplTest {
         final ImmutableList.Builder<BaseDescription> descriptions = ImmutableList.builder();
         for (long id = startId; id < startId + number; id++) {
             final BaseDescription.BaseDescriptionBuilder builder = BaseDescription.builder()
-                    .dbId(id)
                     .dbUserId(userId)
                     .ispublic(true)
                     .componentId(idPrefix + id)
