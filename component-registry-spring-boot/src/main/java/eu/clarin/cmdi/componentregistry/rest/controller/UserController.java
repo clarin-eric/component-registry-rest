@@ -16,13 +16,19 @@
  */
 package eu.clarin.cmdi.componentregistry.rest.controller;
 
+import com.google.common.collect.Lists;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import eu.clarin.cmdi.componentregistry.rest.model.UserGroup;
 import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -74,27 +80,28 @@ public class UserController {
                 //if user not found
                 .orElseThrow(() -> new UserNotFoundException("User not found or not allowed to find it"));
     }
-//
-//    @Operation(summary = "Get the user's teams")
-//    @ApiResponses(value = {
-//        @ApiResponse(
-//                responseCode = "200",
-//                description = "A list of teams of which the user is a member")})
-//    @GetMapping(path = "/teams", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-//    public String getTeams(@RequestParam(required = false) Optional<Long> userId) {
-//        userId.ifPresent((id) -> {
-//            //TODO: check if user is allowed to request info for user
-//        });
-//
-//        //Produce user info
-//        return userId
-//                .map(id -> repository.getReferenceById(id))
-//                .orElseGet(() -> {
-//                    //TODO: retrieve current user id
-//                    final Long currentUser = 1L;
-//                    return repository.getReferenceById(currentUser);
-//                });
-//    }
+
+    @Operation(summary = "Get the user's teams")
+    @ApiResponses(value = {
+        @ApiResponse(
+                responseCode = "200",
+                description = "A list of teams of which the user is a member")})
+    @GetMapping(path = "/teams", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public List<UserGroup> getTeams(@RequestParam(required = false) Optional<Long> userId) {
+        userId.ifPresent((id) -> {
+            //TODO: check if user is allowed to request info for user
+        });
+
+        final Long id = userId.orElseGet(this::getCurrentUser);
+
+        final Optional<Set<UserGroup>> retrieved = repository.findById(id)
+                .map(RegistryUser::getGroups);
+
+        //return as a list, or if none found the empty list
+        return retrieved.<List>map(group -> Lists.newArrayList(group))
+                .orElseGet(Collections::emptyList);
+
+    }
 
     private Long getCurrentUser() {
         //TODO: retrieve current user id
