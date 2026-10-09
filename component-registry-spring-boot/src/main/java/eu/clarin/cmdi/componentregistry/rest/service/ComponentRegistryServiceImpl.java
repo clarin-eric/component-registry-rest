@@ -73,7 +73,7 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
 
     @Override
     public List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Direction> sortDirection, Optional<Integer> groupId) {
+            Optional<String> sortBy, Optional<Direction> sortDirection, Optional<Long> groupId) {
         final String prefix = prefixForType(type) + "%";
         final Sort sorting = sortBy
                 .map(property -> Sort.by(sortDirection.orElse(Direction.ASC), property))

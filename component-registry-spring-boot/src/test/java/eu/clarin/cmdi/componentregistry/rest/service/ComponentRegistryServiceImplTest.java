@@ -21,12 +21,17 @@ import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
+import eu.clarin.cmdi.componentregistry.rest.model.Ownership;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import eu.clarin.cmdi.componentregistry.rest.model.UserGroup;
+import eu.clarin.cmdi.componentregistry.rest.persistence.OwnershipRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.SpecRepository;
+import eu.clarin.cmdi.componentregistry.rest.persistence.UserGroupRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,7 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -76,6 +80,10 @@ public class ComponentRegistryServiceImplTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserGroupRepository groupRepository;
+    @Autowired
+    private OwnershipRepository ownershipRepository;
 
     private ComponentRegistryServiceImpl instance;
 
@@ -105,14 +113,72 @@ public class ComponentRegistryServiceImplTest {
         //get components
         {
             final List<BaseDescription> result = instance.getItemDescriptions(
+                    ItemType.COMPONENT, ImmutableList.of(ComponentStatus.PRODUCTION),
+                    //no sorting, no group 
+                    Optional.empty(), Optional.empty(), Optional.empty());
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(7);
+        }
+
+        //get profiles
+        {
+            final List<BaseDescription> result = instance.getItemDescriptions(
+                    ItemType.PROFILE, ImmutableList.of(ComponentStatus.PRODUCTION),
+                    //no sorting, no group 
+                    Optional.empty(), Optional.empty(), Optional.empty());
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(3);
+        }
+    }
+
+    @Test
+    public void testGetTeamComponentsAndProfiles() {
+        long userId = insertUser("TestUser");
+
+        //insert components
+        insertDescriptions("clarin.eu:cr1:c_", 1001, 7, userId);
+        //insert profiles
+        insertDescriptions("clarin.eu:cr1:p_", 2001, 3, userId);
+
+        //create team
+        UserGroup g = new UserGroup();
+        g.setOwnerId(userId);
+        g.setName("Team1");
+        Long groupId = groupRepository.saveAndFlush(g).getId();
+
+        //add component to team
+        {
+            Ownership o = new Ownership();
+            o.setComponentId("clarin.eu:cr1:c_1001");
+            o.setGroupId(1L);
+            ownershipRepository.save(o);
+        }
+
+        //add profiles to team
+        {
+            Ownership o = new Ownership();
+            o.setComponentId("clarin.eu:cr1:p_2001");
+            o.setGroupId(1L);
+            ownershipRepository.save(o);
+        }
+        {
+            Ownership o = new Ownership();
+            o.setComponentId("clarin.eu:cr1:p_2002");
+            o.setGroupId(1L);
+            ownershipRepository.saveAndFlush(o);
+        }
+
+        //get components
+        {
+            final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.COMPONENT,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
                     Optional.empty(), Optional.empty(),
-                    // no group
-                    Optional.empty());
+                    // group
+                    Optional.of(groupId));
             assertThat(result).isNotNull();
-            assertThat(result).hasSize(7);
+            assertThat(result).hasSize(1);
         }
 
         //get profiles
@@ -122,10 +188,10 @@ public class ComponentRegistryServiceImplTest {
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
                     Optional.empty(), Optional.empty(),
-                    // no group
-                    Optional.empty());
+                    // group
+                    Optional.of(groupId));
             assertThat(result).isNotNull();
-            assertThat(result).hasSize(3);
+            assertThat(result).hasSize(2);
         }
     }
 
