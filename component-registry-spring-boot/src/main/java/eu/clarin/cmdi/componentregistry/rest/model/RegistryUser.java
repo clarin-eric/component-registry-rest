@@ -5,17 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-
 
 /**
  *
@@ -41,6 +44,14 @@ public class RegistryUser implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @ManyToMany
+    @JoinTable(
+            name = "groupmembership",
+            joinColumns = @JoinColumn(name = "userid"),
+            inverseJoinColumns = @JoinColumn(name = "groupid")
+    )
+    private Set<UserGroup> groups;
+
     public void setName(String name) {
         this.name = name;
     }
@@ -63,6 +74,14 @@ public class RegistryUser implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<UserGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<UserGroup> groups) {
+        this.groups = groups;
     }
 
     @Override

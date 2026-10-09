@@ -145,7 +145,7 @@ public class ComponentRegistryServiceImplTest {
         g.setOwnerId(userId);
         g.setName("Team1");
         Long groupId = groupRepository.saveAndFlush(g).getId();
-
+        
         //add component to team
         {
             Ownership o = new Ownership();
