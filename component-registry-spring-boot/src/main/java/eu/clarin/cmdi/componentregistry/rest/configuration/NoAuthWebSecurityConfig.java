@@ -19,20 +19,18 @@ package eu.clarin.cmdi.componentregistry.rest.configuration;
 import com.google.common.collect.ImmutableList;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
 
 /**
@@ -41,19 +39,21 @@ import org.springframework.security.web.header.HeaderWriterFilter;
  */
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+@Profile({"security-noauth", "default"})
+public class NoAuthWebSecurityConfig {
+    
+    private static final String KEY_ANONYMOUS = "KEY_ANONYMOUS";
+    private static final String ANONYMOUS_USER_NAME = "anonymous";
+    private static final ImmutableList<GrantedAuthority> ANONYMOUS_AUTHORITIES = ImmutableList.of(new SimpleGrantedAuthority("ANONYMOUS"));
+    private static final User ANONYMOUS_PRINCIPAL = new User(ANONYMOUS_USER_NAME, "", ANONYMOUS_AUTHORITIES);
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
-                //                .cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterAfter(requestHeaderAuthenticationFilter(), HeaderWriterFilter.class)
+                .addFilterAfter(anonymousAuthFilter(), HeaderWriterFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry
                         -> authorizationManagerRequestMatcherRegistry
-                        .requestMatchers("/**")
-                        .hasAuthority("REGISTRY")
                         .requestMatchers("/**")
                         .permitAll());
 
@@ -61,36 +61,12 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter() {
-        final RequestHeaderAuthenticationFilter authFilter = new RequestHeaderAuthenticationFilter();
-        authFilter.setPrincipalRequestHeader("x-auth-principal");
-        authFilter.setExceptionIfHeaderMissing(false);
-        authFilter.setAuthenticationManager(authenticationManager());
-        return authFilter;
-    }
-
-    @Bean
-    public AuthenticationUserDetailsService userDetailsService() {
-        AuthenticationUserDetailsService userDetailsService = (token) -> {
-            if (token.getPrincipal() instanceof String principalName) {
-                return new User(principalName, "", ImmutableList.of(new SimpleGrantedAuthority("REGISTRY")));
-            } else {
-                throw new UsernameNotFoundException("No username");
-            }
-        };
-        return userDetailsService;
+    public AnonymousAuthenticationFilter anonymousAuthFilter() {
+        return new AnonymousAuthenticationFilter(KEY_ANONYMOUS, ANONYMOUS_PRINCIPAL, ANONYMOUS_AUTHORITIES);
     }
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        final PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider() {
-            @Override
-            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-                return super.authenticate(authentication); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-            }
-
-        };
-        provider.setPreAuthenticatedUserDetailsService(userDetailsService());
-        return new ProviderManager(provider);
+        return new ProviderManager(new AnonymousAuthenticationProvider(KEY_ANONYMOUS));
     }
 }

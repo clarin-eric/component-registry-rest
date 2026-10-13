@@ -1,7 +1,9 @@
 spring:
     application:
         name: component-registry-rest
-
+    profiles:
+        default: "default"
+        #active: "security-preauthenticated"
     datasource:
         hikari:
             connectionTimeout: 20000
