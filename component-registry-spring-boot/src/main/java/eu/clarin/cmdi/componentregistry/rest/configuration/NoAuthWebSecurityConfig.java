@@ -41,7 +41,7 @@ import org.springframework.security.web.header.HeaderWriterFilter;
 @EnableWebSecurity
 @Profile({"security-noauth", "default"})
 public class NoAuthWebSecurityConfig {
-    
+
     private static final String KEY_ANONYMOUS = "KEY_ANONYMOUS";
     private static final String ANONYMOUS_USER_NAME = "anonymous";
     private static final ImmutableList<GrantedAuthority> ANONYMOUS_AUTHORITIES = ImmutableList.of(new SimpleGrantedAuthority("ANONYMOUS"));
@@ -49,8 +49,9 @@ public class NoAuthWebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http.sessionManagement(httpSecuritySessionManagementConfigurer
+                -> httpSecuritySessionManagementConfigurer
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAfter(anonymousAuthFilter(), HeaderWriterFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry
                         -> authorizationManagerRequestMatcherRegistry
