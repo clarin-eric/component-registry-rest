@@ -12,6 +12,13 @@ spring:
 #        username: <....>
 #        password: <....>
 
+compreg:
+  api:
+    security:
+      preauth:
+        enabled: false
+        preAuthAccessKey: ""
+
 server:
     servlet:
         context-path: /rest
