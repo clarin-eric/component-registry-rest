@@ -53,8 +53,9 @@ class PassthroughBasicAuthWebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(a
-                -> a.requestMatchers("/registry/**").permitAll()
-                        .requestMatchers("/user", "/user/**").authenticated())
+                -> a
+                        .requestMatchers("/user", "/user/**").authenticated()
+                        .requestMatchers("/**").permitAll())
                 .httpBasic(Customizer.withDefaults());   // use HTTP Basic auth
 
         return http.build();
