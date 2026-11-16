@@ -171,7 +171,7 @@ public class UserController {
             throw new AccessDeniedException("Need to be authenticated to request a user's info");
         } else {
             if (authentication.getPrincipal() instanceof User authPrincipal) {
-                if (Objects.equals(principal, authPrincipal.getUsername())) {
+                if (principal.equals(authPrincipal.getUsername())) {
                     //allowed
                     return true;
                 } else {

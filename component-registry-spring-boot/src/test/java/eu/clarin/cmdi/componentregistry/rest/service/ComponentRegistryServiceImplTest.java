@@ -22,6 +22,7 @@ import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.model.Ownership;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
 import eu.clarin.cmdi.componentregistry.rest.model.UserGroup;
 import eu.clarin.cmdi.componentregistry.rest.persistence.OwnershipRepository;
@@ -93,16 +94,6 @@ public class ComponentRegistryServiceImplTest {
     }
 
     @Test
-    public void testGetAllPublishedDescriptions() {
-        long userId = insertUser("TestUser");
-        insertDescriptions("id", 1001, 5, userId);
-
-        List<BaseDescription> result = instance.getPublishedDescriptions();
-        assertThat(result).isNotNull();
-        assertThat(result).hasSize(5);
-    }
-
-    @Test
     public void testGetPublishedComponentsAndProfiles() {
         long userId = insertUser("TestUser");
         //insert components
@@ -113,7 +104,7 @@ public class ComponentRegistryServiceImplTest {
         //get components
         {
             final List<BaseDescription> result = instance.getItemDescriptions(
-                    ItemType.COMPONENT, ImmutableList.of(ComponentStatus.PRODUCTION),
+                    ItemType.COMPONENT, RegistrySpace.PUBLIC, ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting, no group 
                     Optional.empty(), Optional.empty(), Optional.empty());
             assertThat(result).isNotNull();
@@ -123,7 +114,7 @@ public class ComponentRegistryServiceImplTest {
         //get profiles
         {
             final List<BaseDescription> result = instance.getItemDescriptions(
-                    ItemType.PROFILE, ImmutableList.of(ComponentStatus.PRODUCTION),
+                    ItemType.PROFILE, RegistrySpace.PUBLIC, ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting, no group 
                     Optional.empty(), Optional.empty(), Optional.empty());
             assertThat(result).isNotNull();
@@ -172,6 +163,7 @@ public class ComponentRegistryServiceImplTest {
         {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.COMPONENT,
+                    RegistrySpace.PUBLIC,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
                     Optional.empty(), Optional.empty(),
@@ -185,6 +177,7 @@ public class ComponentRegistryServiceImplTest {
         {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.PROFILE,
+                    RegistrySpace.PUBLIC,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
                     Optional.empty(), Optional.empty(),

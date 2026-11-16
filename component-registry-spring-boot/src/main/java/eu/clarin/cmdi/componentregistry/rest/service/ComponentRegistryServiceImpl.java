@@ -22,6 +22,7 @@ import static eu.clarin.cmdi.componentregistry.rest.ComponentRegistryConstants.P
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import eu.clarin.cmdi.componentregistry.rest.persistence.RegistryItemRepository;
 import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.xml.bind.JAXBException;
@@ -55,36 +56,42 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
         this.specMarshaller = specMarshaller;
     }
 
+//    @Override
+//    public List<BaseDescription> getItemDescriptions(Collection<ComponentStatus> status, Optional<String> sortBy, Optional<Direction> sortDirection) {
+//        return itemRepository.findItems(true,
+//                status,
+//                sortBy
+//                        .map(property -> Sort.by(
+//                        sortDirection.orElse(Direction.ASC),
+//                        property))
+//                        .orElseGet(Sort::unsorted));
+//    }
     @Override
-    public List<BaseDescription> getPublishedDescriptions() {
-        return itemRepository.findPublicItems(Sort.unsorted());
-    }
-
-    @Override
-    public List<BaseDescription> getItemDescriptions(Collection<ComponentStatus> status, Optional<String> sortBy, Optional<Direction> sortDirection) {
-        return itemRepository.findItems(true,
-                status,
-                sortBy
-                        .map(property -> Sort.by(
-                        sortDirection.orElse(Direction.ASC),
-                        property))
-                        .orElseGet(Sort::unsorted));
-    }
-
-    @Override
-    public List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
+    public List<BaseDescription> getItemDescriptions(ItemType type,
+            RegistrySpace space,
+            Collection<ComponentStatus> status,
             Optional<String> sortBy, Optional<Direction> sortDirection, Optional<Long> groupId) {
         final String prefix = prefixForType(type) + "%";
         final Sort sorting = sortBy
                 .map(property -> Sort.by(sortDirection.orElse(Direction.ASC), property))
                 .orElseGet(Sort::unsorted);
 
-        if (groupId.isPresent()) {
-            //TODO: check authorization
-            return itemRepository.findItemsInTeam(prefix, groupId.get(), status, sorting);
-        } else {
-            return itemRepository.findItems(prefix, true, status, sorting);
+        switch (space) {
+            case GROUP -> {
+                final Long grId = groupId.orElseThrow(RuntimeException::new);
+                //TODO: else throw specific exception
+                return itemRepository.findItemsInTeam(prefix, grId, status, sorting);
+            }
+            case PUBLIC -> {
+                return itemRepository.findItems(prefix, true, status, sorting);
+            }
+            case PRIVATE -> {
+                return itemRepository.findItems(prefix, false, status, sorting);
+            }
         }
+        //TODO: custom exception
+        throw new RuntimeException("Invalid request");
+
     }
 
     private String prefixForType(ItemType type) {

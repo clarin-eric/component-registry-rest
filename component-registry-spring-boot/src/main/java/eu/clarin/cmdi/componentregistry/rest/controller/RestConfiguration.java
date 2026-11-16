@@ -18,6 +18,7 @@ package eu.clarin.cmdi.componentregistry.rest.controller;
 
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -34,6 +35,7 @@ public class RestConfiguration implements WebMvcConfigurer {
         //converters that allow lower case values for component type and status filters
         registry.addConverter(new ComponentStatus.StringToComponentStatusConverter());
         registry.addConverter(new ItemType.StringToItemTypeConverter());
+        registry.addConverter(new RegistrySpace.StringToItemTypeConverter());
     }
 
 }

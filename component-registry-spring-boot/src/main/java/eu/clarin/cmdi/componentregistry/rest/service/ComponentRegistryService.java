@@ -4,6 +4,7 @@ import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -23,25 +24,11 @@ public interface ComponentRegistryService {
 
     /**
      * *
-     * @return an unsorted list of all published items
-     */
-    List<BaseDescription> getPublishedDescriptions();
-
-    /**
-     * *
-     * @param status
-     * @param sortBy field to sort by
-     * @param sortDirection direction to sort in
-     * @return a sorted list of all published items
-     */
-    List<BaseDescription> getItemDescriptions(Collection<ComponentStatus> status, Optional<String> sortBy, Optional<Sort.Direction> sortDirection);
-
-    /**
-     * *
      * Get all published items with the specified type and status. 
      * Checks authorization if needed (when requesting items from a private or team space)
      *
      * @param type
+     * @param space
      * @param status
      * @param sortBy field to sort by; provide an empty optional for unsorted
      * result
@@ -50,7 +37,7 @@ public interface ComponentRegistryService {
      * @param groupId user group (aka team) id
      * @return
      */
-    List<BaseDescription> getItemDescriptions(ItemType type, Collection<ComponentStatus> status,
+    List<BaseDescription> getItemDescriptions(ItemType type, RegistrySpace space, Collection<ComponentStatus> status,
             Optional<String> sortBy, Optional<Sort.Direction> sortDirection, Optional<Long> groupId);
 
     public boolean itemIsOfType(BaseDescription item, ItemType type);

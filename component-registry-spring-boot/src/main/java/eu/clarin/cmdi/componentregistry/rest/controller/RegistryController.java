@@ -24,6 +24,7 @@ import eu.clarin.cmdi.componentregistry.rest.model.ComponentsList;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfileDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfilesList;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.rest.service.ItemDescriptionConverter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,14 +62,14 @@ public class RegistryController {
     @GetMapping(path = "/components",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ComponentsList getComponents(
-            @RequestParam(value = "registrySpace", defaultValue = "published") String registrySpace,
+            @RequestParam(value = "registrySpace", defaultValue = "published") RegistrySpace registrySpace,
             @RequestParam(value = "status") List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
             @RequestParam(value = "groupId", required = false) Long groupId
     ) {
         return itemConverter.descriptionsAsComponentsList(
-                getItems(ItemType.COMPONENT, registrySpace, status, sortBy, sortDirection, groupId)
+                getItemsOfType(ItemType.COMPONENT, registrySpace, status, sortBy, sortDirection, groupId)
         );
     }
 
@@ -77,33 +78,15 @@ public class RegistryController {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
     public ProfilesList getProfiles(
-            @RequestParam(value = "registrySpace", defaultValue = "published") String registrySpace,
+            @RequestParam(value = "registrySpace", defaultValue = "published") RegistrySpace registrySpace,
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
             @RequestParam(value = "groupId", required = false) Long groupId
     ) {
         return itemConverter.descriptionsAsProfilesList(
-                getItems(ItemType.PROFILE, registrySpace, status, sortBy, sortDirection, groupId)
+                getItemsOfType(ItemType.PROFILE, registrySpace, status, sortBy, sortDirection, groupId)
         );
-    }
-
-    private List<BaseDescription> getItems(ItemType itemType, String registrySpace, List<ComponentStatus> status, String sortBy, Sort.Direction sortDirection, Long groupId) throws UnsupportedOperationException, IllegalArgumentException {
-        final List<BaseDescription> items = switch (registrySpace) {
-            case "published" -> {
-                yield getItemsOfType(itemType, status, sortBy, sortDirection, null);
-            }
-            case "private" -> {
-                throw new UnsupportedOperationException("Private registry space not yet implemented");
-            }
-            case "group" -> {
-                yield getItemsOfType(ItemType.PROFILE, status, sortBy, sortDirection, groupId);
-            }
-            default -> {
-                throw new IllegalArgumentException("No such registry space: " + registrySpace);
-            }
-        };
-        return items;
     }
 
     @GetMapping(path = "/components/{componentId}/description",
@@ -128,10 +111,12 @@ public class RegistryController {
                 getItemDescriptionOfType(ItemType.PROFILE, componentId));
     }
 
-    private List<BaseDescription> getItemsOfType(ItemType type, List<ComponentStatus> status,
+    private List<BaseDescription> getItemsOfType(ItemType type, 
+            RegistrySpace space,
+            List<ComponentStatus> status,
             String sortBy, Sort.Direction sortDirection, Long groupId) {
         return registryService.getItemDescriptions(
-                type,
+                type, space,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
                 Optional.of(sortBy), Optional.of(sortDirection), Optional.ofNullable(groupId));
     }

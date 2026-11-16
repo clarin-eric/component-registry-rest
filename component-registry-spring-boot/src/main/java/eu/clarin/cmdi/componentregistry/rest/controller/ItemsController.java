@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import eu.clarin.cmdi.componentregistry.components.ComponentSpec;
 import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,19 +75,18 @@ public class ItemsController {
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
             @RequestParam(value = "type") Optional<ItemType> itemType,
+            @RequestParam(value = "registrySpace") Optional<RegistrySpace> space,
             @RequestParam(value = "groupId") Optional<Long> groupId,
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Direction sortDirection
     ) {
-        return itemType.map(
-                (type) -> registryService.getItemDescriptions(type,
-                        CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                        Optional.of(sortBy), Optional.of(sortDirection), groupId))
-                .orElseGet(
-                        () -> registryService.getItemDescriptions(
-                                CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                                Optional.of(sortBy), Optional.of(sortDirection)));
+        //TODO: check authorization if private or group space
+
+        return registryService.getItemDescriptions(itemType.orElse(ItemType.PROFILE),
+                space.orElse(RegistrySpace.PUBLIC),
+                CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
+                Optional.of(sortBy), Optional.of(sortDirection), groupId);
     }
 
     @Operation(summary = "Get the description of a profile or component")
