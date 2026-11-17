@@ -7,7 +7,6 @@ import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Sort;
 
 /**
@@ -24,8 +23,9 @@ public interface ComponentRegistryService {
 
     /**
      * *
-     * Get all published items with the specified type and status. 
-     * Checks authorization if needed (when requesting items from a private or team space)
+     * Get all published items with the specified type and status. Checks
+     * authorization if needed (when requesting items from a private or team
+     * space)
      *
      * @param type
      * @param space
@@ -38,7 +38,7 @@ public interface ComponentRegistryService {
      * @return
      */
     List<BaseDescription> getItemDescriptions(ItemType type, RegistrySpace space, Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Sort.Direction> sortDirection, Optional<Long> userId, Optional<Long> groupId);
+            String sortBy, Sort.Direction sortDirection, Long userId, Long groupId);
 
     public boolean itemIsOfType(BaseDescription item, ItemType type);
 

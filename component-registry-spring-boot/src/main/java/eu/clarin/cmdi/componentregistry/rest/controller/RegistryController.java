@@ -31,7 +31,6 @@ import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.rest.service.ItemDescriptionConverter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -124,12 +123,11 @@ public class RegistryController {
             List<ComponentStatus> status,
             String sortBy, Sort.Direction sortDirection, Long groupId, Authentication authentication) {
 
-        final Optional<Long> grpId = Optional.ofNullable(groupId);
-        final Optional<Long> userId = Optional.ofNullable(checkUserSpaceAccess(space, authentication, grpId));
+        final Long userId = checkUserSpaceAccess(space, authentication, groupId);
 
         return registryService.getItemDescriptions(type, space,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                Optional.of(sortBy), Optional.of(sortDirection), userId, grpId);
+                sortBy, sortDirection, userId, groupId);
     }
 
     /**
@@ -141,7 +139,7 @@ public class RegistryController {
      * @throws An exception if the user is not authorized to access the
      * specified space
      */
-    private Long checkUserSpaceAccess(RegistrySpace space, Authentication authentication, Optional<Long> groupId) {
+    private Long checkUserSpaceAccess(RegistrySpace space, Authentication authentication, Long groupId) {
         if (space == null) {
             return null;
         } else {
@@ -154,18 +152,23 @@ public class RegistryController {
                             //return its ID
                             .getId();
                 case GROUP:
+                    if(groupId == null) {
+                        throw new RuntimeException("Group ID not given");
+                    }
+                    
                     // current user must exist
                     final RegistryUser user
                             = authInfoService.getCurrentUser(authentication)
                                     //TODO: throw something specific
                                     .orElseThrow();
+                    
                     // user must have access to the specified group
-                    if (authInfoService.canUserAccessGroup(user, groupId.orElseThrow())) {
+                    if (authInfoService.canUserAccessGroup(user, groupId)) {
                         // user is authorized, return its id
                         return user.getId();
                     } else {
                         // user is not authorized
-                        throw new RuntimeException();
+                        throw new RuntimeException("User not authorized to access group");
                     }
                 default:
                     return null;

@@ -91,11 +91,13 @@ public class ItemsController {
         //TODO: check authorization if private or group space
 
         final RegistrySpace space = registrySpace.orElse(RegistrySpace.PUBLIC);
-        final Optional<Long> userId = checkAccessForUser(space, authentication, groupId);
+        final Optional<Long> userId = checkAccessForUser(space, authentication, groupId.orElse(null));
 
         return registryService.getItemDescriptions(itemType.orElse(ItemType.PROFILE), space,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                Optional.of(sortBy), Optional.of(sortDirection), userId, groupId);
+                sortBy, sortDirection,
+                userId.orElse(null),
+                groupId.orElse(null));
     }
 
     /**
@@ -106,7 +108,7 @@ public class ItemsController {
      * @return
      * @throws RuntimeException
      */
-    private Optional<Long> checkAccessForUser(final RegistrySpace space, Authentication authentication, Optional<Long> groupId) throws RuntimeException {
+    private Optional<Long> checkAccessForUser(final RegistrySpace space, Authentication authentication, Long groupId) throws RuntimeException {
         if (space == RegistrySpace.PUBLIC) {
             return Optional.empty();
         } else {
@@ -114,8 +116,8 @@ public class ItemsController {
                     //TODO: throw unauthorized exception
                     .orElseThrow();
             Optional<Long> userId = Optional.of(currentUser.getId());
-            if (groupId.isPresent()) {
-                if (!authInfoService.canUserAccessGroup(currentUser, groupId.get())) {
+            if (groupId != null) {
+                if (!authInfoService.canUserAccessGroup(currentUser, groupId)) {
                     //TODO: throw unauthorized exception
                     throw new RuntimeException("User does not have access to team");
                 }

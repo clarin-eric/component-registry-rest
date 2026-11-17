@@ -56,40 +56,34 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
         this.specMarshaller = specMarshaller;
     }
 
-//    @Override
-//    public List<BaseDescription> getItemDescriptions(Collection<ComponentStatus> status, Optional<String> sortBy, Optional<Direction> sortDirection) {
-//        return itemRepository.findItems(true,
-//                status,
-//                sortBy
-//                        .map(property -> Sort.by(
-//                        sortDirection.orElse(Direction.ASC),
-//                        property))
-//                        .orElseGet(Sort::unsorted));
-//    }
     @Override
     public List<BaseDescription> getItemDescriptions(ItemType type,
             RegistrySpace space,
             Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Direction> sortDirection, 
-            Optional<Long> userId, Optional<Long> groupId) {
+            String sortBy, Direction sortDirection,
+            Long userId, Long groupId) {
         final String prefix = prefixForType(type) + "%";
-        final Sort sorting = sortBy
-                .map(property -> Sort.by(sortDirection.orElse(Direction.ASC), property))
+        final Sort sorting = Optional.ofNullable(sortBy)
+                .map(property -> Sort.by(sortDirection == null ? Direction.ASC : sortDirection, property))
                 .orElseGet(Sort::unsorted);
 
         switch (space) {
             case GROUP -> {
-                final Long grId = groupId.orElseThrow(RuntimeException::new);
-                //TODO: else throw specific exception
-                return itemRepository.findItemsInTeam(prefix, grId, status, sorting);
+                if (groupId == null) {
+                    //TODO: else throw specific exception
+                    throw new RuntimeException("Group id not given");
+                }
+                return itemRepository.findItemsInTeam(prefix, groupId, status, sorting);
             }
             case PUBLIC -> {
                 return itemRepository.findItems(prefix, true, status, sorting);
             }
             case PRIVATE -> {
-                final Long uId = userId.orElseThrow(RuntimeException::new);
-                //TODO: else throw specific exception
-                return itemRepository.findUserItems(prefix, uId, false, status, sorting);
+                if (userId == null) {
+                    //TODO: else throw specific exception
+                    throw new RuntimeException("User not set/specified");
+                }
+                return itemRepository.findUserItems(prefix, userId, false, status, sorting);
             }
         }
         //TODO: custom exception

@@ -104,7 +104,7 @@ public class ComponentRegistryServiceImplTest {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.COMPONENT, RegistrySpace.PUBLIC, ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting, no group 
-                    Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    null,null,null,null);
             assertThat(result).isNotNull();
             assertThat(result).hasSize(7);
         }
@@ -114,7 +114,7 @@ public class ComponentRegistryServiceImplTest {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.PROFILE, RegistrySpace.PUBLIC, ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting, no group 
-                    Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    null,null,null,null);
             assertThat(result).isNotNull();
             assertThat(result).hasSize(3);
         }
@@ -164,11 +164,9 @@ public class ComponentRegistryServiceImplTest {
                     RegistrySpace.PUBLIC,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
-                    Optional.empty(), Optional.empty(),
-                    // user
-                    Optional.empty(),
-                    // group
-                    Optional.of(groupId));
+                    null,null,
+                    // user, group
+                    null, null);
             assertThat(result).isNotNull();
             assertThat(result).hasSize(1);
         }
@@ -179,12 +177,10 @@ public class ComponentRegistryServiceImplTest {
                     ItemType.PROFILE,
                     RegistrySpace.PUBLIC,
                     ImmutableList.of(ComponentStatus.PRODUCTION),
-                    //no sorting
-                    Optional.empty(), Optional.empty(),
-                    // user
-                    Optional.empty(),
+                    //no sorting, no user
+                    null,null, null,
                     // group
-                    Optional.of(groupId));
+                    groupId);
             assertThat(result).isNotNull();
             assertThat(result).hasSize(2);
         }
