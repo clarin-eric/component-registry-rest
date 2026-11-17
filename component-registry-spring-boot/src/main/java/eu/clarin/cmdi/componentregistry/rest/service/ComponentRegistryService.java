@@ -38,7 +38,7 @@ public interface ComponentRegistryService {
      * @return
      */
     List<BaseDescription> getItemDescriptions(ItemType type, RegistrySpace space, Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Sort.Direction> sortDirection, Optional<Long> groupId);
+            Optional<String> sortBy, Optional<Sort.Direction> sortDirection, Optional<Long> userId, Optional<Long> groupId);
 
     public boolean itemIsOfType(BaseDescription item, ItemType type);
 

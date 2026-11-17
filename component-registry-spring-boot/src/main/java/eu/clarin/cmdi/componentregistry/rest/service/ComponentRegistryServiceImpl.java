@@ -70,7 +70,8 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
     public List<BaseDescription> getItemDescriptions(ItemType type,
             RegistrySpace space,
             Collection<ComponentStatus> status,
-            Optional<String> sortBy, Optional<Direction> sortDirection, Optional<Long> groupId) {
+            Optional<String> sortBy, Optional<Direction> sortDirection, 
+            Optional<Long> userId, Optional<Long> groupId) {
         final String prefix = prefixForType(type) + "%";
         final Sort sorting = sortBy
                 .map(property -> Sort.by(sortDirection.orElse(Direction.ASC), property))
@@ -86,7 +87,9 @@ public class ComponentRegistryServiceImpl implements ComponentRegistryService {
                 return itemRepository.findItems(prefix, true, status, sorting);
             }
             case PRIVATE -> {
-                return itemRepository.findItems(prefix, false, status, sorting);
+                final Long uId = userId.orElseThrow(RuntimeException::new);
+                //TODO: else throw specific exception
+                return itemRepository.findUserItems(prefix, uId, false, status, sorting);
             }
         }
         //TODO: custom exception

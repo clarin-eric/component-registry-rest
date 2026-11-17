@@ -32,10 +32,8 @@ import eu.clarin.cmdi.componentregistry.rest.persistence.UserGroupRepository;
 import eu.clarin.cmdi.componentregistry.rest.persistence.UserRepository;
 import eu.clarin.cmdi.componentregistry.rest.spec.ComponentSpecMarshaller;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,7 +104,7 @@ public class ComponentRegistryServiceImplTest {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.COMPONENT, RegistrySpace.PUBLIC, ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting, no group 
-                    Optional.empty(), Optional.empty(), Optional.empty());
+                    Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
             assertThat(result).isNotNull();
             assertThat(result).hasSize(7);
         }
@@ -116,7 +114,7 @@ public class ComponentRegistryServiceImplTest {
             final List<BaseDescription> result = instance.getItemDescriptions(
                     ItemType.PROFILE, RegistrySpace.PUBLIC, ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting, no group 
-                    Optional.empty(), Optional.empty(), Optional.empty());
+                    Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
             assertThat(result).isNotNull();
             assertThat(result).hasSize(3);
         }
@@ -167,6 +165,8 @@ public class ComponentRegistryServiceImplTest {
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
                     Optional.empty(), Optional.empty(),
+                    // user
+                    Optional.empty(),
                     // group
                     Optional.of(groupId));
             assertThat(result).isNotNull();
@@ -181,6 +181,8 @@ public class ComponentRegistryServiceImplTest {
                     ImmutableList.of(ComponentStatus.PRODUCTION),
                     //no sorting
                     Optional.empty(), Optional.empty(),
+                    // user
+                    Optional.empty(),
                     // group
                     Optional.of(groupId));
             assertThat(result).isNotNull();

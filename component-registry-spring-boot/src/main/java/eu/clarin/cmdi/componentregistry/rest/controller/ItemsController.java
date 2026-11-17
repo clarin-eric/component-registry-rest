@@ -22,6 +22,8 @@ import eu.clarin.cmdi.componentregistry.rest.model.BaseDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ComponentStatus;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
 import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import eu.clarin.cmdi.componentregistry.rest.service.AuthorizationInfoService;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -37,6 +39,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +63,9 @@ public class ItemsController {
     @Autowired
     private ComponentRegistryService registryService;
 
+    @Autowired
+    private AuthorizationInfoService authInfoService;
+
     @Operation(summary = "Get a filtered list of descriptions of profiles and/or components")
     @ApiResponses(value = {
         @ApiResponse(
@@ -74,8 +80,9 @@ public class ItemsController {
                             array = @ArraySchema(schema = @Schema(implementation = BaseDescription.class)))})})
     @GetMapping(path = {}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<BaseDescription> getItems(
+            Authentication authentication,
             @RequestParam(value = "type") Optional<ItemType> itemType,
-            @RequestParam(value = "registrySpace") Optional<RegistrySpace> space,
+            @RequestParam(value = "registrySpace") Optional<RegistrySpace> registrySpace,
             @RequestParam(value = "groupId") Optional<Long> groupId,
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
@@ -83,10 +90,38 @@ public class ItemsController {
     ) {
         //TODO: check authorization if private or group space
 
-        return registryService.getItemDescriptions(itemType.orElse(ItemType.PROFILE),
-                space.orElse(RegistrySpace.PUBLIC),
+        final RegistrySpace space = registrySpace.orElse(RegistrySpace.PUBLIC);
+        final Optional<Long> userId = checkAccessForUser(space, authentication, groupId);
+
+        return registryService.getItemDescriptions(itemType.orElse(ItemType.PROFILE), space,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                Optional.of(sortBy), Optional.of(sortDirection), groupId);
+                Optional.of(sortBy), Optional.of(sortDirection), userId, groupId);
+    }
+
+    /**
+     *
+     * @param space
+     * @param authentication
+     * @param groupId
+     * @return
+     * @throws RuntimeException
+     */
+    private Optional<Long> checkAccessForUser(final RegistrySpace space, Authentication authentication, Optional<Long> groupId) throws RuntimeException {
+        if (space == RegistrySpace.PUBLIC) {
+            return Optional.empty();
+        } else {
+            final RegistryUser currentUser = authInfoService.getCurrentUser(authentication)
+                    //TODO: throw unauthorized exception
+                    .orElseThrow();
+            Optional<Long> userId = Optional.of(currentUser.getId());
+            if (groupId.isPresent()) {
+                if (!authInfoService.canUserAccessGroup(currentUser, groupId.get())) {
+                    //TODO: throw unauthorized exception
+                    throw new RuntimeException("User does not have access to team");
+                }
+            }
+            return userId;
+        }
     }
 
     @Operation(summary = "Get the description of a profile or component")
@@ -182,6 +217,14 @@ public class ItemsController {
                     .ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(spec);
+        }
+    }
+
+    private Object getPrincipal(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        } else {
+            return authentication.getPrincipal();
         }
     }
 }

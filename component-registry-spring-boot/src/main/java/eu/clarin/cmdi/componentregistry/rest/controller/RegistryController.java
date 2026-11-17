@@ -25,6 +25,8 @@ import eu.clarin.cmdi.componentregistry.rest.model.ItemType;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfileDescription;
 import eu.clarin.cmdi.componentregistry.rest.model.ProfilesList;
 import eu.clarin.cmdi.componentregistry.rest.model.RegistrySpace;
+import eu.clarin.cmdi.componentregistry.rest.model.RegistryUser;
+import eu.clarin.cmdi.componentregistry.rest.service.AuthorizationInfoService;
 import eu.clarin.cmdi.componentregistry.rest.service.ComponentRegistryService;
 import eu.clarin.cmdi.componentregistry.rest.service.ItemDescriptionConverter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,17 +62,21 @@ public class RegistryController {
     @Autowired
     private ItemDescriptionConverter itemConverter;
 
+    @Autowired
+    private AuthorizationInfoService authInfoService;
+
     @GetMapping(path = "/components",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ComponentsList getComponents(
-            @RequestParam(value = "registrySpace", defaultValue = "published") RegistrySpace registrySpace,
-            @RequestParam(value = "status") List<ComponentStatus> status,
+            Authentication authentication,
+            @RequestParam(value = "registrySpace", defaultValue = "public") RegistrySpace registrySpace,
+            @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") Sort.Direction sortDirection,
             @RequestParam(value = "groupId", required = false) Long groupId
     ) {
         return itemConverter.descriptionsAsComponentsList(
-                getItemsOfType(ItemType.COMPONENT, registrySpace, status, sortBy, sortDirection, groupId)
+                getItemsOfType(ItemType.COMPONENT, registrySpace, status, sortBy, sortDirection, groupId, authentication)
         );
     }
 
@@ -78,6 +85,7 @@ public class RegistryController {
                 MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE})
     public ProfilesList getProfiles(
+            Authentication authentication,
             @RequestParam(value = "registrySpace", defaultValue = "published") RegistrySpace registrySpace,
             @RequestParam(value = "status", required = false) List<ComponentStatus> status,
             @RequestParam(value = "sortBy", defaultValue = "name") String sortBy,
@@ -85,7 +93,7 @@ public class RegistryController {
             @RequestParam(value = "groupId", required = false) Long groupId
     ) {
         return itemConverter.descriptionsAsProfilesList(
-                getItemsOfType(ItemType.PROFILE, registrySpace, status, sortBy, sortDirection, groupId)
+                getItemsOfType(ItemType.PROFILE, registrySpace, status, sortBy, sortDirection, groupId, authentication)
         );
     }
 
@@ -111,14 +119,59 @@ public class RegistryController {
                 getItemDescriptionOfType(ItemType.PROFILE, componentId));
     }
 
-    private List<BaseDescription> getItemsOfType(ItemType type, 
+    private List<BaseDescription> getItemsOfType(ItemType type,
             RegistrySpace space,
             List<ComponentStatus> status,
-            String sortBy, Sort.Direction sortDirection, Long groupId) {
-        return registryService.getItemDescriptions(
-                type, space,
+            String sortBy, Sort.Direction sortDirection, Long groupId, Authentication authentication) {
+
+        final Optional<Long> grpId = Optional.ofNullable(groupId);
+        final Optional<Long> userId = Optional.ofNullable(checkUserSpaceAccess(space, authentication, grpId));
+
+        return registryService.getItemDescriptions(type, space,
                 CollectionUtils.isEmpty(status) ? DEFAULT_STATUS : status,
-                Optional.of(sortBy), Optional.of(sortDirection), Optional.ofNullable(groupId));
+                Optional.of(sortBy), Optional.of(sortDirection), userId, grpId);
+    }
+
+    /**
+     *
+     * @param space space to access
+     * @param authentication current authentication state
+     * @param groupId id of group to access (only processed if space == RegistrySpace.GROUP
+     * @return the user ID
+     * @throws An exception if the user is not authorized to access the
+     * specified space
+     */
+    private Long checkUserSpaceAccess(RegistrySpace space, Authentication authentication, Optional<Long> groupId) {
+        if (space == null) {
+            return null;
+        } else {
+            switch (space) {
+                case PRIVATE:
+                    //current user must be set
+                    return authInfoService.getCurrentUser(authentication)
+                            //TODO: throw something specific
+                            .orElseThrow()
+                            //return its ID
+                            .getId();
+                case GROUP:
+                    // current user must exist
+                    final RegistryUser user
+                            = authInfoService.getCurrentUser(authentication)
+                                    //TODO: throw something specific
+                                    .orElseThrow();
+                    // user must have access to the specified group
+                    if (authInfoService.canUserAccessGroup(user, groupId.orElseThrow())) {
+                        // user is authorized, return its id
+                        return user.getId();
+                    } else {
+                        // user is not authorized
+                        throw new RuntimeException();
+                    }
+                default:
+                    return null;
+            }
+        }
+
     }
 
     private BaseDescription getItemDescriptionOfType(ItemType type, String componentId) {

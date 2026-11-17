@@ -48,7 +48,20 @@ public interface RegistryItemRepository extends JpaRepository<BaseDescription, L
             boolean isPublic,
             Collection<ComponentStatus> status,
             Sort sort);
-    
+
+    @Query("SELECT c FROM BaseDescription c"
+            + " WHERE c.componentId like ?1"
+            + " AND c.dbUserId = ?2"
+            + " AND c.ispublic = ?3"
+            + " AND status in ?4"
+            + " AND c.deleted = false")
+    List<BaseDescription> findUserItems(
+            String idPrefix,
+            Long userId,
+            boolean isPublic,
+            Collection<ComponentStatus> status,
+            Sort sort);
+
     @Query("SELECT c FROM BaseDescription c"
             + " JOIN Ownership o on c.componentId = o.componentId"
             + " WHERE c.componentId like ?1"
